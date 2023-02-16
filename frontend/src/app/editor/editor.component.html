@@ -1,0 +1,9 @@
+<div id="question-container">
+    <ng-container *ngIf="question; else quizComplete">
+        <p><b>{{ question.id }}</b></p>
+        <p [innerHTML]="question.name"></p>
+    </ng-container>
+    <ng-template #quizComplete>
+        <p>We're all out of questions!</p>
+    </ng-template>
+</div>
