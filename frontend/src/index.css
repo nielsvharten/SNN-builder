@@ -11,3 +11,43 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.network {
+  width: 50%;
+  height: 500px;
+  background-color: rgb(160, 160, 160);
+}
+
+.node {
+  background-color: #002D42;
+}
+
+.node-lif {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  position: absolute;
+
+  /* positioning within neuron */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.node-input-train {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  position: absolute;
+  
+  /* positioning within neuron */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.node-name {
+  padding: 0px 5px;
+  color: white;
+  position: absolute;
+}

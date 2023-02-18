@@ -130,5 +130,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://www.twilio.com/blog/build-progressive-web-application-django-angular-part-1-backend-api
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
+    "http://localhost:3000",
 ]
