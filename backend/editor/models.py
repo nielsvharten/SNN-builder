@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 
 class Network(models.Model):
     name = models.CharField('network name', max_length=200)
@@ -9,6 +9,8 @@ class Network(models.Model):
 
 
 class AbstractNode(models.Model):
+    net = models.ForeignKey(Network, related_name='nodes', on_delete=models.CASCADE, default=None)
+
     amplitude =  models.FloatField('amplitude of output', default=1.)
     name = models.CharField('neuron name', max_length=200)
 
@@ -20,7 +22,6 @@ class AbstractNode(models.Model):
 
 
 class LIF(AbstractNode):
-    net = models.ForeignKey(Network, related_name='lifs', on_delete=models.CASCADE, default=None)
     m = models.FloatField('inverse leakage', default=0.)
     V_init = models.FloatField('initial voltage', default=0.)
     V_reset = models.FloatField('reset voltage after spike', default=0.)
@@ -31,7 +32,6 @@ class LIF(AbstractNode):
 
 
 class InputTrain(AbstractNode):
-    net = models.ForeignKey(Network, related_name='input_trains', on_delete=models.CASCADE, default=None)
     train = models.TextField('output train', max_length=9999)
     loop = models.BooleanField('loop the train', default=False)
 
