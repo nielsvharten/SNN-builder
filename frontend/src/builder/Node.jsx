@@ -7,7 +7,11 @@ class Node extends Component {
 
     return (
       <Draggable onStart={onClickNode} onDrag={onDragNode}>
-        <div className={"node node-" + type} onClick={onClickNode}>
+        <div
+          className={"node node-" + type}
+          onClick={onClickNode}
+          style={{ top: node.y_pos, left: node.x_pos }}
+        >
           <div className="node-name" contentEditable="true" spellCheck="false">
             {node.name}
           </div>

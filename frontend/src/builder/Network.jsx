@@ -11,7 +11,7 @@ class Network extends Component {
   }
 
   render() {
-    const { id, name, lifs, inputTrains, synapses } = this.props.network;
+    const { id, name, lifs, input_trains, synapses } = this.props.network;
 
     return (
       <div className="network">
@@ -22,6 +22,15 @@ class Network extends Component {
             node={lif}
             onDragNode={() => this.handleDragNode(lif.id)}
             onClickNode={() => this.handleClickNode(lif.id)}
+          />
+        ))}
+        {input_trains.map((input) => (
+          <Node
+            key={input.id}
+            type="input-train"
+            node={input}
+            onDragNode={() => this.handleDragNode(input.id)}
+            onClickNode={() => this.handleClickNode(input.id)}
           />
         ))}
       </div>

@@ -6,7 +6,7 @@ from .models import Network, LIF
 class LIFSerializer(serializers.ModelSerializer):
     class Meta:
         model = LIF
-        fields = ['id', 'name', 'm', 'V_reset', 'thr']
+        fields = ['id', 'name', 'x_pos', 'y_pos', 'm', 'V_reset', 'thr']
 
 
 class NetworkSerializer(serializers.ModelSerializer):
