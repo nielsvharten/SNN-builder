@@ -10,9 +10,8 @@ class Network(models.Model):
 
 class AbstractNode(models.Model):
     net = models.ForeignKey(Network, related_name='nodes', on_delete=models.CASCADE, default=None)
-
-    amplitude =  models.FloatField('amplitude of output', default=1.)
     name = models.CharField('neuron name', max_length=200)
+    amplitude =  models.FloatField('amplitude of output', default=1.)
 
     x_pos = models.CharField('horizontal position', max_length=10, default="100px")
     y_pos = models.CharField('vertical position', max_length=10, default="100px")
@@ -28,6 +27,7 @@ class LIF(AbstractNode):
     thr = models.FloatField('spiking threshold', default=0.99)
     I_e = models.FloatField('constant input current', default=0.)
     noise = models.FloatField('membrane voltage noise', default=0.)
+
     # refrac_time = models.IntegerField('refractory period in time steps', default=0)
 
 
@@ -45,4 +45,4 @@ class Synapse(models.Model):
     d = models.IntegerField('synaptic delay (nr of timesteps)', default=1)
 
     def __str__(self):
-        return 'from ' + self.source.name + ' to ' + self.target.name
+        return 'from ' + self.pre.name + ' to ' + self.post.name

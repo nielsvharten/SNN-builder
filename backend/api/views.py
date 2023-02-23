@@ -6,7 +6,7 @@ from .serializers import NetworkSerializer
 from rest_framework import status
 
 
-class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
+class NetworkViewSet(viewsets.ModelViewSet):
     queryset = Network.objects.all()
     serializer_class = NetworkSerializer
     
