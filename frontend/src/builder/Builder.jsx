@@ -3,8 +3,7 @@ import Network from "./Network";
 
 class Builder extends Component {
   state = {
-    error: null,
-    isLoaded: false,
+    maxId: 0,
     network: {
       id: -1,
       name: "",
@@ -15,10 +14,12 @@ class Builder extends Component {
 
   handleAddNode = (type) => {
     const network = { ...this.state.network };
+    const id = this.state.maxId + 1;
+
     const node = {
-      id: 124,
+      id: id,
       type: type,
-      name: "A",
+      name: "",
       x_pos: "100px",
       y_pos: "100px",
       m: 0.0,
@@ -29,28 +30,15 @@ class Builder extends Component {
     }
     network.nodes = network.nodes.concat(node);
 
+    this.setState({ maxId: id });
     this.setState({ network });
   };
 
   handleSaveNetwork = () => {
-    console.log("save network", this.state.network);
+    console.log("save state", this.state);
 
-    const jsonNetwork = JSON.stringify(this.state.network);
-    window.localStorage.setItem("network", jsonNetwork);
-    /*
-    var data = new FormData();
-    data.append("network", this.state.network);
-    console.log(JSON.stringify(this.state.network));
-    fetch("http://127.0.0.1:8000/api/networks/1/", {
-      method: "PATCH",
-      //headers: { "X-CSRFToken": getCookie("csrftoken") }
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(this.state.network),
-      //credentials: "include",
-    });*/
+    const jsonState = JSON.stringify(this.state);
+    window.localStorage.setItem("state", jsonState);
   };
 
   handleDeleteNode(node) {
@@ -62,27 +50,14 @@ class Builder extends Component {
   }
 
   componentDidMount() {
-    const jsonNetwork = window.localStorage.getItem("network");
-    const network = JSON.parse(jsonNetwork);
+    const jsonState = window.localStorage.getItem("state");
+    if (jsonState === null) {
+      console.log("no state defined");
+      return;
+    }
 
-    this.setState({ network });
-    /*
-    fetch("http://127.0.0.1:8000/api/networks/1/")
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            network: result,
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error,
-          });
-        }
-      );*/
+    const state = JSON.parse(jsonState);
+    this.setState(state);
   }
 
   render() {
