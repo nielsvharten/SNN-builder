@@ -3,12 +3,12 @@ import Draggable from "react-draggable"; // The default
 
 class Node extends Component {
   render() {
-    const { node, type, onDragNode, onClickNode } = this.props;
+    const { node, onDragNode, onClickNode } = this.props;
 
     return (
       <Draggable onStart={onClickNode} onDrag={onDragNode}>
         <div
-          className={"node node-" + type}
+          className={"node node-" + node.type}
           onClick={onClickNode}
           style={{ top: node.y_pos, left: node.x_pos }}
         >
