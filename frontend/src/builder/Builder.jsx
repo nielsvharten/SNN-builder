@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Network from "./Network";
+import Config from "./Config";
 
 class Builder extends Component {
   state = {
@@ -12,6 +13,13 @@ class Builder extends Component {
     },
   };
 
+  handleSaveNetwork = () => {
+    console.log("save state", this.state);
+
+    const jsonState = JSON.stringify(this.state);
+    window.localStorage.setItem("state", jsonState);
+  };
+
   handleAddNode = (type) => {
     const network = { ...this.state.network };
     const id = this.state.maxId + 1;
@@ -22,6 +30,7 @@ class Builder extends Component {
       name: "",
       x_pos: 100,
       y_pos: 100,
+      selected: false,
       m: 0.0,
     };
 
@@ -34,13 +43,6 @@ class Builder extends Component {
     this.setState({ network });
   };
 
-  handleSaveNetwork = () => {
-    console.log("save state", this.state);
-
-    const jsonState = JSON.stringify(this.state);
-    window.localStorage.setItem("state", jsonState);
-  };
-
   handleDeleteNode(nodeId) {
     const network = { ...this.state.network };
     network.nodes = network.nodes.filter((node) => node.id !== nodeId);
@@ -50,20 +52,40 @@ class Builder extends Component {
   }
 
   handleStopDragNode = (node, x, y) => {
-    console.log("Node dragged", node);
-    console.log(x, y);
     const network = { ...this.state.network };
     const index = network.nodes.indexOf(node);
     network.nodes[index] = { ...node };
     network.nodes[index].x_pos = x;
     network.nodes[index].y_pos = y;
 
-    // disable transform before setting correct state?
     this.setState({ network });
   };
 
-  handleClickNode = (nodeId) => {
-    console.log("Node clicked", nodeId);
+  handleClickNode = (node) => {
+    const network = { ...this.state.network };
+    const indexNew = network.nodes.indexOf(node);
+    const indexPrev = network.nodes.indexOf(
+      network.nodes.find((node) => node.selected === true)
+    );
+
+    // deselect previous selected node
+    network.nodes[indexPrev] = { ...network.nodes[indexPrev] };
+    network.nodes[indexPrev].selected = false;
+
+    // select node
+    network.nodes[indexNew] = { ...node };
+    network.nodes[indexNew].selected = true;
+
+    this.setState({ network });
+  };
+
+  handleRenameNode = (node, newName) => {
+    const network = { ...this.state.network };
+    const index = network.nodes.indexOf(node);
+    network.nodes[index] = { ...node };
+    network.nodes[index].name = newName;
+
+    this.setState({ network });
   };
 
   componentDidMount() {
@@ -86,7 +108,9 @@ class Builder extends Component {
           network={network}
           onStopDragNode={this.handleStopDragNode}
           onClickNode={this.handleClickNode}
+          onRenameNode={this.handleRenameNode}
         />
+        <Config nodes={network.nodes} />
         <button
           onClick={() => this.handleAddNode("lif")}
           className="btn btn-primary m-2"

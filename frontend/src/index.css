@@ -51,3 +51,7 @@ code {
   color: white;
   position: absolute;
 }
+
+.node.selected {
+  border: 2px solid white; 
+}
