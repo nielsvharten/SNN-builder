@@ -37,14 +37,20 @@ class Config extends Component {
   getConfigSelectedNode(selectedNode, options) {
     if (selectedNode) {
       return (
-        <form className="column">
+        <div className="column">
           <h3>
             Editing {selectedNode.type} {selectedNode.name}
           </h3>
           {Object.keys(options).map((key) =>
             this.getConfigOption(selectedNode, key, options[key])
           )}
-        </form>
+          <button
+            className="btn btn-danger"
+            onClick={() => this.props.onDeleteNode(selectedNode.id)}
+          >
+            Delete node
+          </button>
+        </div>
       );
     } else {
       return <div className="column"></div>;

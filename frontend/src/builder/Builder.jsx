@@ -50,13 +50,13 @@ class Builder extends Component {
     this.setState({ network });
   };
 
-  handleDeleteNode(nodeId) {
+  handleDeleteNode = (nodeId) => {
     const network = { ...this.state.network };
     network.nodes = network.nodes.filter((node) => node.id !== nodeId);
     //network.synapses = network.synapses.filter(s => )
 
     this.setState({ network });
-  }
+  };
 
   handleStopDragNode = (node, x, y) => {
     const network = { ...this.state.network };
@@ -130,25 +130,26 @@ class Builder extends Component {
           <Config
             nodes={network.nodes}
             onChangeOption={this.handleChangeOption}
+            onDeleteNode={this.handleDeleteNode}
           />
         </div>
         <button
           onClick={() => this.handleAddNode("lif")}
           className="btn btn-primary m-2"
         >
-          ADD LIF
+          Add lif
         </button>
         <button
           onClick={() => this.handleAddNode("input")}
           className="btn btn-warning m-2"
         >
-          ADD INPUT
+          Add input
         </button>
         <button
           onClick={this.handleSaveNetwork}
           className="btn btn-success m-2"
         >
-          SAVE NETWORK
+          Save network
         </button>
       </React.Fragment>
     );
