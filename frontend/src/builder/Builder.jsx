@@ -39,7 +39,11 @@ class Builder extends Component {
       node.V_reset = 0.0;
       node.thr = 0.99;
       node.I_e = 0.0;
+    } else if (type === "input") {
+      node.train = "[0]";
+      node.loop = false;
     }
+
     network.nodes = network.nodes.concat(node);
 
     this.setState({ maxId: id });

@@ -9,6 +9,10 @@ class Config extends Component {
       thr: "Spiking threshold (T)",
       I_e: "Constant input current",
     },
+    inputOptions: {
+      train: "Input spike train",
+      loop: "Whether to loop the train",
+    },
   };
 
   getConfigOption(node, key, label) {
@@ -34,6 +38,9 @@ class Config extends Component {
     if (selectedNode) {
       return (
         <form className="column">
+          <h3>
+            Editing {selectedNode.type} {selectedNode.name}
+          </h3>
           {Object.keys(options).map((key) =>
             this.getConfigOption(selectedNode, key, options[key])
           )}
@@ -47,7 +54,10 @@ class Config extends Component {
   render() {
     const { nodes } = this.props;
     const selectedNode = nodes.find((node) => node.selected === true);
-    let options = this.state.lifOptions;
+    let options =
+      selectedNode && selectedNode.type === "lif"
+        ? this.state.lifOptions
+        : this.state.inputOptions;
 
     return this.getConfigSelectedNode(selectedNode, options);
   }
