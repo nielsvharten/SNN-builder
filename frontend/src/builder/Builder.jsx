@@ -31,11 +31,14 @@ class Builder extends Component {
       x_pos: 100,
       y_pos: 100,
       selected: false,
-      m: 0.0,
     };
 
     if (type === "lif") {
-      // TODO:
+      node.m = 0.0;
+      node.V_init = 0.0;
+      node.V_reset = 0.0;
+      node.thr = 0.99;
+      node.I_e = 0.0;
     }
     network.nodes = network.nodes.concat(node);
 
@@ -88,6 +91,15 @@ class Builder extends Component {
     this.setState({ network });
   };
 
+  handleChangeOption = (node, option, newValue) => {
+    const network = { ...this.state.network };
+    const index = network.nodes.indexOf(node);
+    network.nodes[index] = { ...node };
+    network.nodes[index][option] = newValue;
+
+    this.setState({ network });
+  };
+
   componentDidMount() {
     const jsonState = window.localStorage.getItem("state");
     if (jsonState === null) {
@@ -104,13 +116,18 @@ class Builder extends Component {
 
     return (
       <React.Fragment>
-        <Network
-          network={network}
-          onStopDragNode={this.handleStopDragNode}
-          onClickNode={this.handleClickNode}
-          onRenameNode={this.handleRenameNode}
-        />
-        <Config nodes={network.nodes} />
+        <div className="table">
+          <Network
+            network={network}
+            onStopDragNode={this.handleStopDragNode}
+            onClickNode={this.handleClickNode}
+            onRenameNode={this.handleRenameNode}
+          />
+          <Config
+            nodes={network.nodes}
+            onChangeOption={this.handleChangeOption}
+          />
+        </div>
         <button
           onClick={() => this.handleAddNode("lif")}
           className="btn btn-primary m-2"

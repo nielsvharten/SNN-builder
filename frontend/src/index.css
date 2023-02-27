@@ -55,3 +55,15 @@ code {
 .node.selected {
   border: 2px solid white; 
 }
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.table:after {
+  content: "";
+  display: table;
+  clear: both;
+}

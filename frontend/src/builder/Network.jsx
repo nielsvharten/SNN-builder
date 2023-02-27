@@ -6,7 +6,7 @@ class Network extends Component {
     const { id, name, nodes, synapses } = this.props.network;
 
     return (
-      <div className="network">
+      <div className="network column">
         {nodes.map((node) => (
           <Node
             key={node.id}
