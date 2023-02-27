@@ -17,7 +17,7 @@ class Config extends Component {
 
   getConfigOption(node, key, label) {
     return (
-      <div className="form-group row" key={key}>
+      <div className="form-group row m-1" key={key}>
         <div className="col-sm-5">
           <label className="col-form-label">{label}</label>
         </div>
@@ -45,7 +45,7 @@ class Config extends Component {
             this.getConfigOption(selectedNode, key, options[key])
           )}
           <button
-            className="btn btn-danger"
+            className="btn btn-danger m-2"
             onClick={() => this.props.onDeleteNode(selectedNode.id)}
           >
             Delete node
