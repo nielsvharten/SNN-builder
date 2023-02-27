@@ -20,8 +20,8 @@ class Builder extends Component {
       id: id,
       type: type,
       name: "",
-      x_pos: "100px",
-      y_pos: "100px",
+      x_pos: 100,
+      y_pos: 100,
       m: 0.0,
     };
 
@@ -41,13 +41,30 @@ class Builder extends Component {
     window.localStorage.setItem("state", jsonState);
   };
 
-  handleDeleteNode(node) {
+  handleDeleteNode(nodeId) {
     const network = { ...this.state.network };
-    network.nodes = network.nodes.filter((n) => n !== node);
+    network.nodes = network.nodes.filter((node) => node.id !== nodeId);
     //network.synapses = network.synapses.filter(s => )
 
     this.setState({ network });
   }
+
+  handleStopDragNode = (node, x, y) => {
+    console.log("Node dragged", node);
+    console.log(x, y);
+    const network = { ...this.state.network };
+    const index = network.nodes.indexOf(node);
+    network.nodes[index] = { ...node };
+    network.nodes[index].x_pos = x;
+    network.nodes[index].y_pos = y;
+
+    // disable transform before setting correct state?
+    this.setState({ network });
+  };
+
+  handleClickNode = (nodeId) => {
+    console.log("Node clicked", nodeId);
+  };
 
   componentDidMount() {
     const jsonState = window.localStorage.getItem("state");
@@ -65,7 +82,11 @@ class Builder extends Component {
 
     return (
       <React.Fragment>
-        <Network network={network} />
+        <Network
+          network={network}
+          onStopDragNode={this.handleStopDragNode}
+          onClickNode={this.handleClickNode}
+        />
         <button
           onClick={() => this.handleAddNode("lif")}
           className="btn btn-primary m-2"

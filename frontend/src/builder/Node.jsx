@@ -6,12 +6,12 @@ class Node extends Component {
     const { node, onDragNode, onClickNode } = this.props;
 
     return (
-      <Draggable onStart={onClickNode} onDrag={onDragNode}>
-        <div
-          className={"node node-" + node.type}
-          onClick={onClickNode}
-          style={{ top: node.y_pos, left: node.x_pos }}
-        >
+      <Draggable
+        position={{ x: node.x_pos, y: node.y_pos }}
+        bounds={"parent"}
+        onStop={(_, data) => this.props.onStopDragNode(node, data.x, data.y)}
+      >
+        <div className={"node node-" + node.type} onClick={onClickNode}>
           <div className="node-name" contentEditable="true" spellCheck="false">
             {node.name}
           </div>

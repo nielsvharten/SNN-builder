@@ -2,10 +2,6 @@ import React, { Component } from "react";
 import Node from "./Node";
 
 class Network extends Component {
-  handleDragNode(nodeId) {
-    console.log("Node dragged", nodeId);
-  }
-
   handleClickNode(nodeId) {
     console.log("Node clicked", nodeId);
   }
@@ -19,8 +15,8 @@ class Network extends Component {
           <Node
             key={node.id}
             node={node}
-            onDragNode={() => this.handleDragNode(node.id)}
-            onClickNode={() => this.handleClickNode(node.id)}
+            onStopDragNode={this.props.onStopDragNode}
+            onClickNode={() => this.props.onClickNode(node.id)}
           />
         ))}
       </div>
