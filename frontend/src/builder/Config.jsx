@@ -35,21 +35,17 @@ class Config extends Component {
   }
 
   getConnectButton() {
-    if (this.props.connectMode) {
+    const { connectMode, onClickConnect, onClickCancelConnect } = this.props;
+
+    if (connectMode) {
       return (
-        <button
-          className="btn btn-warning m-2"
-          onClick={() => console.log("connect with other node")}
-        >
+        <button className="btn btn-warning m-2" onClick={onClickCancelConnect}>
           Cancel connecting
         </button>
       );
     } else {
       return (
-        <button
-          className="btn btn-primary m-2"
-          onClick={() => console.log("connect with other node")}
-        >
+        <button className="btn btn-primary m-2" onClick={onClickConnect}>
           Connect node
         </button>
       );
@@ -82,8 +78,9 @@ class Config extends Component {
   }
 
   render() {
-    const { nodes } = this.props;
-    const selectedNode = nodes.find((node) => node.selected === true);
+    const { nodes, selectedNodeId } = this.props;
+    const selectedNode = nodes.find((node) => node.id === selectedNodeId);
+
     let options =
       selectedNode && selectedNode.type === "lif"
         ? this.state.lifOptions

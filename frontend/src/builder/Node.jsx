@@ -2,9 +2,16 @@ import React from "react";
 import { useXarrow } from "react-xarrows";
 import Draggable from "react-draggable";
 
-const Node = ({ node, onStopDragNode, onClickNode, onRenameNode }) => {
+const Node = ({
+  node,
+  selectedNodeId,
+  onStopDragNode,
+  onClickNode,
+  onRenameNode,
+}) => {
+  console.log(selectedNodeId);
   const updateXarrow = useXarrow();
-  let selectedClass = node.selected === true ? " selected" : "";
+  let selectedClass = node.id === selectedNodeId ? " selected" : "";
 
   return (
     <Draggable
@@ -27,50 +34,6 @@ const Node = ({ node, onStopDragNode, onClickNode, onRenameNode }) => {
         >
           {node.id}
         </div>
-        <div
-          style={{
-            height: "8px",
-            width: "8px",
-            backgroundColor: "black",
-            position: "absolute",
-            borderRadius: "50%",
-            left: "25px",
-            top: "-7px",
-          }}
-        ></div>
-        <div
-          style={{
-            height: "8px",
-            width: "8px",
-            backgroundColor: "black",
-            position: "absolute",
-            borderRadius: "50%",
-            left: "56px",
-            top: "25px",
-          }}
-        ></div>
-        <div
-          style={{
-            height: "8px",
-            width: "8px",
-            backgroundColor: "black",
-            position: "absolute",
-            borderRadius: "50%",
-            left: "42px",
-            top: "-2px",
-          }}
-        ></div>
-        <div
-          style={{
-            height: "8px",
-            width: "8px",
-            backgroundColor: "black",
-            position: "absolute",
-            borderRadius: "50%",
-            left: "52px",
-            top: "10px",
-          }}
-        ></div>
       </div>
     </Draggable>
   );

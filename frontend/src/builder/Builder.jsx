@@ -6,7 +6,7 @@ class Builder extends Component {
   state = {
     maxNodeId: 0,
     maxSynapseId: 0,
-    selectedNode: null,
+    selectedNodeId: null,
     selectedSynapse: null,
     connectMode: false,
     network: {
@@ -24,7 +24,23 @@ class Builder extends Component {
     window.localStorage.setItem("state", jsonState);
   };
 
-  handleAddSynapse = () => {};
+  handleAddSynapse = (preId, postId) => {
+    console.log("create", preId, postId);
+    const network = { ...this.state.network };
+    const id = this.state.maxSynapseId + 1;
+
+    const synapse = {
+      id: id,
+      pre: preId,
+      post: postId,
+      w: 1.0,
+      d: 1,
+    };
+
+    network.synapses = network.synapses.concat(synapse);
+    this.setState({ maxSynapseId: id });
+    this.setState({ network });
+  };
 
   handleDeleteSynapse = () => {};
 
@@ -38,7 +54,6 @@ class Builder extends Component {
       name: "",
       x_pos: 100,
       y_pos: 100,
-      selected: false,
     };
 
     if (type === "lif") {
@@ -76,22 +91,28 @@ class Builder extends Component {
     this.setState({ network });
   };
 
+  handleSelectNode = (nodeId) => {
+    const selectedNodeId = nodeId;
+
+    // select node and deselect previous selected node
+    this.setState({ selectedNodeId });
+    console.log("does set state");
+  };
+
   handleClickNode = (node) => {
-    const network = { ...this.state.network };
-    const indexNew = network.nodes.indexOf(node);
-    const indexPrev = network.nodes.indexOf(
-      network.nodes.find((node) => node.selected === true)
-    );
+    const { connectMode, selectedNodeId } = this.state;
 
-    // deselect previous selected node
-    network.nodes[indexPrev] = { ...network.nodes[indexPrev] };
-    network.nodes[indexPrev].selected = false;
+    if (connectMode) {
+      if (node.type === "input") {
+        return;
+      }
+      this.handleAddSynapse(selectedNodeId, node.id);
 
-    // select node
-    network.nodes[indexNew] = { ...node };
-    network.nodes[indexNew].selected = true;
-
-    this.setState({ network });
+      // disable connect mode
+      this.handleSwitchConnectMode(false);
+    } else {
+      this.handleSelectNode(node.id);
+    }
   };
 
   handleRenameNode = (node, newName) => {
@@ -112,6 +133,10 @@ class Builder extends Component {
     this.setState({ network });
   };
 
+  handleSwitchConnectMode = (connectMode) => {
+    this.setState({ connectMode });
+  };
+
   componentDidMount() {
     const jsonState = window.localStorage.getItem("state");
     if (jsonState === null) {
@@ -124,21 +149,26 @@ class Builder extends Component {
   }
 
   render() {
-    const { error, isLoaded, network } = this.state;
+    const { selectedNodeId, network } = this.state;
 
     return (
       <React.Fragment>
         <div className="builder">
           <Network
             network={network}
+            selectedNodeId={selectedNodeId}
             onStopDragNode={this.handleStopDragNode}
             onClickNode={this.handleClickNode}
             onRenameNode={this.handleRenameNode}
           />
           <Config
             nodes={network.nodes}
+            connectMode={this.state.connectMode}
             onChangeOption={this.handleChangeOption}
             onDeleteNode={this.handleDeleteNode}
+            onClickConnect={() => this.handleSwitchConnectMode(true)}
+            onClickCancelConnect={() => this.handleSwitchConnectMode(false)}
+            selectedNodeId={selectedNodeId}
           />
         </div>
         <button

@@ -19,7 +19,8 @@ class Network extends Component {
   }
 
   getNodeComponents(nodes) {
-    const { onStopDragNode, onClickNode, onRenameNode } = this.props;
+    const { onStopDragNode, onClickNode, onRenameNode, selectedNodeId } =
+      this.props;
 
     return nodes.map((node) => (
       <Node
@@ -28,6 +29,7 @@ class Network extends Component {
         onStopDragNode={onStopDragNode}
         onClickNode={onClickNode}
         onRenameNode={onRenameNode}
+        selectedNodeId={selectedNodeId}
       />
     ));
   }
@@ -49,9 +51,7 @@ class Network extends Component {
       <div className="network column">
         <Xwrapper style={{ width: "100%", height: "100%" }}>
           {this.getNodeComponents(nodes)}
-          {this.getSynapseComponents([
-            { id: 1, pre: 1, post: 2, w: 1.1, d: 2 },
-          ])}
+          {this.getSynapseComponents(synapses)}
         </Xwrapper>
       </div>
     );
