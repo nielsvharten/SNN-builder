@@ -1,47 +1,58 @@
 import React, { Component } from "react";
+import { Xwrapper } from "react-xarrows";
 import Node from "./Node";
-import Xarrow, { useXarrow, Xwrapper } from "react-xarrows";
-import Draggable from "react-draggable";
-
-const boxStyle = {
-  border: "grey solid 2px",
-  borderRadius: "10px",
-  padding: "5px",
-};
-
-const DraggableBox = ({ id }) => {
-  const updateXarrow = useXarrow();
-  return (
-    <Draggable onDrag={updateXarrow} onStop={updateXarrow}>
-      <div id={id} style={boxStyle}>
-        {id}
-      </div>
-    </Draggable>
-  );
-};
+import Synapse from "./Synapse";
 
 class Network extends Component {
+  state = {
+    rendered: false,
+  };
+
+  handleArrowClick = (e) => {
+    console.log("xarrow clicked!");
+    console.log(e);
+  };
+
+  componentDidMount() {
+    const rendered = true;
+    this.setState({ rendered });
+  }
+
+  getNodeComponents(nodes) {
+    const { onStopDragNode, onClickNode, onRenameNode } = this.props;
+
+    return nodes.map((node) => (
+      <Node
+        key={node.id}
+        node={node}
+        onStopDragNode={onStopDragNode}
+        onClickNode={onClickNode}
+        onRenameNode={onRenameNode}
+      />
+    ));
+  }
+
+  getSynapseComponents(synapses) {
+    if (!this.state.rendered) {
+      return;
+    }
+
+    return synapses.map((synapse) => (
+      <Synapse key={synapse.id} synapse={synapse} />
+    ));
+  }
+
   render() {
     const { id, name, nodes, synapses } = this.props.network;
 
     return (
       <div className="network column">
-        {nodes.map((node) => (
-          <Node
-            key={node.id}
-            node={node}
-            onStopDragNode={this.props.onStopDragNode}
-            onClickNode={this.props.onClickNode}
-            onRenameNode={this.props.onRenameNode}
-          />
-        ))}
-        <div>
-          <Xwrapper>
-            <DraggableBox id={"elem1"} />
-            <DraggableBox id={"elem2"} />
-            <Xarrow start={"elem1"} end="elem2" />
-          </Xwrapper>
-        </div>
+        <Xwrapper style={{ width: "100%", height: "100%" }}>
+          {this.getNodeComponents(nodes)}
+          {this.getSynapseComponents([
+            { id: 1, pre: 1, post: 2, w: 1.1, d: 2 },
+          ])}
+        </Xwrapper>
       </div>
     );
   }

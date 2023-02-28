@@ -21,7 +21,7 @@ class Config extends Component {
         <div className="col-sm-5">
           <label className="col-form-label">{label}</label>
         </div>
-        <div className="col-sm-2">
+        <div className="col-sm-3">
           <input
             className="form-control"
             value={node[key]}
@@ -34,6 +34,28 @@ class Config extends Component {
     );
   }
 
+  getConnectButton() {
+    if (this.props.connectMode) {
+      return (
+        <button
+          className="btn btn-warning m-2"
+          onClick={() => console.log("connect with other node")}
+        >
+          Cancel connecting
+        </button>
+      );
+    } else {
+      return (
+        <button
+          className="btn btn-primary m-2"
+          onClick={() => console.log("connect with other node")}
+        >
+          Connect node
+        </button>
+      );
+    }
+  }
+
   getConfigSelectedNode(selectedNode, options) {
     if (selectedNode) {
       return (
@@ -44,6 +66,8 @@ class Config extends Component {
           {Object.keys(options).map((key) =>
             this.getConfigOption(selectedNode, key, options[key])
           )}
+          <br></br>
+          {this.getConnectButton()}
           <button
             className="btn btn-danger m-2"
             onClick={() => this.props.onDeleteNode(selectedNode.id)}

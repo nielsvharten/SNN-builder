@@ -20,6 +20,14 @@ code {
 
 .node {
   background-color: #002D42;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.network {
+  border: 2px solid; 
+  resize: both;
+  overflow: auto;
 }
 
 .node-lif {
@@ -62,7 +70,7 @@ code {
   padding: 10px;
 }
 
-.table:after {
+.builder:after {
   content: "";
   display: table;
   clear: both;

@@ -4,9 +4,13 @@ import Config from "./Config";
 
 class Builder extends Component {
   state = {
-    maxId: 0,
+    maxNodeId: 0,
+    maxSynapseId: 0,
+    selectedNode: null,
+    selectedSynapse: null,
+    connectMode: false,
     network: {
-      id: -1,
+      id: 1,
       name: "",
       nodes: [],
       synapses: [],
@@ -20,9 +24,13 @@ class Builder extends Component {
     window.localStorage.setItem("state", jsonState);
   };
 
+  handleAddSynapse = () => {};
+
+  handleDeleteSynapse = () => {};
+
   handleAddNode = (type) => {
     const network = { ...this.state.network };
-    const id = this.state.maxId + 1;
+    const id = this.state.maxNodeId + 1;
 
     const node = {
       id: id,
@@ -46,7 +54,7 @@ class Builder extends Component {
 
     network.nodes = network.nodes.concat(node);
 
-    this.setState({ maxId: id });
+    this.setState({ maxNodeId: id });
     this.setState({ network });
   };
 
@@ -120,7 +128,7 @@ class Builder extends Component {
 
     return (
       <React.Fragment>
-        <div className="table">
+        <div className="builder">
           <Network
             network={network}
             onStopDragNode={this.handleStopDragNode}
