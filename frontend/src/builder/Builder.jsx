@@ -44,9 +44,11 @@ class Builder extends Component {
 
   handleSelectSynapse = (synapseId) => {
     const selectedSynapseId = synapseId;
+    const selectedNodeId = null;
 
     // select node and deselect previous selected node
     this.setState({ selectedSynapseId });
+    this.setState({ selectedNodeId });
   };
 
   handleClickSynapse = (synapseId) => {
@@ -87,7 +89,9 @@ class Builder extends Component {
   handleDeleteNode = (nodeId) => {
     const network = { ...this.state.network };
     network.nodes = network.nodes.filter((node) => node.id !== nodeId);
-    //network.synapses = network.synapses.filter(s => )
+    network.synapses = network.synapses.filter(
+      (synapse) => synapse.pre !== nodeId && synapse.post !== nodeId
+    );
 
     this.setState({ network });
   };
@@ -104,9 +108,11 @@ class Builder extends Component {
 
   handleSelectNode = (nodeId) => {
     const selectedNodeId = nodeId;
+    const selectedSynapseId = null;
 
     // select node and deselect previous selected node
     this.setState({ selectedNodeId });
+    this.setState({ selectedSynapseId });
   };
 
   handleClickNode = (node) => {
