@@ -27,6 +27,50 @@ const Node = ({ node, onStopDragNode, onClickNode, onRenameNode }) => {
         >
           {node.id}
         </div>
+        <div
+          style={{
+            height: "8px",
+            width: "8px",
+            backgroundColor: "black",
+            position: "absolute",
+            borderRadius: "50%",
+            left: "25px",
+            top: "-7px",
+          }}
+        ></div>
+        <div
+          style={{
+            height: "8px",
+            width: "8px",
+            backgroundColor: "black",
+            position: "absolute",
+            borderRadius: "50%",
+            left: "56px",
+            top: "25px",
+          }}
+        ></div>
+        <div
+          style={{
+            height: "8px",
+            width: "8px",
+            backgroundColor: "black",
+            position: "absolute",
+            borderRadius: "50%",
+            left: "42px",
+            top: "-2px",
+          }}
+        ></div>
+        <div
+          style={{
+            height: "8px",
+            width: "8px",
+            backgroundColor: "black",
+            position: "absolute",
+            borderRadius: "50%",
+            left: "52px",
+            top: "10px",
+          }}
+        ></div>
       </div>
     </Draggable>
   );
