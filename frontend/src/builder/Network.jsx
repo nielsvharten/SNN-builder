@@ -40,7 +40,12 @@ class Network extends Component {
     }
 
     return synapses.map((synapse) => (
-      <Synapse key={synapse.id} synapse={synapse} />
+      <Synapse
+        key={synapse.id}
+        synapse={synapse}
+        selectedSynapseId={this.props.selectedSynapseId}
+        onClickSynapse={this.props.onClickSynapse}
+      />
     ));
   }
 

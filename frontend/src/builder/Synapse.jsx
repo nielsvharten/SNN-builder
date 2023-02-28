@@ -1,12 +1,17 @@
 import Xarrow from "react-xarrows";
 
-const Synapse = ({ synapse }) => {
+const Synapse = ({ synapse, selectedSynapseId, onClickSynapse }) => {
+  let color = "black";
+  if (selectedSynapseId === synapse.id) {
+    color = "blue";
+  }
+
   return (
     <Xarrow
       start={synapse.pre.toString()}
       end={synapse.post.toString()}
-      lineColor="black"
-      headColor="black"
+      lineColor={color}
+      headColor={color}
       labels=<p
         style={{
           color: "white",
@@ -16,7 +21,7 @@ const Synapse = ({ synapse }) => {
         {"w:" + synapse.w + " d:" + synapse.d}
       </p>
       passProps={{
-        //onClick: this.handleArrowClick,
+        onClick: () => onClickSynapse(synapse.id),
         cursor: "pointer",
       }}
       strokeWidth={3}

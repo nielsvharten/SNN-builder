@@ -7,7 +7,7 @@ class Builder extends Component {
     maxNodeId: 0,
     maxSynapseId: 0,
     selectedNodeId: null,
-    selectedSynapse: null,
+    selectedSynapseId: null,
     connectMode: false,
     network: {
       id: 1,
@@ -40,6 +40,17 @@ class Builder extends Component {
     network.synapses = network.synapses.concat(synapse);
     this.setState({ maxSynapseId: id });
     this.setState({ network });
+  };
+
+  handleSelectSynapse = (synapseId) => {
+    const selectedSynapseId = synapseId;
+
+    // select node and deselect previous selected node
+    this.setState({ selectedSynapseId });
+  };
+
+  handleClickSynapse = (synapseId) => {
+    this.handleSelectSynapse(synapseId);
   };
 
   handleDeleteSynapse = () => {};
@@ -96,7 +107,6 @@ class Builder extends Component {
 
     // select node and deselect previous selected node
     this.setState({ selectedNodeId });
-    console.log("does set state");
   };
 
   handleClickNode = (node) => {
@@ -149,7 +159,7 @@ class Builder extends Component {
   }
 
   render() {
-    const { selectedNodeId, network } = this.state;
+    const { selectedNodeId, selectedSynapseId, network } = this.state;
 
     return (
       <React.Fragment>
@@ -160,6 +170,8 @@ class Builder extends Component {
             onStopDragNode={this.handleStopDragNode}
             onClickNode={this.handleClickNode}
             onRenameNode={this.handleRenameNode}
+            selectedSynapseId={selectedSynapseId}
+            onClickSynapse={this.handleClickSynapse}
           />
           <Config
             nodes={network.nodes}
