@@ -13,9 +13,15 @@ class Config extends Component {
       train: "Input spike train",
       loop: "Whether to loop the train",
     },
+    synapseOptions: {
+      w: "Synaptic weight",
+      d: "Synaptic delay in time steps",
+    },
   };
 
-  getConfigOption(node, key, label) {
+  getConfigOption(element, elementType, key, label) {
+    const { onChangeOption } = this.props;
+
     return (
       <div className="form-group row m-1" key={key}>
         <div className="col-sm-5">
@@ -24,9 +30,9 @@ class Config extends Component {
         <div className="col-sm-3">
           <input
             className="form-control"
-            value={node[key]}
+            value={element[key]}
             onChange={(e) =>
-              this.props.onChangeOption(node, key, e.target.value)
+              onChangeOption(element, elementType, key, e.target.value)
             }
           ></input>
         </div>
@@ -53,40 +59,69 @@ class Config extends Component {
   }
 
   getConfigSelectedNode(selectedNode, options) {
+    return (
+      <React.Fragment>
+        <h3>
+          Editing {selectedNode.type} {selectedNode.name}
+        </h3>
+        {Object.keys(options).map((key) =>
+          this.getConfigOption(selectedNode, "nodes", key, options[key])
+        )}
+        <br></br>
+        {this.getConnectButton()}
+        <button
+          className="btn btn-danger m-2"
+          onClick={() => this.props.onDeleteNode(selectedNode.id)}
+        >
+          Delete node
+        </button>
+      </React.Fragment>
+    );
+  }
+
+  getConfigSelectedSynapse(selectedSynapse, options) {
+    return (
+      <React.Fragment>
+        <h3>
+          Editing synapse from {selectedSynapse.pre} to {selectedSynapse.post}
+        </h3>
+        {Object.keys(options).map((key) =>
+          this.getConfigOption(selectedSynapse, "synapses", key, options[key])
+        )}
+        <button
+          className="btn btn-danger m-2"
+          onClick={() => this.props.onDeleteSynapse(selectedSynapse.id)}
+        >
+          Delete synapse
+        </button>
+      </React.Fragment>
+    );
+  }
+
+  getConfigSelectedElement(selectedNode, selectedSynapse) {
     if (selectedNode) {
-      return (
-        <div className="column">
-          <h3>
-            Editing {selectedNode.type} {selectedNode.name}
-          </h3>
-          {Object.keys(options).map((key) =>
-            this.getConfigOption(selectedNode, key, options[key])
-          )}
-          <br></br>
-          {this.getConnectButton()}
-          <button
-            className="btn btn-danger m-2"
-            onClick={() => this.props.onDeleteNode(selectedNode.id)}
-          >
-            Delete node
-          </button>
-        </div>
-      );
-    } else {
-      return <div className="column"></div>;
+      const options =
+        selectedNode.type === "lif"
+          ? this.state.lifOptions
+          : this.state.inputOptions;
+
+      return this.getConfigSelectedNode(selectedNode, options);
+    } else if (selectedSynapse) {
+      const options = this.state.synapseOptions;
+      return this.getConfigSelectedSynapse(selectedSynapse, options);
     }
   }
 
   render() {
-    const { nodes, selectedNodeId } = this.props;
-    const selectedNode = nodes.find((node) => node.id === selectedNodeId);
+    const { nodes, selectedNodeId, synapses, selectedSynapseId } = this.props;
+    const selectedNode = nodes.find((n) => n.id === selectedNodeId);
+    const selectedSynapse = synapses.find((s) => s.id === selectedSynapseId);
 
-    let options =
-      selectedNode && selectedNode.type === "lif"
-        ? this.state.lifOptions
-        : this.state.inputOptions;
-
-    return this.getConfigSelectedNode(selectedNode, options);
+    return (
+      <div className="column">
+        {this.getConfigSelectedElement(selectedNode, selectedSynapse)}
+      </div>
+    );
   }
 }
 

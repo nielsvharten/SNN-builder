@@ -55,7 +55,12 @@ class Builder extends Component {
     this.handleSelectSynapse(synapseId);
   };
 
-  handleDeleteSynapse = () => {};
+  handleDeleteSynapse = (synapseId) => {
+    const network = { ...this.state.network };
+    network.synapses = network.synapses.filter((s) => s.id !== synapseId);
+    console.log(synapseId);
+    this.setState({ network });
+  };
 
   handleAddNode = (type) => {
     const network = { ...this.state.network };
@@ -140,11 +145,11 @@ class Builder extends Component {
     this.setState({ network });
   };
 
-  handleChangeOption = (node, option, newValue) => {
+  handleChangeOption = (element, elementType, option, newValue) => {
     const network = { ...this.state.network };
-    const index = network.nodes.indexOf(node);
-    network.nodes[index] = { ...node };
-    network.nodes[index][option] = newValue;
+    const index = network[elementType].indexOf(element);
+    network[elementType][index] = { ...element };
+    network[elementType][index][option] = newValue;
 
     this.setState({ network });
   };
@@ -181,12 +186,15 @@ class Builder extends Component {
           />
           <Config
             nodes={network.nodes}
+            selectedNodeId={selectedNodeId}
+            synapses={network.synapses}
+            selectedSynapseId={selectedSynapseId}
             connectMode={this.state.connectMode}
             onChangeOption={this.handleChangeOption}
             onDeleteNode={this.handleDeleteNode}
             onClickConnect={() => this.handleSwitchConnectMode(true)}
             onClickCancelConnect={() => this.handleSwitchConnectMode(false)}
-            selectedNodeId={selectedNodeId}
+            onDeleteSynapse={this.handleDeleteSynapse}
           />
         </div>
         <button

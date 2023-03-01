@@ -9,7 +9,6 @@ const Node = ({
   onClickNode,
   onRenameNode,
 }) => {
-  console.log(selectedNodeId);
   const updateXarrow = useXarrow();
   let selectedClass = node.id === selectedNodeId ? " selected" : "";
 

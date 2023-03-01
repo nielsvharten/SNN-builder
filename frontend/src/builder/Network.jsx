@@ -6,6 +6,7 @@ import Synapse from "./Synapse";
 class Network extends Component {
   state = {
     rendered: false,
+    storedNodes: [{}],
   };
 
   handleArrowClick = (e) => {
