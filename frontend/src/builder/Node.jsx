@@ -8,6 +8,7 @@ const Node = ({
   onStopDragNode,
   onClickNode,
   onRenameNode,
+  storedName,
 }) => {
   const updateXarrow = useXarrow();
   let selectedClass = node.id === selectedNodeId ? " selected" : "";
@@ -31,7 +32,7 @@ const Node = ({
           spellCheck="false"
           onInput={(e) => onRenameNode(node, e.currentTarget.textContent)}
         >
-          {node.id}
+          {storedName}
         </div>
       </div>
     </Draggable>

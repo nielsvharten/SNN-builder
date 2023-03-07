@@ -4,30 +4,31 @@ import Config from "./Config";
 
 class Builder extends Component {
   state = {
-    maxNodeId: 0,
-    maxSynapseId: 0,
     selectedNodeId: null,
     selectedSynapseId: null,
     connectMode: false,
+    loaded: false,
     network: {
       id: 1,
       name: "",
       nodes: [],
       synapses: [],
+      maxNodeId: 0,
+      maxSynapseId: 0,
     },
   };
 
   handleSaveNetwork = () => {
-    console.log("save state", this.state);
+    console.log("save network", this.state.network);
 
-    const jsonState = JSON.stringify(this.state);
-    window.localStorage.setItem("state", jsonState);
+    const jsonState = JSON.stringify(this.state.network);
+    window.localStorage.setItem("network", jsonState);
   };
 
   handleAddSynapse = (preId, postId) => {
     console.log("create", preId, postId);
     const network = { ...this.state.network };
-    const id = this.state.maxSynapseId + 1;
+    const id = network.maxSynapseId + 1;
 
     const synapse = {
       id: id,
@@ -38,7 +39,8 @@ class Builder extends Component {
     };
 
     network.synapses = network.synapses.concat(synapse);
-    this.setState({ maxSynapseId: id });
+    network.maxSynapseId = id;
+
     this.setState({ network });
   };
 
@@ -64,7 +66,7 @@ class Builder extends Component {
 
   handleAddNode = (type) => {
     const network = { ...this.state.network };
-    const id = this.state.maxNodeId + 1;
+    const id = network.maxNodeId + 1;
 
     const node = {
       id: id,
@@ -86,8 +88,8 @@ class Builder extends Component {
     }
 
     network.nodes = network.nodes.concat(node);
+    network.maxNodeId = id;
 
-    this.setState({ maxNodeId: id });
     this.setState({ network });
   };
 
@@ -159,17 +161,18 @@ class Builder extends Component {
   };
 
   componentDidMount() {
-    const jsonState = window.localStorage.getItem("state");
+    const jsonState = window.localStorage.getItem("network");
     if (jsonState === null) {
-      console.log("no state defined");
+      console.log("no network defined");
+      this.setState({ loaded: true });
       return;
     }
 
-    const state = JSON.parse(jsonState);
-    this.setState(state);
+    const network = JSON.parse(jsonState);
+    this.setState({ network, loaded: true });
   }
 
-  render() {
+  getBuilder() {
     const { selectedNodeId, selectedSynapseId, network } = this.state;
 
     return (
@@ -217,6 +220,12 @@ class Builder extends Component {
         </button>
       </React.Fragment>
     );
+  }
+
+  render() {
+    if (this.state.loaded) {
+      return this.getBuilder();
+    }
   }
 }
 

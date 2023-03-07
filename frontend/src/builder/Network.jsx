@@ -5,8 +5,7 @@ import Synapse from "./Synapse";
 
 class Network extends Component {
   state = {
-    rendered: false,
-    storedNodes: [{}],
+    storedNodes: [...this.props.network.nodes],
   };
 
   handleArrowClick = (e) => {
@@ -14,9 +13,12 @@ class Network extends Component {
     console.log(e);
   };
 
-  componentDidMount() {
-    const rendered = true;
-    this.setState({ rendered });
+  getStoredName(nodeId) {
+    const storedNode = this.state.storedNodes.find(
+      (node) => node.id === nodeId
+    );
+
+    return storedNode ? storedNode.name : "";
   }
 
   getNodeComponents(nodes) {
@@ -27,6 +29,7 @@ class Network extends Component {
       <Node
         key={node.id}
         node={node}
+        storedName={this.getStoredName(node.id)}
         onStopDragNode={onStopDragNode}
         onClickNode={onClickNode}
         onRenameNode={onRenameNode}
@@ -36,10 +39,6 @@ class Network extends Component {
   }
 
   getSynapseComponents(synapses) {
-    if (!this.state.rendered) {
-      return;
-    }
-
     return synapses.map((synapse) => (
       <Synapse
         key={synapse.id}
