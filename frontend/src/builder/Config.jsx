@@ -1,42 +1,37 @@
 import React, { Component } from "react";
+import Option from "./Option";
 
 class Config extends Component {
   state = {
     lifOptions: {
-      m: "Inverse leakage (m)",
-      V_init: "Initial voltage",
-      V_reset: "Reset voltage (R)",
-      thr: "Spiking threshold (T)",
-      I_e: "Constant input current",
+      m: { type: "float", text: "Inverse leakage (m)" },
+      V_init: { type: "float", text: "Initial voltage" },
+      V_reset: { type: "float", text: "Reset voltage (R)" },
+      thr: { type: "float", text: "Spiking threshold (T)" },
+      I_e: { type: "float", text: "Constant input current" },
     },
     inputOptions: {
-      train: "Input spike train",
-      loop: "Whether to loop the train",
+      train: { type: "float-list", text: "Input spike train" },
+      loop: { type: "bool", text: "Whether to loop the train" },
     },
     synapseOptions: {
-      w: "Synaptic weight",
-      d: "Synaptic delay in time steps",
+      w: { type: "float", text: "Synaptic weight" },
+      d: { type: "int", text: "Synaptic delay in time steps" },
     },
   };
 
-  getConfigOption(element, elementType, key, label) {
+  getConfigOption(element, elementType, key, option) {
     const { onChangeOption } = this.props;
 
     return (
-      <div className="form-group row m-1" key={key}>
-        <div className="col-sm-5">
-          <label className="col-form-label">{label}</label>
-        </div>
-        <div className="col-sm-3">
-          <input
-            className="form-control"
-            value={element[key]}
-            onChange={(e) =>
-              onChangeOption(element, elementType, key, e.target.value)
-            }
-          ></input>
-        </div>
-      </div>
+      <Option
+        key={key}
+        option={option}
+        value={element[key]}
+        onChangeOption={(newValue) =>
+          onChangeOption(element, elementType, key, newValue)
+        }
+      />
     );
   }
 
@@ -62,7 +57,7 @@ class Config extends Component {
     return (
       <React.Fragment>
         <h3>
-          Editing {selectedNode.type} {selectedNode.name}
+          Editing {selectedNode.type} <b>{selectedNode.name}</b>
         </h3>
         {Object.keys(options).map((key) =>
           this.getConfigOption(selectedNode, "nodes", key, options[key])

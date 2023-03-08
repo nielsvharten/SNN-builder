@@ -148,6 +148,7 @@ class Builder extends Component {
   };
 
   handleChangeOption = (element, elementType, option, newValue) => {
+    // TODO: check if input is valid
     const network = { ...this.state.network };
     const index = network[elementType].indexOf(element);
     network[elementType][index] = { ...element };
