@@ -7,6 +7,7 @@ class Option extends Component {
     return (
       <input
         className="form-control"
+        type="number"
         value={value}
         onChange={(e) => onChangeOption(e.target.value)}
       />
@@ -74,10 +75,10 @@ class Option extends Component {
 
     return (
       <div className="form-group row m-1">
-        <div className="col-sm-5">
+        <div className="col-sm-7">
           <label className="col-form-label">{option.text}</label>
         </div>
-        <div className="col-sm-3">{this.getInput(option)}</div>
+        <div className="col-sm-5">{this.getInput(option)}</div>
       </div>
     );
   }

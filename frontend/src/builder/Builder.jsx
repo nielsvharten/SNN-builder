@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Network from "./Network";
 import Config from "./Config";
+import APIService from "./APIService";
 
 class Builder extends Component {
   state = {
@@ -21,8 +22,28 @@ class Builder extends Component {
   handleSaveNetwork = () => {
     console.log("save network", this.state.network);
 
+    this.handlePostNetwork();
+
     const jsonState = JSON.stringify(this.state.network);
     window.localStorage.setItem("network", jsonState);
+  };
+
+  handlePostNetwork = () => {
+    const network = this.state.network;
+    network.nodes = [...network.nodes];
+
+    fetch("http://127.0.0.1:5000/network", {
+      method: "POST",
+      //headers: { "X-CSRFToken": getCookie("csrftoken") },
+      headers: {
+        "Access-Control-Allow-Origin": "localhost:5000",
+        "Content-Type": "application/json",
+      },
+      //credentials: "include",
+      body: JSON.stringify(this.state.network),
+    })
+      .then()
+      .catch();
   };
 
   handleAddSynapse = (preId, postId) => {
@@ -161,6 +182,14 @@ class Builder extends Component {
     this.setState({ connectMode });
   };
 
+  rerenderSynapses = () => {
+    console.log("rerendering synapses");
+    const network = { ...this.state.network };
+    network.synapses = [...this.state.network.synapses];
+
+    this.setState({ network });
+  };
+
   componentDidMount() {
     const jsonState = window.localStorage.getItem("network");
     if (jsonState === null) {
@@ -187,6 +216,7 @@ class Builder extends Component {
             onRenameNode={this.handleRenameNode}
             selectedSynapseId={selectedSynapseId}
             onClickSynapse={this.handleClickSynapse}
+            rerenderSynapses={this.rerenderSynapses}
           />
           <Config
             nodes={network.nodes}

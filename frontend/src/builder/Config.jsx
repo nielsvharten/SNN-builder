@@ -113,7 +113,7 @@ class Config extends Component {
     const selectedSynapse = synapses.find((s) => s.id === selectedSynapseId);
 
     return (
-      <div className="column">
+      <div className="column-right">
         {this.getConfigSelectedElement(selectedNode, selectedSynapse)}
       </div>
     );

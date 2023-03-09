@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Xwrapper } from "react-xarrows";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Node from "./Node";
 import Synapse from "./Synapse";
 
@@ -49,16 +50,50 @@ class Network extends Component {
     ));
   }
 
+  getMinNetworkWidth = () => {
+    const xPositionNodes = this.props.network.nodes.map((node) => node.x_pos);
+    const width = Math.max(...xPositionNodes);
+
+    return (width + 200).toString() + "px";
+  };
+
+  getMinNetworkHeight = () => {
+    const xPositionNodes = this.props.network.nodes.map((node) => node.y_pos);
+    const height = Math.max(...xPositionNodes);
+
+    return (height + 200).toString() + "px";
+  };
+
+  printStuff = () => {
+    this.props.rerenderSynapses();
+    console.log("rerender now!");
+  };
+
   render() {
     const { id, name, nodes, synapses } = this.props.network;
 
     return (
-      <div className="network column">
-        <Xwrapper style={{ width: "100%", height: "100%" }}>
-          {this.getNodeComponents(nodes)}
-          {this.getSynapseComponents(synapses)}
-        </Xwrapper>
-      </div>
+      <Xwrapper>
+        <TransformWrapper
+          //maxScale={1}
+          minScale={0.2}
+          panning={{ excluded: ["node-lif", "node-input", "node-name"] }}
+          onTransformed={this.printStuff}
+        >
+          <TransformComponent>
+            <div
+              className="network column-left"
+              style={{
+                minWidth: this.getMinNetworkWidth(),
+                minHeight: this.getMinNetworkHeight(),
+              }}
+            >
+              {this.getNodeComponents(nodes)}
+            </div>
+          </TransformComponent>
+        </TransformWrapper>
+        {this.getSynapseComponents(synapses)}
+      </Xwrapper>
     );
   }
 }

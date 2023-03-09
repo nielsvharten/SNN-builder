@@ -12,12 +12,6 @@ code {
     monospace;
 }
 
-.network {
-  width: 50%;
-  height: 500px;
-  background-color: rgb(160, 160, 160);
-}
-
 .node {
   background-color: #002D42;
   z-index: 1;
@@ -25,9 +19,11 @@ code {
 }
 
 .network {
-  border: 2px solid; 
-  resize: both;
-  overflow: auto;
+  min-width: 100px;
+  height: 85vh;
+  width: 100vw;
+  background-color: rgb(160, 160, 160);
+  position: relative;
 }
 
 .node-lif {
@@ -64,14 +60,24 @@ code {
   border: 2px solid white; 
 }
 
-.column {
+.column-left {
   float: left;
-  width: 50%;
+}
+
+.column-right {
+  float: left;
+  width: 400px;
   padding: 10px;
 }
 
-.builder:after {
-  content: "";
-  display: table;
-  clear: both;
+.builder {
+  display: flex;
+  height: 85vh;
+  width: 100vw;
+}
+
+.react-transform-wrapper {
+  height: 100% !important;
+  width: 100% !important;
+  background-color: rgb(219, 219, 219);
 }
