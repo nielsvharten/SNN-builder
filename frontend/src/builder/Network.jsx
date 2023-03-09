@@ -64,36 +64,29 @@ class Network extends Component {
     return (height + 200).toString() + "px";
   };
 
-  printStuff = () => {
-    this.props.rerenderSynapses();
-    console.log("rerender now!");
-  };
-
   render() {
     const { id, name, nodes, synapses } = this.props.network;
 
     return (
-      <Xwrapper>
-        <TransformWrapper
-          //maxScale={1}
-          minScale={0.2}
-          panning={{ excluded: ["node-lif", "node-input", "node-name"] }}
-          onTransformed={this.printStuff}
-        >
-          <TransformComponent>
-            <div
-              className="network column-left"
-              style={{
-                minWidth: this.getMinNetworkWidth(),
-                minHeight: this.getMinNetworkHeight(),
-              }}
-            >
+      <TransformWrapper
+        maxScale={1}
+        panning={{ excluded: ["node-lif", "node-input", "node-name"] }}
+      >
+        <TransformComponent>
+          <div
+            className="network column-left"
+            style={{
+              minWidth: this.getMinNetworkWidth(),
+              minHeight: this.getMinNetworkHeight(),
+            }}
+          >
+            <Xwrapper>
               {this.getNodeComponents(nodes)}
-            </div>
-          </TransformComponent>
-        </TransformWrapper>
-        {this.getSynapseComponents(synapses)}
-      </Xwrapper>
+              {this.getSynapseComponents(synapses)}
+            </Xwrapper>
+          </div>
+        </TransformComponent>
+      </TransformWrapper>
     );
   }
 }

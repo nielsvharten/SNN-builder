@@ -182,14 +182,6 @@ class Builder extends Component {
     this.setState({ connectMode });
   };
 
-  rerenderSynapses = () => {
-    console.log("rerendering synapses");
-    const network = { ...this.state.network };
-    network.synapses = [...this.state.network.synapses];
-
-    this.setState({ network });
-  };
-
   componentDidMount() {
     const jsonState = window.localStorage.getItem("network");
     if (jsonState === null) {
@@ -216,7 +208,6 @@ class Builder extends Component {
             onRenameNode={this.handleRenameNode}
             selectedSynapseId={selectedSynapseId}
             onClickSynapse={this.handleClickSynapse}
-            rerenderSynapses={this.rerenderSynapses}
           />
           <Config
             nodes={network.nodes}
