@@ -53,6 +53,17 @@ class Config extends Component {
     }
   }
 
+  getNodeName(nodeId) {
+    const nodes = this.props.nodes;
+    const node = nodes.find((node) => node.id === nodeId);
+
+    if (node) {
+      return node.name;
+    } else {
+      return "";
+    }
+  }
+
   getConfigSelectedNode(selectedNode, options) {
     return (
       <React.Fragment>
@@ -78,7 +89,8 @@ class Config extends Component {
     return (
       <React.Fragment>
         <h3>
-          Editing synapse from {selectedSynapse.pre} to {selectedSynapse.post}
+          Editing synapse from {this.getNodeName(selectedSynapse.pre)} to{" "}
+          {this.getNodeName(selectedSynapse.post)}
         </h3>
         {Object.keys(options).map((key) =>
           this.getConfigOption(selectedSynapse, "synapses", key, options[key])
