@@ -3,33 +3,43 @@ import Option from "./Option";
 
 class Config extends Component {
   state = {
-    lifOptions: {
-      m: { type: "float", text: "Inverse leakage (m)" },
-      V_init: { type: "float", text: "Initial voltage" },
-      V_reset: { type: "float", text: "Reset voltage (R)" },
-      thr: { type: "float", text: "Spiking threshold (T)" },
-      I_e: { type: "float", text: "Constant input current" },
-    },
-    inputOptions: {
-      train: { type: "float-list", text: "Input spike train" },
-      loop: { type: "bool", text: "Whether to loop the train" },
-    },
-    synapseOptions: {
-      w: { type: "float", text: "Synaptic weight" },
-      d: { type: "int", text: "Synaptic delay in time steps" },
-    },
+    lifOptions: [
+      { name: "m", type: "float", text: "Inverse leakage (m)", default: 1 },
+      { name: "V_init", type: "float", text: "Initial voltage", default: 0 },
+      { name: "V_reset", type: "float", text: "Reset voltage (R)", default: 0 },
+      { name: "thr", type: "float", text: "Spiking threshold (T)", default: 1 },
+      {
+        name: "I_e",
+        type: "float",
+        text: "Constant input current",
+        default: 0,
+      },
+    ],
+    inputOptions: [
+      { name: "train", type: "float-list", text: "Input spike train" },
+      { name: "loop", type: "bool", text: "Whether to loop the train" },
+    ],
+    synapseOptions: [
+      { name: "w", type: "float", text: "Synaptic weight", default: 1 },
+      {
+        name: "d",
+        type: "int",
+        text: "Synaptic delay in time steps",
+        default: 1,
+      },
+    ],
   };
 
-  getConfigOption(element, elementType, key, option) {
+  getConfigOption(element, elementType, option) {
     const { onChangeOption } = this.props;
 
     return (
       <Option
-        key={key}
+        key={option.name}
         option={option}
-        value={element[key]}
+        value={element[option.name]}
         onChangeOption={(newValue) =>
-          onChangeOption(element, elementType, key, newValue)
+          onChangeOption(element, elementType, option, newValue)
         }
       />
     );
@@ -70,8 +80,8 @@ class Config extends Component {
         <h3>
           Editing {selectedNode.type} <b>{selectedNode.name}</b>
         </h3>
-        {Object.keys(options).map((key) =>
-          this.getConfigOption(selectedNode, "nodes", key, options[key])
+        {options.map((option) =>
+          this.getConfigOption(selectedNode, "nodes", option)
         )}
         <br></br>
         {this.getConnectButton()}
@@ -92,8 +102,8 @@ class Config extends Component {
           Editing synapse from {this.getNodeName(selectedSynapse.pre)} to{" "}
           {this.getNodeName(selectedSynapse.post)}
         </h3>
-        {Object.keys(options).map((key) =>
-          this.getConfigOption(selectedSynapse, "synapses", key, options[key])
+        {options.map((option) =>
+          this.getConfigOption(selectedSynapse, "synapses", option)
         )}
         <button
           className="btn btn-danger m-2"

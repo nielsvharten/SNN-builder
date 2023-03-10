@@ -2,31 +2,29 @@ import React, { Component } from "react";
 
 class Option extends Component {
   getFloatInput() {
-    const { value, onChangeOption } = this.props;
+    const { value, option, onChangeOption } = this.props;
 
     return (
       <input
         className="form-control"
-        type="number"
+        type="text"
         value={value}
+        placeholder={option.default}
         onChange={(e) => onChangeOption(e.target.value)}
       />
     );
   }
 
   getIntInput() {
-    const { value, onChangeOption } = this.props;
+    const { value, option, onChangeOption } = this.props;
 
     return (
       <input
         className="form-control"
-        type="number"
+        type="text"
         value={value}
-        pattern="[0-9]"
-        onChange={(e) => {
-          e.preventDefault();
-          onChangeOption(e.target.value);
-        }}
+        placeholder={option.default}
+        onChange={(e) => onChangeOption(e.target.value)}
       />
     );
   }
@@ -51,6 +49,7 @@ class Option extends Component {
     return (
       <input
         className="form-control"
+        type="text"
         value={value}
         onChange={(e) => onChangeOption(e.target.value)}
       />

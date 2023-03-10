@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Network from "./Network";
 import Config from "./Config";
 import APIService from "./APIService";
+import InputValidator from "./InputValidator";
 
 class Builder extends Component {
   state = {
@@ -169,11 +170,15 @@ class Builder extends Component {
   };
 
   handleChangeOption = (element, elementType, option, newValue) => {
-    // TODO: check if input is valid
     const network = { ...this.state.network };
     const index = network[elementType].indexOf(element);
+    const oldValue = network[elementType][index][option.name];
+
+    // TODO: check if input is valid
+    const validatedValue = InputValidator(option, oldValue, newValue);
+
     network[elementType][index] = { ...element };
-    network[elementType][index][option] = newValue;
+    network[elementType][index][option.name] = validatedValue;
 
     this.setState({ network });
   };
