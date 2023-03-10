@@ -34,7 +34,7 @@ function InputValidator(option, oldValue, newValue) {
       return validateFloat(oldValue, newValue);
     case "int":
       return validateInt(oldValue, newValue);
-    case "bool":
+    case "bool": // always valid
       return newValue;
     case "float-list":
       return validateFloatList(oldValue, newValue);

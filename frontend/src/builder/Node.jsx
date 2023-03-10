@@ -2,6 +2,39 @@ import React from "react";
 import { useXarrow } from "react-xarrows";
 import Draggable from "react-draggable";
 
+function getNodeProps(node) {
+  if (node.type !== "lif") {
+    return;
+  }
+
+  return (
+    <React.Fragment>
+      <div
+        className="node-prop-m"
+        style={{
+          position: "absolute",
+          top: "-10px",
+          left: "50px",
+          fontSize: "small",
+        }}
+      >
+        m={node.m}
+      </div>
+      <div
+        className="node-prop-thr"
+        style={{
+          position: "absolute",
+          top: "50px",
+          left: "50px",
+          fontSize: "small",
+        }}
+      >
+        T={node.thr}
+      </div>
+    </React.Fragment>
+  );
+}
+
 const Node = ({
   node,
   selectedNodeId,
@@ -34,6 +67,7 @@ const Node = ({
         >
           {storedName}
         </div>
+        {getNodeProps(node)}
       </div>
     </Draggable>
   );

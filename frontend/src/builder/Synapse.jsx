@@ -19,7 +19,7 @@ const Synapse = ({ synapse, selectedSynapseId, onClickSynapse }) => {
           fontWeight: "bold",
         }}
       >
-        {"w:" + synapse.w + " d:" + synapse.d}
+        {"w=" + synapse.w + " d=" + synapse.d}
       </p>
       passProps={{
         onClick: () => onClickSynapse(synapse.id),
