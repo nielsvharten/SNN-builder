@@ -33,24 +33,27 @@ def network():
     net = Network()
 
     nodes = {}
-    for json_node in json_network['nodes']:
-        if json_node['type'] == "lif":
-            node = remove_json_keys(json_node, ['type', 'name', 'x_pos', 'y_pos'])
-            id = node.pop('id')
-
-            nodes[id] = net.createLIF(ID=id, **node)
-        elif json_node['type'] == "input":
-            id = json_node.pop('id')
-            train = ast.literal_eval(json_node['train'])
-            loop = json_node['loop']
+    for node in json_network['nodes']:
+        id = node['id']
+        if node['type'] == "lif":
+            m = float(node['m'])
+            V_init = float(node['V_init'])
+            V_reset = float(node['V_reset'])
+            thr = float(node['thr'])
+            I_e = float(node['I_e'])
+            
+            nodes[id] = net.createLIF(ID=id, m=m, V_init=V_init, V_reset=V_reset, thr=thr, I_e=I_e)
+        elif node['type'] == "input":
+            train = ast.literal_eval(node['train'])
+            loop = bool(node['loop'])
 
             nodes[id] = net.createInputTrain(ID=id, train=train, loop=loop)
 
-    for json_synapse in json_network['synapses']:
-        pre = nodes[json_synapse['pre']]
-        post = nodes[json_synapse['post']]
-        w = float(json_synapse['w'])
-        d = int(json_synapse['d'])
+    for synapse in json_network['synapses']:
+        pre = nodes[synapse['pre']]
+        post = nodes[synapse['post']]
+        w = float(synapse['w'])
+        d = int(synapse['d'])
         net.createSynapse(pre=pre, post=post, w=w, d=d)
 
     sim = Simulator(net)
