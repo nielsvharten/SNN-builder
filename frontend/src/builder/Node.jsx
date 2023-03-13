@@ -44,19 +44,20 @@ const Node = ({
   storedName,
 }) => {
   const updateXarrow = useXarrow();
-  let selectedClass = node.id === selectedNodeId ? " selected" : "";
+  const selectedClass = node.id === selectedNodeId ? " selected" : "";
+  const readOutClass = node.read_out ? " read-out" : "";
 
   return (
     <Draggable
       onStart={() => onClickNode(node)}
       onDrag={updateXarrow}
       onStop={(_, data) => onStopDragNode(node, data.x, data.y)}
-      position={{ x: node.x_pos, y: node.y_pos }}
+      position={{ x: node.x, y: node.y }}
       bounds={"parent"}
     >
       <div
         id={node.id}
-        className={"node node-" + node.type + selectedClass}
+        className={"node node-" + node.type + selectedClass + readOutClass}
         onClick={() => onClickNode(node)}
       >
         <div

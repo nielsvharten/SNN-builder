@@ -51,14 +51,14 @@ class Network extends Component {
   }
 
   getMinNetworkWidth = () => {
-    const xPositionNodes = this.props.network.nodes.map((node) => node.x_pos);
+    const xPositionNodes = this.props.network.nodes.map((node) => node.x);
     const width = Math.max(...xPositionNodes);
 
     return (width + 200).toString() + "px";
   };
 
   getMinNetworkHeight = () => {
-    const xPositionNodes = this.props.network.nodes.map((node) => node.y_pos);
+    const xPositionNodes = this.props.network.nodes.map((node) => node.y);
     const height = Math.max(...xPositionNodes);
 
     return (height + 200).toString() + "px";

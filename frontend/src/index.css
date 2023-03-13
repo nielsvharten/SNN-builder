@@ -60,6 +60,10 @@ code {
   border: 2px solid white; 
 }
 
+.node.read-out {
+  background-color: #7b0600;
+}
+
 .column-left {
   float: left;
 }

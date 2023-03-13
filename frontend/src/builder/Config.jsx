@@ -14,10 +14,12 @@ class Config extends Component {
         text: "Constant input current",
         default: 0,
       },
+      { name: "read_out", type: "bool", text: "Read-out neuron" },
     ],
     inputOptions: [
       { name: "train", type: "float-list", text: "Input spike train" },
       { name: "loop", type: "bool", text: "Whether to loop the train" },
+      { name: "read_out", type: "bool", text: "Read-out neuron" },
     ],
     synapseOptions: [
       { name: "w", type: "float", text: "Synaptic weight", default: 1 },

@@ -32,6 +32,7 @@ def network():
     # response.headers.add('Access-Control-Allow-Origin', '*')
     net = Network()
 
+    read_out_nodes = []
     nodes = {}
     for node in json_network['nodes']:
         id = node['id']
@@ -49,6 +50,9 @@ def network():
 
             nodes[id] = net.createInputTrain(ID=id, train=train, loop=loop)
 
+        if bool(node['read_out']):
+            read_out_nodes.append(nodes[id])
+
     for synapse in json_network['synapses']:
         pre = nodes[synapse['pre']]
         post = nodes[synapse['post']]
@@ -59,9 +63,9 @@ def network():
     sim = Simulator(net)
     
     # Add all neurons to the raster
-    sim.raster.addTarget([nodes[1], nodes[3]])
+    sim.raster.addTarget(read_out_nodes)
     # Add all neurons to the multimeter
-    sim.multimeter.addTarget([nodes[1], nodes[3]])
+    sim.multimeter.addTarget(read_out_nodes)
 
     sim.run(steps=10, plotting=True)
     

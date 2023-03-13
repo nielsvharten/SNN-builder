@@ -23,13 +23,11 @@ class Builder extends Component {
   handleSaveNetwork = () => {
     console.log("save network", this.state.network);
 
-    this.handlePostNetwork();
-
     const jsonState = JSON.stringify(this.state.network);
     window.localStorage.setItem("network", jsonState);
   };
 
-  handlePostNetwork = () => {
+  handleExecuteNetwork = () => {
     const network = this.state.network;
     network.nodes = [...network.nodes];
 
@@ -93,9 +91,10 @@ class Builder extends Component {
     const node = {
       id: id,
       type: type,
+      read_out: false,
       name: "",
-      x_pos: 100,
-      y_pos: 100,
+      x: 100,
+      y: 100,
     };
 
     if (type === "lif") {
@@ -129,8 +128,8 @@ class Builder extends Component {
     const network = { ...this.state.network };
     const index = network.nodes.indexOf(node);
     network.nodes[index] = { ...node };
-    network.nodes[index].x_pos = x;
-    network.nodes[index].y_pos = y;
+    network.nodes[index].x = x;
+    network.nodes[index].y = y;
 
     this.setState({ network });
   };
@@ -238,6 +237,12 @@ class Builder extends Component {
           className="btn btn-warning m-2"
         >
           Add input
+        </button>
+        <button
+          onClick={this.handleExecuteNetwork}
+          className="btn btn-danger m-2"
+        >
+          Execute network
         </button>
         <button
           onClick={this.handleSaveNetwork}
