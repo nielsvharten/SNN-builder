@@ -10,7 +10,7 @@ function getNodeProps(node) {
   return (
     <React.Fragment>
       <div
-        className="node-prop-m"
+        className="node-prop node-prop-m"
         style={{
           position: "absolute",
           top: "-10px",
@@ -21,7 +21,7 @@ function getNodeProps(node) {
         m={node.m}
       </div>
       <div
-        className="node-prop-thr"
+        className="node-prop node-prop-thr"
         style={{
           position: "absolute",
           top: "50px",

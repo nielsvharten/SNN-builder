@@ -70,7 +70,9 @@ class Network extends Component {
     return (
       <TransformWrapper
         maxScale={1}
-        panning={{ excluded: ["node-lif", "node-input", "node-name"] }}
+        panning={{
+          excluded: ["node-lif", "node-input", "node-name", "node-prop"],
+        }}
       >
         <TransformComponent>
           <div
