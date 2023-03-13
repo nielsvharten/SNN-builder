@@ -8,7 +8,6 @@ const Synapse = ({ synapse, selectedSynapseId, onClickSynapse }) => {
 
   return (
     <Xarrow
-      style={{ position: "relative" }}
       start={synapse.pre.toString()}
       end={synapse.post.toString()}
       lineColor={color}

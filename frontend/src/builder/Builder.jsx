@@ -101,7 +101,7 @@ class Builder extends Component {
       node.m = 0.0;
       node.V_init = 0.0;
       node.V_reset = 0.0;
-      node.thr = 0.99;
+      node.thr = 1.0;
       node.I_e = 0.0;
     } else if (type === "input") {
       node.train = "[0]";
