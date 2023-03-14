@@ -33,13 +33,14 @@ class Config extends Component {
   };
 
   getConfigOption(element, elementType, option) {
-    const { onChangeOption } = this.props;
+    const { editMode, onChangeOption } = this.props;
 
     return (
       <Option
         key={option.name}
         option={option}
         value={element[option.name]}
+        editMode={editMode}
         onChangeOption={(newValue) =>
           onChangeOption(element, elementType, option, newValue)
         }
@@ -76,15 +77,13 @@ class Config extends Component {
     }
   }
 
-  getConfigSelectedNode(selectedNode, options) {
+  getButtonsNodeConfig(selectedNode) {
+    if (!this.props.editMode) {
+      return;
+    }
+
     return (
       <React.Fragment>
-        <h3>
-          Editing {selectedNode.type} <b>{selectedNode.name}</b>
-        </h3>
-        {options.map((option) =>
-          this.getConfigOption(selectedNode, "nodes", option)
-        )}
         <br></br>
         {this.getConnectButton()}
         <button
@@ -97,22 +96,46 @@ class Config extends Component {
     );
   }
 
+  getConfigSelectedNode(selectedNode, options) {
+    return (
+      <React.Fragment>
+        <h3>
+          {selectedNode.type} <b>{selectedNode.name}</b>
+        </h3>
+        {options.map((option) =>
+          this.getConfigOption(selectedNode, "nodes", option)
+        )}
+        {this.getButtonsNodeConfig(selectedNode)}
+      </React.Fragment>
+    );
+  }
+
+  getButtonsSynapseConfig(selectedSynapse) {
+    if (!this.props.editMode) {
+      return;
+    }
+
+    return (
+      <button
+        className="btn btn-danger m-2"
+        onClick={() => this.props.onDeleteSynapse(selectedSynapse.id)}
+      >
+        Delete synapse
+      </button>
+    );
+  }
+
   getConfigSelectedSynapse(selectedSynapse, options) {
     return (
       <React.Fragment>
         <h3>
-          Editing synapse from {this.getNodeName(selectedSynapse.pre)} to{" "}
+          Synapse from {this.getNodeName(selectedSynapse.pre)} to{" "}
           {this.getNodeName(selectedSynapse.post)}
         </h3>
         {options.map((option) =>
           this.getConfigOption(selectedSynapse, "synapses", option)
         )}
-        <button
-          className="btn btn-danger m-2"
-          onClick={() => this.props.onDeleteSynapse(selectedSynapse.id)}
-        >
-          Delete synapse
-        </button>
+        {this.getButtonsSynapseConfig(selectedSynapse)}
       </React.Fragment>
     );
   }

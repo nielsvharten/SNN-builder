@@ -1,83 +1,67 @@
 import React, { Component } from "react";
 
 class Option extends Component {
-  getFloatInput() {
-    const { value, option, onChangeOption } = this.props;
-
+  getNumberInput(option, value, editMode, onChangeOption) {
     return (
       <input
         className="form-control"
         type="text"
         value={value}
+        disabled={!editMode}
         placeholder={option.default}
         onChange={(e) => onChangeOption(e.target.value)}
       />
     );
   }
 
-  getIntInput() {
-    const { value, option, onChangeOption } = this.props;
-
-    return (
-      <input
-        className="form-control"
-        type="text"
-        value={value}
-        placeholder={option.default}
-        onChange={(e) => onChangeOption(e.target.value)}
-      />
-    );
-  }
-
-  getBoolInput() {
-    const { value, onChangeOption } = this.props;
-
+  getBoolInput(value, editMode, onChangeOption) {
     return (
       <input
         className="form-check-input"
         type="checkbox"
         checked={value}
+        disabled={!editMode}
         onChange={(e) => onChangeOption(e.target.checked)}
         style={{ height: "24px", width: "24px" }}
       />
     );
   }
 
-  getFloatListInput() {
-    const { value, onChangeOption } = this.props;
-
+  getFloatListInput(value, editMode, onChangeOption) {
     return (
       <input
         className="form-control"
         type="text"
         value={value}
+        disabled={!editMode}
         onChange={(e) => onChangeOption(e.target.value)}
       />
     );
   }
 
-  getInput(option) {
+  getInput(option, value, editMode, onChangeOption) {
     switch (option.type) {
       case "float":
-        return this.getFloatInput();
       case "int":
-        return this.getIntInput();
+        return this.getNumberInput(option, value, editMode, onChangeOption);
       case "bool":
-        return this.getBoolInput();
+        return this.getBoolInput(value, editMode, onChangeOption);
       case "float-list":
-        return this.getFloatListInput();
+        return this.getFloatListInput(value, editMode, onChangeOption);
     }
   }
 
   render() {
-    const { option } = this.props;
+    const { option, value, editMode, onChangeOption } = this.props;
 
     return (
       <div className="form-group row m-1">
         <div className="col-sm-7">
           <label className="col-form-label">{option.text}</label>
         </div>
-        <div className="col-sm-5">{this.getInput(option)}</div>
+        <div className="col-sm-5">
+          {this.getInput(option, value, editMode, onChangeOption)}
+        </div>
       </div>
     );
   }

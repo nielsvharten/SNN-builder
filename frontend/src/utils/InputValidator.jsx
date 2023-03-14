@@ -20,7 +20,7 @@ function validateInt(oldValue, newValue) {
 
 function validateFloatList(oldValue, newValue) {
   console.log(newValue);
-  const valid = /^\[(-?\d*(\.\d*)?\,)*(-?\d*(\.\d*)?)?\]$/.test(newValue);
+  const valid = /^\[(-?\d\d*(\.\d*)?\,)*(-?\d*(\d\.\d*)?)?\]$/.test(newValue);
   if (valid) {
     return newValue;
   } else {

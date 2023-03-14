@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import Network from "./Network";
 import Config from "./Config";
-import APIService from "./APIService";
-import InputValidator from "./InputValidator";
+import APIService from "../utils/APIService";
+import InputValidator from "../utils/InputValidator";
 
-class Builder extends Component {
+class Editor extends Component {
   state = {
     selectedNodeId: null,
     selectedSynapseId: null,
     connectMode: false,
+    editMode: true,
     loaded: false,
     network: {
       id: 1,
@@ -18,31 +19,6 @@ class Builder extends Component {
       maxNodeId: 0,
       maxSynapseId: 0,
     },
-  };
-
-  handleSaveNetwork = () => {
-    console.log("save network", this.state.network);
-
-    const jsonState = JSON.stringify(this.state.network);
-    window.localStorage.setItem("network", jsonState);
-  };
-
-  handleExecuteNetwork = () => {
-    const network = this.state.network;
-    network.nodes = [...network.nodes];
-
-    fetch("http://127.0.0.1:5000/network", {
-      method: "POST",
-      //headers: { "X-CSRFToken": getCookie("csrftoken") },
-      headers: {
-        "Access-Control-Allow-Origin": "localhost:5000",
-        "Content-Type": "application/json",
-      },
-      //credentials: "include",
-      body: JSON.stringify(this.state.network),
-    })
-      .then()
-      .catch();
   };
 
   handleAddSynapse = (preId, postId) => {
@@ -104,7 +80,7 @@ class Builder extends Component {
       node.thr = 1.0;
       node.I_e = 0.0;
     } else if (type === "input") {
-      node.train = "[0]";
+      node.train = "[]";
       node.loop = false;
     }
 
@@ -186,6 +162,10 @@ class Builder extends Component {
     this.setState({ connectMode });
   };
 
+  handleSwitchEditMode = (editMode) => {
+    this.setState({ editMode });
+  };
+
   componentDidMount() {
     const jsonState = window.localStorage.getItem("network");
     if (jsonState === null) {
@@ -198,14 +178,48 @@ class Builder extends Component {
     this.setState({ network, loaded: true });
   }
 
-  getBuilder() {
-    const { selectedNodeId, selectedSynapseId, network } = this.state;
+  getEditButtons() {
+    if (this.state.editMode) {
+      return (
+        <React.Fragment>
+          <button
+            onClick={() => this.handleAddNode("lif")}
+            className="btn btn-primary m-2"
+          >
+            Add lif
+          </button>
+          <button
+            onClick={() => this.handleAddNode("input")}
+            className="btn btn-warning m-2"
+          >
+            Add input
+          </button>
+          <button
+            onClick={this.handleSaveNetwork}
+            className="btn btn-success m-2"
+          >
+            Save network
+          </button>
+          <button
+            onClick={() => this.handleSwitchEditMode(false)}
+            className="btn btn-danger m-2"
+          >
+            To execution mode
+          </button>
+        </React.Fragment>
+      );
+    }
+  }
+
+  getEditor() {
+    const { network, editMode, selectedNodeId, selectedSynapseId } = this.state;
 
     return (
       <React.Fragment>
         <div className="builder">
           <Network
             network={network}
+            editMode={editMode}
             selectedNodeId={selectedNodeId}
             onStopDragNode={this.handleStopDragNode}
             onClickNode={this.handleClickNode}
@@ -215,10 +229,11 @@ class Builder extends Component {
           />
           <Config
             nodes={network.nodes}
-            selectedNodeId={selectedNodeId}
             synapses={network.synapses}
-            selectedSynapseId={selectedSynapseId}
             connectMode={this.state.connectMode}
+            editMode={this.state.editMode}
+            selectedNodeId={selectedNodeId}
+            selectedSynapseId={selectedSynapseId}
             onChangeOption={this.handleChangeOption}
             onDeleteNode={this.handleDeleteNode}
             onClickConnect={() => this.handleSwitchConnectMode(true)}
@@ -226,39 +241,16 @@ class Builder extends Component {
             onDeleteSynapse={this.handleDeleteSynapse}
           />
         </div>
-        <button
-          onClick={() => this.handleAddNode("lif")}
-          className="btn btn-primary m-2"
-        >
-          Add lif
-        </button>
-        <button
-          onClick={() => this.handleAddNode("input")}
-          className="btn btn-warning m-2"
-        >
-          Add input
-        </button>
-        <button
-          onClick={this.handleExecuteNetwork}
-          className="btn btn-danger m-2"
-        >
-          Execute network
-        </button>
-        <button
-          onClick={this.handleSaveNetwork}
-          className="btn btn-success m-2"
-        >
-          Save network
-        </button>
+        {this.getEditButtons()}
       </React.Fragment>
     );
   }
 
   render() {
     if (this.state.loaded) {
-      return this.getBuilder();
+      return this.getEditor();
     }
   }
 }
 
-export default Builder;
+export default Editor;

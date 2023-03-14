@@ -9,11 +9,6 @@ class Network extends Component {
     storedNodes: [...this.props.network.nodes],
   };
 
-  handleArrowClick = (e) => {
-    console.log("xarrow clicked!");
-    console.log(e);
-  };
-
   getStoredName(nodeId) {
     const storedNode = this.state.storedNodes.find(
       (node) => node.id === nodeId
@@ -22,14 +17,38 @@ class Network extends Component {
     return storedNode ? storedNode.name : "";
   }
 
+  getNodeVoltage(node, execution) {
+    if (execution.nodes[node.id]) {
+      return execution.nodes[node.id]["voltages"][execution.timeStep];
+    }
+
+    return null;
+  }
+
+  getNodeSpike(node, execution) {
+    if (execution.nodes[node.id]) {
+      return execution.nodes[node.id]["spikes"][execution.timeStep];
+    }
+
+    return false;
+  }
+
   getNodeComponents(nodes) {
-    const { onStopDragNode, onClickNode, onRenameNode, selectedNodeId } =
-      this.props;
+    const {
+      onStopDragNode,
+      onClickNode,
+      onRenameNode,
+      selectedNodeId,
+      execution,
+    } = this.props;
 
     return nodes.map((node) => (
       <Node
         key={node.id}
         node={node}
+        editMode={this.props.editMode}
+        voltage={this.getNodeVoltage(node, execution)}
+        spike={this.getNodeSpike(node, execution)}
         storedName={this.getStoredName(node.id)}
         onStopDragNode={onStopDragNode}
         onClickNode={onClickNode}
@@ -64,6 +83,13 @@ class Network extends Component {
     return (height + 200).toString() + "px";
   };
 
+  getBackgroundColor = () => {
+    if (this.props.editMode) {
+      return "rgb(160, 160, 160)";
+    } else {
+      return "rgb(117, 117, 117)";
+    }
+  };
   render() {
     const { id, name, nodes, synapses } = this.props.network;
 
@@ -80,6 +106,7 @@ class Network extends Component {
             style={{
               minWidth: this.getMinNetworkWidth(),
               minHeight: this.getMinNetworkHeight(),
+              backgroundColor: this.getBackgroundColor(),
             }}
           >
             <Xwrapper>
