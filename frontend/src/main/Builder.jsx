@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Network from "../network/Network";
-import Config from "../network/Config";
+import Config from "../config/Config";
 import APIService from "../utils/APIService";
 import InputValidator from "../utils/InputValidator";
 
