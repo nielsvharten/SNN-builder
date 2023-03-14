@@ -19,7 +19,8 @@ class Builder extends Component {
       maxNodeId: 0,
       maxSynapseId: 0,
     },
-    execution: { timeStep: 0, nodes: {} },
+    duration: 10,
+    execution: { timeStep: 0, duration: 10, nodes: {} },
   };
 
   /*
@@ -64,8 +65,10 @@ class Builder extends Component {
   };
 
   handleSwitchEditMode = (editMode) => {
-    this.setState({ editMode });
-    this.setState({ execution: { timeStep: 0, nodes: {} } });
+    const execution = { ...this.state.execution };
+    execution.nodes = {};
+    this.setState({ execution }); // remove execution
+    this.setState({ editMode }); // set edit mode
   };
 
   /*
@@ -169,12 +172,17 @@ class Builder extends Component {
     const oldValue = network[elementType][index][option.name];
 
     // TODO: check if input is valid
-    const validatedValue = InputValidator(option, oldValue, newValue);
+    const validatedValue = InputValidator(option.type, oldValue, newValue);
 
     network[elementType][index] = { ...element };
     network[elementType][index][option.name] = validatedValue;
 
     this.setState({ network });
+  };
+
+  handleChangeDuration = (newValue) => {
+    const duration = InputValidator("int", this.state.duration, newValue);
+    this.setState({ duration });
   };
 
   handleSwitchConnectMode = (connectMode) => {
@@ -191,17 +199,29 @@ class Builder extends Component {
         "Access-Control-Allow-Origin": "localhost:5000",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(this.state.network),
+      body: JSON.stringify({
+        network: this.state.network,
+        duration: this.state.duration,
+      }),
     })
       .then((response) => response.json())
-      .then((nodes) => this.setState({ execution: { timeStep: 0, nodes } }))
+      .then((nodes) => {
+        const execution = { ...this.state.execution };
+        execution.timeStep = 0;
+        execution.duration = this.state.duration;
+        execution.nodes = nodes;
+        this.setState({ execution });
+      })
       .catch();
   };
 
   handleUpdateTimeStep = (newValue) => {
     const execution = { ...this.state.execution };
-    execution.timeStep = newValue;
+    if (newValue >= execution.duration || newValue < 0) {
+      return;
+    }
 
+    execution.timeStep = newValue;
     this.setState({ execution });
   };
 
@@ -218,20 +238,39 @@ class Builder extends Component {
   }
 
   getExecutionSlider() {
-    const nrNodes = Object.keys(this.state.execution.nodes).length;
+    const execution = this.state.execution;
+    const nrNodes = Object.keys(execution.nodes).length;
     if (nrNodes > 0) {
       return (
-        <div className="form-group row">
-          <p className="col-sm-1 m-2">Time step</p>
+        <div className="form-group row m-2" style={{ width: "700px" }}>
+          <p className="col-sm-2 m-2">Time step</p>
           <input
-            className="col-sm-2 m-2"
+            className="col-sm-3 m-2"
             type="range"
             min={0}
-            max={9}
-            value={this.state.execution.timeStep}
+            max={execution.duration - 1}
+            value={execution.timeStep}
             onChange={(e) => this.handleUpdateTimeStep(e.target.value)}
           />
-          <p className="col-sm-2 m-2">{this.state.execution.timeStep}</p>
+          <button
+            className="btn btn-secondary col-sm-1"
+            onClick={() =>
+              this.handleUpdateTimeStep(Number(execution.timeStep) - 1)
+            }
+          >
+            prev
+          </button>
+          <p className="col-sm-1 m-2" style={{ textAlign: "center" }}>
+            {execution.timeStep}
+          </p>
+          <button
+            className="btn btn-secondary col-sm-1"
+            onClick={() =>
+              this.handleUpdateTimeStep(Number(execution.timeStep) + 1)
+            }
+          >
+            next
+          </button>
         </div>
       );
     }
@@ -282,10 +321,10 @@ class Builder extends Component {
           <div className="col-sm-1">
             <input
               className=" form-control"
-              type="number"
+              type="text"
               placeholder={10}
-              min="1"
-              onInput={(e) => e.target.validity.valid || (e.target.value = "")}
+              value={this.state.duration}
+              onChange={(e) => this.handleChangeDuration(e.target.value)}
             ></input>
           </div>
           <button

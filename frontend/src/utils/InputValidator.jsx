@@ -28,8 +28,8 @@ function validateFloatList(oldValue, newValue) {
   }
 }
 
-function InputValidator(option, oldValue, newValue) {
-  switch (option.type) {
+function InputValidator(type, oldValue, newValue) {
+  switch (type) {
     case "float":
       return validateFloat(oldValue, newValue);
     case "int":

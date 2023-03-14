@@ -27,14 +27,15 @@ def get_current_time():
 @app.route('/network', methods=['POST'])
 @cross_origin()
 def network():
-    json_network = request.get_json()
-    #response = jsonify({'some': 'data'})
-    # response.headers.add('Access-Control-Allow-Origin', '*')
+    json= request.get_json()
+    network = json['network']
+    duration = int(json['duration'])
+
     net = Network()
 
     read_out_nodes = []
     nodes = {}
-    for node in json_network['nodes']:
+    for node in network['nodes']:
         id = node['id']
         if node['type'] == "lif":
             m = float(node['m'])
@@ -50,10 +51,10 @@ def network():
 
             nodes[id] = net.createInputTrain(ID=id, train=train, loop=loop)
 
-        if bool(node['read_out']):
-            read_out_nodes.append(nodes[id])
+        #if bool(node['read_out']):
+        read_out_nodes.append(nodes[id])
 
-    for synapse in json_network['synapses']:
+    for synapse in network['synapses']:
         pre = nodes[synapse['pre']]
         post = nodes[synapse['post']]
         w = float(synapse['w'])
@@ -66,7 +67,7 @@ def network():
     sim.raster.addTarget(read_out_nodes)
     sim.multimeter.addTarget(read_out_nodes)
 
-    sim.run(steps=10, plotting=False)
+    sim.run(steps=duration, plotting=False)
 
     # Obtain all measurements
     spikes = sim.raster.get_measurements()
