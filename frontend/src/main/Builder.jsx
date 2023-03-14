@@ -226,8 +226,9 @@ class Builder extends Component {
           <input
             className="col-sm-2 m-2"
             type="range"
-            min="0"
-            max="9"
+            min={0}
+            max={9}
+            value={this.state.execution.timeStep}
             onChange={(e) => this.handleUpdateTimeStep(e.target.value)}
           />
           <p className="col-sm-2 m-2">{this.state.execution.timeStep}</p>
