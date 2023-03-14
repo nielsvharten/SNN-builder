@@ -28,7 +28,7 @@ def get_current_time():
 @cross_origin()
 def network():
     json_network = request.get_json()
-    response = jsonify({'some': 'data'})
+    #response = jsonify({'some': 'data'})
     # response.headers.add('Access-Control-Allow-Origin', '*')
     net = Network()
 
@@ -62,11 +62,26 @@ def network():
 
     sim = Simulator(net)
     
-    # Add all neurons to the raster
+    # Add all read_out neurons to the simulation
     sim.raster.addTarget(read_out_nodes)
-    # Add all neurons to the multimeter
     sim.multimeter.addTarget(read_out_nodes)
 
-    sim.run(steps=10, plotting=True)
-    
-    return response
+    sim.run(steps=10, plotting=False)
+
+    # Obtain all measurements
+    spikes = sim.raster.get_measurements()
+    voltages = sim.multimeter.get_measurements()
+
+    response = {  }
+    for i, node in enumerate(read_out_nodes):
+        response[node.ID] = { "spikes": [], "voltages": []}
+
+        for spike in spikes:
+            response[node.ID]["spikes"].append(str(spike[i]).lower())
+        
+        for voltage in voltages:
+            response[node.ID]["voltages"].append(voltage[i])
+        
+    print(response)
+
+    return jsonify(response)
