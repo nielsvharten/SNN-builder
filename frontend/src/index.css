@@ -69,6 +69,7 @@ code {
 
 .column-right {
   float: left;
+  min-width: fit-content;
   width: 400px;
   padding: 10px;
 }

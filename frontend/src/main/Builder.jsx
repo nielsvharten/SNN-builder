@@ -4,6 +4,7 @@ import Config from "../config/Config";
 import APIService from "../utils/APIService";
 import InputValidator from "../utils/InputValidator";
 
+// TODO: NEXT, plots for read_out_neurons
 class Builder extends Component {
   state = {
     selectedNodeId: null,
@@ -357,6 +358,7 @@ class Builder extends Component {
           />
           <Config
             nodes={network.nodes}
+            execution={execution}
             selectedNodeId={selectedNodeId}
             synapses={network.synapses}
             selectedSynapseId={selectedSynapseId}

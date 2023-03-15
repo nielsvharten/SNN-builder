@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Option from "./Option";
+import Plot from "./Plot";
 
 class Config extends Component {
   state = {
@@ -154,14 +155,32 @@ class Config extends Component {
     }
   }
 
+  getPlotsSelectedNode(selectedNode, execution) {
+    if (
+      selectedNode &&
+      selectedNode.read_out &&
+      execution.nodes[selectedNode.id]
+    ) {
+      return (
+        <Plot
+          voltages={execution.nodes[selectedNode.id]["voltages"]}
+          spikes={execution.nodes[selectedNode.id]["spikes"]}
+        />
+      );
+    }
+  }
+
   render() {
-    const { nodes, selectedNodeId, synapses, selectedSynapseId } = this.props;
+    const { nodes, execution, selectedNodeId, synapses, selectedSynapseId } =
+      this.props;
     const selectedNode = nodes.find((n) => n.id === selectedNodeId);
     const selectedSynapse = synapses.find((s) => s.id === selectedSynapseId);
 
     return (
       <div className="column-right">
         {this.getConfigSelectedElement(selectedNode, selectedSynapse)}
+        <br />
+        {this.getPlotsSelectedNode(selectedNode, execution)}
       </div>
     );
   }
