@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import Network from "../network/Network";
 import Config from "../config/Config";
-import APIService from "../utils/APIService";
 import InputValidator from "../utils/InputValidator";
 
-// TODO: NEXT, plots for read_out_neurons
-class Builder extends Component {
+class Editor extends Component {
   state = {
     selectedNodeId: null,
     selectedSynapseId: null,
@@ -21,7 +19,7 @@ class Builder extends Component {
       maxSynapseId: 0,
     },
     duration: 10,
-    execution: { timeStep: 0, duration: 10, nodes: {} },
+    execution: { timeStep: 0, duration: 10, measurements: {} },
   };
 
   /*
@@ -67,9 +65,10 @@ class Builder extends Component {
 
   handleSwitchEditMode = (editMode) => {
     const execution = { ...this.state.execution };
-    execution.nodes = {};
+    execution.measurements = {};
     this.setState({ execution }); // remove execution
     this.setState({ editMode }); // set edit mode
+    this.setState({ connectMode: false }); // disable connectMode
   };
 
   /*
@@ -181,11 +180,6 @@ class Builder extends Component {
     this.setState({ network });
   };
 
-  handleChangeDuration = (newValue) => {
-    const duration = InputValidator("int", this.state.duration, newValue);
-    this.setState({ duration });
-  };
-
   handleSwitchConnectMode = (connectMode) => {
     this.setState({ connectMode });
   };
@@ -206,14 +200,13 @@ class Builder extends Component {
       }),
     })
       .then((response) => response.json())
-      .then((nodes) => {
-        const execution = { ...this.state.execution };
-        execution.timeStep = 0;
-        execution.duration = this.state.duration;
-        execution.nodes = nodes;
-        this.setState({ execution });
-      })
+      .then((execution) => this.setState({ execution }))
       .catch();
+  };
+
+  handleChangeDuration = (newValue) => {
+    const duration = InputValidator("int", this.state.duration, newValue);
+    this.setState({ duration });
   };
 
   handleUpdateTimeStep = (newValue) => {
@@ -226,22 +219,17 @@ class Builder extends Component {
     this.setState({ execution });
   };
 
-  componentDidMount() {
-    const jsonState = window.localStorage.getItem("network");
-    if (jsonState === null) {
-      console.log("no network defined");
-      this.setState({ loaded: true });
-      return;
-    }
-
-    const network = JSON.parse(jsonState);
-    this.setState({ network, loaded: true });
-  }
-
+  /*
+  Components of the Editor 
+  */
   getExecutionSlider() {
     const execution = this.state.execution;
-    const nrNodes = Object.keys(execution.nodes).length;
+    const nrNodes = Object.keys(execution.measurements).length;
+
     if (nrNodes > 0) {
+      const nrTimeSteps = Object.values(execution.measurements)[0]["voltages"]
+        .length;
+
       return (
         <div className="form-group row m-2" style={{ width: "700px" }}>
           <p className="col-sm-2 m-2">Time step</p>
@@ -249,7 +237,7 @@ class Builder extends Component {
             className="col-sm-3 m-2"
             type="range"
             min={0}
-            max={execution.duration - 1}
+            max={nrTimeSteps - 1}
             value={execution.timeStep}
             onChange={(e) => this.handleUpdateTimeStep(e.target.value)}
           />
@@ -338,7 +326,8 @@ class Builder extends Component {
       );
     }
   }
-  getBuilder() {
+
+  getEditor() {
     const { network, editMode, execution, selectedNodeId, selectedSynapseId } =
       this.state;
 
@@ -350,6 +339,7 @@ class Builder extends Component {
             editMode={editMode}
             execution={execution}
             selectedNodeId={selectedNodeId}
+            // handlers
             onStopDragNode={this.handleStopDragNode}
             onClickNode={this.handleClickNode}
             onRenameNode={this.handleRenameNode}
@@ -358,17 +348,19 @@ class Builder extends Component {
           />
           <Config
             nodes={network.nodes}
-            execution={execution}
-            selectedNodeId={selectedNodeId}
             synapses={network.synapses}
+            measurements={execution.measurements}
+            // selected element
+            selectedNodeId={selectedNodeId}
             selectedSynapseId={selectedSynapseId}
+            // current mode
             connectMode={this.state.connectMode}
             editMode={this.state.editMode}
-            onChangeOption={this.handleChangeOption}
+            // handlers
             onDeleteNode={this.handleDeleteNode}
-            onClickConnect={() => this.handleSwitchConnectMode(true)}
-            onClickCancelConnect={() => this.handleSwitchConnectMode(false)}
             onDeleteSynapse={this.handleDeleteSynapse}
+            onChangeOption={this.handleChangeOption}
+            onSwitchConnectMode={this.handleSwitchConnectMode}
           />
         </div>
         {this.getExecutionSlider()}
@@ -377,11 +369,24 @@ class Builder extends Component {
     );
   }
 
+  // try loading network json object from local storage
+  componentDidMount() {
+    const jsonState = window.localStorage.getItem("network");
+    if (jsonState === null) {
+      console.log("no network defined");
+      this.setState({ loaded: true });
+      return;
+    }
+
+    const network = JSON.parse(jsonState);
+    this.setState({ network, loaded: true });
+  }
+
   render() {
     if (this.state.loaded) {
-      return this.getBuilder();
+      return this.getEditor();
     }
   }
 }
 
-export default Builder;
+export default Editor;

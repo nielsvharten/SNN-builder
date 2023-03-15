@@ -50,17 +50,23 @@ class Config extends Component {
   }
 
   getConnectButton() {
-    const { connectMode, onClickConnect, onClickCancelConnect } = this.props;
+    const { connectMode, onSwitchConnectMode } = this.props;
 
     if (connectMode) {
       return (
-        <button className="btn btn-warning m-2" onClick={onClickCancelConnect}>
+        <button
+          className="btn btn-warning m-2"
+          onClick={() => onSwitchConnectMode(false)}
+        >
           Cancel connecting
         </button>
       );
     } else {
       return (
-        <button className="btn btn-primary m-2" onClick={onClickConnect}>
+        <button
+          className="btn btn-primary m-2"
+          onClick={() => onSwitchConnectMode(true)}
+        >
           Connect node
         </button>
       );
@@ -155,23 +161,23 @@ class Config extends Component {
     }
   }
 
-  getPlotsSelectedNode(selectedNode, execution) {
+  getPlotsSelectedNode(selectedNode, measurements) {
     if (
       selectedNode &&
       selectedNode.read_out &&
-      execution.nodes[selectedNode.id]
+      measurements[selectedNode.id]
     ) {
       return (
         <Plot
-          voltages={execution.nodes[selectedNode.id]["voltages"]}
-          spikes={execution.nodes[selectedNode.id]["spikes"]}
+          voltages={measurements[selectedNode.id]["voltages"]}
+          spikes={measurements[selectedNode.id]["spikes"]}
         />
       );
     }
   }
 
   render() {
-    const { nodes, execution, selectedNodeId, synapses, selectedSynapseId } =
+    const { nodes, measurements, selectedNodeId, synapses, selectedSynapseId } =
       this.props;
     const selectedNode = nodes.find((n) => n.id === selectedNodeId);
     const selectedSynapse = synapses.find((s) => s.id === selectedSynapseId);
@@ -180,7 +186,7 @@ class Config extends Component {
       <div className="column-right">
         {this.getConfigSelectedElement(selectedNode, selectedSynapse)}
         <br />
-        {this.getPlotsSelectedNode(selectedNode, execution)}
+        {this.getPlotsSelectedNode(selectedNode, measurements)}
       </div>
     );
   }

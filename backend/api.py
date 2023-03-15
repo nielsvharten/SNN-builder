@@ -29,7 +29,10 @@ def get_current_time():
 def network():
     json= request.get_json()
     network = json['network']
-    duration = int(json['duration'])
+    try:
+        duration = int(json['duration'])
+    except ValueError:
+        duration = 10
 
     net = Network()
 
@@ -73,16 +76,14 @@ def network():
     spikes = sim.raster.get_measurements()
     voltages = sim.multimeter.get_measurements()
 
-    response = {  }
+    measurements = {  }
     for i, node in enumerate(read_out_nodes):
-        response[node.ID] = { "spikes": [], "voltages": []}
+        measurements[node.ID] = { "spikes": [], "voltages": []}
 
         for spike in spikes:
-            response[node.ID]["spikes"].append(str(spike[i]).lower())
+            measurements[node.ID]["spikes"].append(str(spike[i]).lower())
         
         for voltage in voltages:
-            response[node.ID]["voltages"].append(voltage[i])
-        
-    print(response)
+            measurements[node.ID]["voltages"].append(voltage[i])
 
-    return jsonify(response)
+    return jsonify({"timeStep": 0, "duration": duration, "measurements": measurements})

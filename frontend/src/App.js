@@ -1,9 +1,9 @@
 import logo from "./logo.svg";
 import "./App.css";
-import Builder from "./main/Builder";
+import Editor from "./main/Editor";
 
 function App() {
-  return <Builder />;
+  return <Editor />;
 }
 
 export default App;

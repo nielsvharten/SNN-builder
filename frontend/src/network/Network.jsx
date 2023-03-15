@@ -18,16 +18,16 @@ class Network extends Component {
   }
 
   getNodeVoltage(node, execution) {
-    if (execution.nodes[node.id]) {
-      return execution.nodes[node.id]["voltages"][execution.timeStep];
+    if (execution.measurements[node.id]) {
+      return execution.measurements[node.id]["voltages"][execution.timeStep];
     }
 
     return null;
   }
 
   getNodeSpike(node, execution) {
-    if (execution.nodes[node.id]) {
-      return execution.nodes[node.id]["spikes"][execution.timeStep];
+    if (execution.measurements[node.id]) {
+      return execution.measurements[node.id]["spikes"][execution.timeStep];
     }
 
     return false;
