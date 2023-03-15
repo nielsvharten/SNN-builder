@@ -97,17 +97,17 @@ function getNodeProps(node, editMode, voltage, spike) {
 
 const Node = ({
   node,
+  selected,
   editMode,
   voltage,
   spike,
-  selectedNodeId,
+  storedName,
   onStopDragNode,
   onClickNode,
   onRenameNode,
-  storedName,
 }) => {
   const updateXarrow = useXarrow();
-  const selectedClass = node.id === selectedNodeId ? " selected" : "";
+  const selectedClass = selected ? " selected" : "";
   const readOutClass = node.read_out ? " read-out" : "";
 
   return (

@@ -336,15 +336,16 @@ class Editor extends Component {
         <div className="builder">
           <Network
             network={network}
-            editMode={editMode}
             execution={execution}
+            editMode={editMode}
+            // selected element
             selectedNodeId={selectedNodeId}
+            selectedSynapseId={selectedSynapseId}
             // handlers
             onStopDragNode={this.handleStopDragNode}
             onClickNode={this.handleClickNode}
-            onRenameNode={this.handleRenameNode}
-            selectedSynapseId={selectedSynapseId}
             onClickSynapse={this.handleClickSynapse}
+            onRenameNode={this.handleRenameNode}
           />
           <Config
             nodes={network.nodes}

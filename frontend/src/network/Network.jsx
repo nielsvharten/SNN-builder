@@ -35,25 +35,27 @@ class Network extends Component {
 
   getNodeComponents(nodes) {
     const {
+      selectedNodeId,
+      execution,
+      editMode,
       onStopDragNode,
       onClickNode,
       onRenameNode,
-      selectedNodeId,
-      execution,
     } = this.props;
 
     return nodes.map((node) => (
       <Node
         key={node.id}
         node={node}
-        editMode={this.props.editMode}
+        selected={selectedNodeId === node.id}
+        editMode={editMode}
         voltage={this.getNodeVoltage(node, execution)}
         spike={this.getNodeSpike(node, execution)}
         storedName={this.getStoredName(node.id)}
+        // handlers
         onStopDragNode={onStopDragNode}
         onClickNode={onClickNode}
         onRenameNode={onRenameNode}
-        selectedNodeId={selectedNodeId}
       />
     ));
   }
@@ -63,7 +65,8 @@ class Network extends Component {
       <Synapse
         key={synapse.id}
         synapse={synapse}
-        selectedSynapseId={this.props.selectedSynapseId}
+        selected={this.props.selectedSynapseId === synapse.id}
+        // handlers
         onClickSynapse={this.props.onClickSynapse}
       />
     ));
@@ -90,8 +93,9 @@ class Network extends Component {
       return "rgb(117, 117, 117)";
     }
   };
+
   render() {
-    const { id, name, nodes, synapses } = this.props.network;
+    const { nodes, synapses } = this.props.network;
 
     return (
       <TransformWrapper

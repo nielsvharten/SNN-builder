@@ -1,8 +1,8 @@
 import Xarrow from "react-xarrows";
 
-const Synapse = ({ synapse, selectedSynapseId, onClickSynapse }) => {
+const Synapse = ({ synapse, selected, onClickSynapse }) => {
   let color = "black";
-  if (selectedSynapseId === synapse.id) {
+  if (selected) {
     color = "blue";
   }
 
