@@ -19,7 +19,7 @@ class Plot extends Component {
     }
 
     return (
-      <LineChart width={400} height={250} data={data}>
+      <LineChart width={380} height={240} data={data}>
         <XAxis
           type="number"
           dataKey="step"
@@ -50,7 +50,7 @@ class Plot extends Component {
     }
 
     return (
-      <ScatterChart width={400} height={80}>
+      <ScatterChart width={380} height={70}>
         <XAxis
           type="number"
           dataKey="step"

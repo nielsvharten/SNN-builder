@@ -55,11 +55,11 @@ class Option extends Component {
     const { option, value, editMode, onChangeOption } = this.props;
 
     return (
-      <div className="form-group row m-1">
-        <div className="col-sm-7">
+      <div className="form-group row m-2" style={{ maxWidth: "400px" }}>
+        <div className="col-sm-8">
           <label className="col-form-label">{option.text}</label>
         </div>
-        <div className="col-sm-5">
+        <div className="col-sm-4">
           {this.getInput(option, value, editMode, onChangeOption)}
         </div>
       </div>

@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import Network from "../network/Network";
-import Config from "../config/Config";
 import InputValidator from "../utils/InputValidator";
+import NetworkDetails from "../details/NetworkDetails";
+import ElementDetails from "../details/ElementDetails";
 
 class Editor extends Component {
   state = {
@@ -188,6 +189,8 @@ class Editor extends Component {
   Handlers for executing the network
   */
   handleExecuteNetwork = () => {
+    this.handleSwitchEditMode(false);
+
     fetch("http://127.0.0.1:5000/network", {
       method: "POST",
       headers: {
@@ -232,15 +235,15 @@ class Editor extends Component {
 
       return (
         <div className="form-group row m-2" style={{ width: "700px" }}>
-          <p className="col-sm-2 m-2">Time step</p>
           <input
-            className="col-sm-3 m-2"
+            className="col-sm-4 m-2"
             type="range"
             min={0}
             max={nrTimeSteps - 1}
             value={execution.timeStep}
             onChange={(e) => this.handleUpdateTimeStep(e.target.value)}
           />
+          <br />
           <button
             className="btn btn-secondary col-sm-1"
             onClick={() =>
@@ -281,48 +284,7 @@ class Editor extends Component {
           >
             Add input
           </button>
-          <button
-            onClick={this.handleSaveNetwork}
-            className="btn btn-success m-2"
-          >
-            Save network
-          </button>
-          <button
-            onClick={() => this.handleSwitchEditMode(false)}
-            className="btn btn-danger m-2"
-          >
-            To execution mode
-          </button>
         </React.Fragment>
-      );
-    } else {
-      return (
-        <div className="form-group row m-2">
-          <button
-            onClick={() => this.handleSwitchEditMode(true)}
-            className="col-sm-2 btn btn-warning"
-          >
-            Edit network
-          </button>
-          <div className="col-sm-1">
-            <label className="col-form-label">Time steps</label>
-          </div>
-          <div className="col-sm-1">
-            <input
-              className=" form-control"
-              type="text"
-              placeholder={10}
-              value={this.state.duration}
-              onChange={(e) => this.handleChangeDuration(e.target.value)}
-            ></input>
-          </div>
-          <button
-            onClick={this.handleExecuteNetwork}
-            className="col-sm-2 btn btn-danger"
-          >
-            Execute network
-          </button>
-        </div>
       );
     }
   }
@@ -347,22 +309,35 @@ class Editor extends Component {
             onClickSynapse={this.handleClickSynapse}
             onRenameNode={this.handleRenameNode}
           />
-          <Config
-            nodes={network.nodes}
-            synapses={network.synapses}
-            measurements={execution.measurements}
-            // selected element
-            selectedNodeId={selectedNodeId}
-            selectedSynapseId={selectedSynapseId}
-            // current mode
-            connectMode={this.state.connectMode}
-            editMode={this.state.editMode}
-            // handlers
-            onDeleteNode={this.handleDeleteNode}
-            onDeleteSynapse={this.handleDeleteSynapse}
-            onChangeOption={this.handleChangeOption}
-            onSwitchConnectMode={this.handleSwitchConnectMode}
-          />
+          <div className="column-right">
+            <NetworkDetails
+              editMode={this.state.editMode}
+              duration={this.state.duration}
+              nrNodes={network.nodes.length}
+              nrSynapses={network.synapses.length}
+              // handlers
+              onExecuteNetwork={this.handleExecuteNetwork}
+              onSaveNetwork={this.handleSaveNetwork}
+              onSwitchEditMode={this.handleSwitchEditMode}
+              onChangeDuration={this.handleChangeDuration}
+            />
+            <ElementDetails
+              nodes={network.nodes}
+              synapses={network.synapses}
+              measurements={execution.measurements}
+              // selected element
+              selectedNodeId={selectedNodeId}
+              selectedSynapseId={selectedSynapseId}
+              // current mode
+              connectMode={this.state.connectMode}
+              editMode={this.state.editMode}
+              // handlers
+              onDeleteNode={this.handleDeleteNode}
+              onDeleteSynapse={this.handleDeleteSynapse}
+              onChangeOption={this.handleChangeOption}
+              onSwitchConnectMode={this.handleSwitchConnectMode}
+            />
+          </div>
         </div>
         {this.getExecutionSlider()}
         {this.getButtons()}

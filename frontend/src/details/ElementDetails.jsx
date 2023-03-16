@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Option from "./Option";
 import Plot from "./Plot";
 
-class Config extends Component {
+class ElementDetails extends Component {
   state = {
     lifOptions: [
       { name: "m", type: "float", text: "Inverse leakage (m)", default: 1 },
@@ -55,7 +55,7 @@ class Config extends Component {
     if (connectMode) {
       return (
         <button
-          className="btn btn-warning m-2"
+          className="col-sm btn btn-warning m-2"
           onClick={() => onSwitchConnectMode(false)}
         >
           Cancel connecting
@@ -64,7 +64,7 @@ class Config extends Component {
     } else {
       return (
         <button
-          className="btn btn-primary m-2"
+          className="col-sm btn btn-primary m-2"
           onClick={() => onSwitchConnectMode(true)}
         >
           Connect node
@@ -90,30 +90,29 @@ class Config extends Component {
     }
 
     return (
-      <React.Fragment>
-        <br></br>
+      <div className="form-group row m-2">
         {this.getConnectButton()}
         <button
-          className="btn btn-danger m-2"
+          className="col-sm btn btn-danger m-2"
           onClick={() => this.props.onDeleteNode(selectedNode.id)}
         >
           Delete node
         </button>
-      </React.Fragment>
+      </div>
     );
   }
 
   getConfigSelectedNode(selectedNode, options) {
     return (
-      <React.Fragment>
-        <h3>
+      <div style={{ maxWidth: "400px" }}>
+        <h3 className="m-2">
           {selectedNode.type} <b>{selectedNode.name}</b>
         </h3>
         {options.map((option) =>
           this.getConfigOption(selectedNode, "nodes", option)
         )}
         {this.getButtonsNodeConfig(selectedNode)}
-      </React.Fragment>
+      </div>
     );
   }
 
@@ -123,19 +122,21 @@ class Config extends Component {
     }
 
     return (
-      <button
-        className="btn btn-danger m-2"
-        onClick={() => this.props.onDeleteSynapse(selectedSynapse.id)}
-      >
-        Delete synapse
-      </button>
+      <div className="form-group row m-2">
+        <button
+          className="col-sm btn btn-danger m-2"
+          onClick={() => this.props.onDeleteSynapse(selectedSynapse.id)}
+        >
+          Delete synapse
+        </button>
+      </div>
     );
   }
 
   getConfigSelectedSynapse(selectedSynapse, options) {
     return (
-      <React.Fragment>
-        <h3>
+      <div style={{ maxWidth: "400px" }}>
+        <h3 className="m-2">
           Synapse from {this.getNodeName(selectedSynapse.pre)} to{" "}
           {this.getNodeName(selectedSynapse.post)}
         </h3>
@@ -143,7 +144,7 @@ class Config extends Component {
           this.getConfigOption(selectedSynapse, "synapses", option)
         )}
         {this.getButtonsSynapseConfig(selectedSynapse)}
-      </React.Fragment>
+      </div>
     );
   }
 
@@ -183,13 +184,13 @@ class Config extends Component {
     const selectedSynapse = synapses.find((s) => s.id === selectedSynapseId);
 
     return (
-      <div className="column-right">
+      <React.Fragment>
         {this.getConfigSelectedElement(selectedNode, selectedSynapse)}
         <br />
         {this.getPlotsSelectedNode(selectedNode, measurements)}
-      </div>
+      </React.Fragment>
     );
   }
 }
 
-export default Config;
+export default ElementDetails;
