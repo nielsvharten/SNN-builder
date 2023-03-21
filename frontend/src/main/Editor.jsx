@@ -3,6 +3,7 @@ import Network from "../network/Network";
 import InputValidator from "../utils/InputValidator";
 import NetworkDetails from "../details/NetworkDetails";
 import ElementDetails from "../details/ElementDetails";
+import { LIF, InputTrain, RandomSpiker } from "../model/node";
 
 class Editor extends Component {
   state = {
@@ -39,7 +40,7 @@ class Editor extends Component {
     const { connectMode, selectedNodeId } = this.state;
 
     if (connectMode) {
-      if (node.type === "input") {
+      if (node.type !== "lif") {
         return;
       }
       this.handleAddSynapse(selectedNodeId, node.id);
@@ -82,28 +83,42 @@ class Editor extends Component {
     window.localStorage.setItem("network", jsonState);
   };
 
+  handleExportNetwork = () => {
+    const { network } = this.state;
+
+    // create file in browser
+    const fileName = "network";
+    const json = JSON.stringify(network, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const href = URL.createObjectURL(blob);
+
+    // create "a" HTLM element with href to file
+    const link = document.createElement("a");
+    link.href = href;
+    link.download = fileName + ".json";
+    document.body.appendChild(link);
+    link.click();
+
+    // clean up "a" element & remove ObjectURL
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  };
+
   handleAddNode = (type) => {
     const network = { ...this.state.network };
     const id = network.maxNodeId + 1;
 
-    const node = {
-      id: id,
-      type: type,
-      read_out: false,
-      name: "",
-      x: 100,
-      y: 100,
-    };
-
-    if (type === "lif") {
-      node.m = 0.0;
-      node.V_init = 0.0;
-      node.V_reset = 0.0;
-      node.thr = 1.0;
-      node.I_e = 0.0;
-    } else if (type === "input") {
-      node.train = "[]";
-      node.loop = false;
+    let node;
+    switch (type) {
+      case "lif":
+        node = new LIF(id);
+        break;
+      case "input":
+        node = new InputTrain(id);
+        break;
+      case "random":
+        node = new RandomSpiker(id);
+        break;
     }
 
     network.nodes = network.nodes.concat(node);
@@ -173,7 +188,13 @@ class Editor extends Component {
     const oldValue = network[elementType][index][option.name];
 
     // TODO: check if input is valid
-    const validatedValue = InputValidator(option.type, oldValue, newValue);
+    const validatedValue = InputValidator(
+      option.type,
+      oldValue,
+      newValue,
+      option.min,
+      option.max
+    );
 
     network[elementType][index] = { ...element };
     network[elementType][index][option.name] = validatedValue;
@@ -283,6 +304,18 @@ class Editor extends Component {
             className="btn btn-warning m-2"
           >
             Add input
+          </button>
+          <button
+            onClick={() => this.handleAddNode("random")}
+            className="btn btn-danger m-2"
+          >
+            Add random
+          </button>
+          <button
+            className="btn btn-success m-2"
+            onClick={this.handleExportNetwork}
+          >
+            Export network
           </button>
         </React.Fragment>
       );

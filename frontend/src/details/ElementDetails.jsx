@@ -4,33 +4,70 @@ import Plot from "./Plot";
 
 class ElementDetails extends Component {
   state = {
-    lifOptions: [
-      { name: "m", type: "float", text: "Inverse leakage (m)", default: 1 },
-      { name: "V_init", type: "float", text: "Initial voltage", default: 0 },
-      { name: "V_reset", type: "float", text: "Reset voltage (R)", default: 0 },
-      { name: "thr", type: "float", text: "Spiking threshold (T)", default: 1 },
-      {
-        name: "I_e",
-        type: "float",
-        text: "Constant input current",
-        default: 0,
-      },
-      { name: "read_out", type: "bool", text: "Read-out neuron" },
-    ],
-    inputOptions: [
-      { name: "train", type: "float-list", text: "Input spike train" },
-      { name: "loop", type: "bool", text: "Whether to loop the train" },
-      { name: "read_out", type: "bool", text: "Read-out neuron" },
-    ],
-    synapseOptions: [
-      { name: "w", type: "float", text: "Synaptic weight", default: 1 },
-      {
-        name: "d",
-        type: "int",
-        text: "Synaptic delay in time steps",
-        default: 1,
-      },
-    ],
+    options: {
+      lif: [
+        {
+          name: "m",
+          type: "float",
+          text: "Inverse leakage (m)",
+          default: 1,
+          min: 0,
+          max: 1,
+        },
+        {
+          name: "V_init",
+          type: "float",
+          text: "Initial voltage",
+          default: 0,
+          min: 0,
+        },
+        {
+          name: "V_reset",
+          type: "float",
+          text: "Reset voltage (R)",
+          default: 0,
+          min: 0,
+        },
+        {
+          name: "thr",
+          type: "float",
+          text: "Spiking threshold (T)",
+          default: 1,
+        },
+        {
+          name: "I_e",
+          type: "float",
+          text: "Constant input current",
+          default: 0,
+        },
+        { name: "read_out", type: "bool", text: "Read-out neuron" },
+      ],
+      input: [
+        { name: "train", type: "float-list", text: "Input spike train" },
+        { name: "loop", type: "bool", text: "Whether to loop the train" },
+        { name: "read_out", type: "bool", text: "Read-out neuron" },
+      ],
+      random: [
+        {
+          name: "p",
+          type: "float",
+          text: "Spiking probability",
+          min: 0,
+          max: 1,
+        },
+        { name: "read_out", type: "bool", text: "Read-out neuron" },
+      ],
+      synapse: [
+        { name: "w", type: "float", text: "Synaptic weight", default: 1 },
+        {
+          name: "d",
+          type: "int",
+          text: "Synaptic delay in time steps",
+          default: 1,
+          min: 1,
+        },
+      ],
+    },
   };
 
   getConfigOption(element, elementType, option) {
@@ -150,14 +187,10 @@ class ElementDetails extends Component {
 
   getConfigSelectedElement(selectedNode, selectedSynapse) {
     if (selectedNode) {
-      const options =
-        selectedNode.type === "lif"
-          ? this.state.lifOptions
-          : this.state.inputOptions;
-
+      const options = this.state.options[selectedNode.type];
       return this.getConfigSelectedNode(selectedNode, options);
     } else if (selectedSynapse) {
-      const options = this.state.synapseOptions;
+      const options = this.state.options.synapse;
       return this.getConfigSelectedSynapse(selectedSynapse, options);
     }
   }

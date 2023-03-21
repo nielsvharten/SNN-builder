@@ -53,6 +53,10 @@ def network():
             loop = bool(node['loop'])
 
             nodes[id] = net.createInputTrain(ID=id, train=train, loop=loop)
+        elif node['type'] == "random":
+            p = float(node['p'])
+
+            nodes[id] = net.createRandomSpiker(ID=id, p=p)
 
         #if bool(node['read_out']):
         read_out_nodes.append(nodes[id])

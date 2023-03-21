@@ -6,6 +6,10 @@ const Synapse = ({ synapse, selected, onClickSynapse }) => {
     color = "blue";
   }
 
+  if (synapse.pre === synapse.post) {
+    // TODO: loop to itself, should be visible
+  }
+
   return (
     <Xarrow
       start={synapse.pre.toString()}
@@ -17,6 +21,7 @@ const Synapse = ({ synapse, selected, onClickSynapse }) => {
           color: "white",
           fontWeight: "bold",
         }}
+        onClick={() => onClickSynapse(synapse.id)}
       >
         {"w=" + synapse.w + " d=" + synapse.d}
       </p>

@@ -9,47 +9,15 @@ function getDefaultProps(node) {
 
   return (
     <React.Fragment>
-      <div
-        className="node-prop node-prop-m"
-        style={{
-          position: "absolute",
-          top: "-10px",
-          left: "50px",
-          fontSize: "small",
-        }}
-      >
-        m={node.m}
-      </div>
-      <div
-        className="node-prop node-prop-thr"
-        style={{
-          position: "absolute",
-          top: "50px",
-          left: "50px",
-          fontSize: "small",
-        }}
-      >
-        T={node.thr}
-      </div>
+      <div className="node-prop node-prop-m">m={node.m}</div>
+      <div className="node-prop node-prop-thr">T={node.thr}</div>
     </React.Fragment>
   );
 }
 
 function getSpikeProp(spike) {
   if (spike === "true") {
-    return (
-      <div
-        className="node-prop node-prop-spike"
-        style={{
-          position: "absolute",
-          top: "2px",
-          left: "54px",
-          fontSize: "larger",
-        }}
-      >
-        ⚡
-      </div>
-    );
+    return <div className="node-prop node-prop-spike">⚡</div>;
   }
 }
 
@@ -60,28 +28,8 @@ function getExecutionProps(node, voltage, spike) {
 
   return (
     <React.Fragment>
-      <div
-        className="node-prop node-prop-v"
-        style={{
-          position: "absolute",
-          top: "-10px",
-          left: "50px",
-          fontSize: "small",
-        }}
-      >
-        V={voltage}
-      </div>
-      <div
-        className="node-prop node-prop-thr"
-        style={{
-          position: "absolute",
-          top: "50px",
-          left: "50px",
-          fontSize: "small",
-        }}
-      >
-        T={node.thr}
-      </div>
+      <div className="node-prop node-prop-v">V={voltage}</div>
+      <div className="node-prop node-prop-thr">T={node.thr}</div>
       {getSpikeProp(spike)}
     </React.Fragment>
   );

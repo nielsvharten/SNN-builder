@@ -16,6 +16,11 @@ code {
   background-color: #002D42;
   z-index: 1;
   cursor: pointer;
+
+  /* positioning within neuron */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .network {
@@ -30,11 +35,6 @@ code {
   height: 60px;
   border-radius: 50%;
   position: absolute;
-
-  /* positioning within neuron */
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .node-input {
@@ -42,11 +42,32 @@ code {
   height: 60px;
   border-radius: 4px;
   position: absolute;
-  
-  /* positioning within neuron */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+}
+
+.node-random {
+  height: 60px;
+  width: 32px;
+  position:absolute;
+}
+
+.node-random::before, .node-random::after {
+  content:"";
+  position: absolute;
+  height: 0;
+  width: 0; 
+  top:0;
+  /* half height */
+  border-top: 30px solid transparent;
+  border-bottom: 30px solid transparent; 
+}
+.node-random::before {
+  left:-16px;
+  border-right:16px solid #002D42; 
+}
+
+.node-random::after {
+  right:-16px;
+  border-left:16px solid #002D42; 
 }
 
 .node-name {
@@ -61,6 +82,37 @@ code {
 
 .node.read-out {
   background-color: #7b0600;
+}
+
+.node-random.read-out::before, .node-random.read-out::after {
+  border-left-color: #7b0600;
+  border-right-color: #7b0600;
+}
+
+
+.node-prop-v, .node-prop-m {
+  position: absolute;
+  top: -10px;
+  left: 50px;
+  font-size: small;
+}
+
+.node-prop-thr {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  font-size: small;
+}
+
+.node-prop-spike {
+  position: absolute;
+  top: 2px;
+  left: 54px;
+  font-size: larger;
+}
+
+.node-random > .node-prop-spike {
+  left: 38px;
 }
 
 .column-left {
