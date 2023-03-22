@@ -13,7 +13,7 @@ class NetworkDetails extends Component {
           <div className="col-sm-4">
             <input
               className=" form-control"
-              disabled="true"
+              disabled={true}
               value={nrNodes}
             ></input>
           </div>
@@ -25,7 +25,7 @@ class NetworkDetails extends Component {
           <div className="col-sm-4">
             <input
               className=" form-control"
-              disabled="true"
+              disabled={true}
               value={nrSynapses}
             ></input>
           </div>

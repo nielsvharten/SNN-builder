@@ -1,10 +1,8 @@
-import React from "react";
-
 const floatRegex = /^-?\d*(\.\d*)?$/;
 const floatRegexNonNegative = /^\d*(\.\d*)?$/;
 const intRegex = /^-?\d*$/;
 const intRegexNonNegative = /^\d*$/;
-const floatListRegex = /^\[(-?\d\d*(\.\d*)?\,)*(-?\d*(\d\.\d*)?)?\]$/;
+const floatListRegex = /^\[(-?\d\d*(\.\d*)?,)*(-?\d*(\d\.\d*)?)?\]$/;
 
 function validateFloat(oldValue, newValue, min, max) {
   const valid =

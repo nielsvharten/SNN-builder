@@ -48,6 +48,8 @@ class Option extends Component {
         return this.getBoolInput(value, editMode, onChangeOption);
       case "float-list":
         return this.getFloatListInput(value, editMode, onChangeOption);
+      default:
+        return;
     }
   }
 

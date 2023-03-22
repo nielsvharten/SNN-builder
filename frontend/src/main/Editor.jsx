@@ -99,6 +99,8 @@ class Editor extends Component {
       case "random":
         node = new RandomSpiker(id);
         break;
+      default:
+        node = null;
     }
 
     network.nodes = network.nodes.concat(node);

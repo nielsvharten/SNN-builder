@@ -15,6 +15,8 @@ function getDefaultProps(node) {
       return <div className="node-prop node-prop-type">R</div>;
     case "input":
       return <div className="node-prop node-prop-type">IT</div>;
+    default:
+      return;
   }
 }
 
