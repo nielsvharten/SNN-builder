@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Navigation from "./Navigation";
 import Network from "../network/Network";
 import InputValidator from "../utils/InputValidator";
 import NetworkDetails from "../details/NetworkDetails";
@@ -81,27 +82,6 @@ class Editor extends Component {
 
     const jsonState = JSON.stringify(this.state.network);
     window.localStorage.setItem("network", jsonState);
-  };
-
-  handleExportNetwork = () => {
-    const { network } = this.state;
-
-    // create file in browser
-    const fileName = "network";
-    const json = JSON.stringify(network, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const href = URL.createObjectURL(blob);
-
-    // create "a" HTLM element with href to file
-    const link = document.createElement("a");
-    link.href = href;
-    link.download = fileName + ".json";
-    document.body.appendChild(link);
-    link.click();
-
-    // clean up "a" element & remove ObjectURL
-    document.body.removeChild(link);
-    URL.revokeObjectURL(href);
   };
 
   handleAddNode = (type) => {
@@ -311,12 +291,6 @@ class Editor extends Component {
           >
             Add random
           </button>
-          <button
-            className="btn btn-success m-2"
-            onClick={this.handleExportNetwork}
-          >
-            Export network
-          </button>
         </React.Fragment>
       );
     }
@@ -328,6 +302,10 @@ class Editor extends Component {
 
     return (
       <React.Fragment>
+        <Navigation
+          network={network}
+          onImportNetwork={this.handleImportNetwork}
+        />
         <div className="builder">
           <Network
             network={network}
@@ -377,6 +355,10 @@ class Editor extends Component {
       </React.Fragment>
     );
   }
+
+  handleImportNetwork = (network) => {
+    this.setState({ network });
+  };
 
   // try loading network json object from local storage
   componentDidMount() {
