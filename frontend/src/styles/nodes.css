@@ -1,0 +1,95 @@
+.node-wrapper {
+  width:60px;
+  height:60px;
+  cursor: pointer;
+
+  /* positioning within neuron */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.node-cut-off {
+  overflow: hidden;
+  
+}
+
+.node-shape {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  overflow: hidden;
+  background-color: #002D42;
+}
+
+.node-shape-lif {
+  border-radius: 50%;
+}
+
+.node-shape-input, .node-shape-random {
+  left: 5px;
+  top: 5px;
+  width: 50px;
+  height: 50px;
+  transform: rotate(45deg);
+  border-radius: 3px;
+}
+
+.node-shape-read-out {
+  overflow: hidden;
+  position: relative;
+  width: 60px;
+  height: 60px;
+  transform: rotate(45deg);
+}
+
+.node-shape-read-out::before {
+  position: absolute;
+  top: -2px; right: -2px; bottom: -2px; left: -2px;
+  transform: rotate(45deg);
+  content: '';
+  border: 2px solid white;
+}
+
+.node-name {
+  padding: 0px 5px;
+  color: white;
+  position: absolute;
+  z-index: 1;
+}
+
+.node-shape.selected {
+  border: 2px solid white; 
+}
+
+.node-prop-v, .node-prop-m {
+  position: absolute;
+  top: -10px;
+  left: 50px;
+  font-size: small;
+}
+
+.node-prop-thr {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  font-size: small;
+}
+
+.node-prop-type {
+  position: absolute;
+  top: 46px;
+  left: 46px;
+  font-size: small;
+  font-weight: bold;
+}
+
+.node-prop-spike {
+  position: absolute;
+  top: 2px;
+  left: 54px;
+  font-size: larger;
+}
+
+.node-shape-random > .node-prop-spike {
+  left: 38px;
+}

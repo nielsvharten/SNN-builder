@@ -3,16 +3,19 @@ import { useXarrow } from "react-xarrows";
 import Draggable from "react-draggable";
 
 function getDefaultProps(node) {
-  if (node.type !== "lif") {
-    return;
+  switch (node.type) {
+    case "lif":
+      return (
+        <React.Fragment>
+          <div className="node-prop node-prop-m">m={node.m}</div>
+          <div className="node-prop node-prop-thr">T={node.thr}</div>
+        </React.Fragment>
+      );
+    case "random":
+      return <div className="node-prop node-prop-type">R</div>;
+    case "input":
+      return <div className="node-prop node-prop-type">IT</div>;
   }
-
-  return (
-    <React.Fragment>
-      <div className="node-prop node-prop-m">m={node.m}</div>
-      <div className="node-prop node-prop-thr">T={node.thr}</div>
-    </React.Fragment>
-  );
 }
 
 function getSpikeProp(spike) {
@@ -35,12 +38,22 @@ function getExecutionProps(node, voltage, spike) {
   );
 }
 
-function getNodeProps(node, editMode, voltage, spike) {
+function getNodeProps(node, voltage, spike) {
   if (voltage !== null) {
     return getExecutionProps(node, voltage, spike);
   } else {
     return getDefaultProps(node);
   }
+}
+
+function getClassNames(type, selected = false, readOut = false) {
+  const selectedClass = selected ? " selected" : "";
+
+  if (readOut) {
+    return "node-shape-read-out " + selectedClass;
+  }
+
+  return "node-shape-" + type + selectedClass;
 }
 
 const Node = ({
@@ -55,8 +68,6 @@ const Node = ({
   onRenameNode,
 }) => {
   const updateXarrow = useXarrow();
-  const selectedClass = selected ? " selected" : "";
-  const readOutClass = node.read_out ? " read-out" : "";
 
   return (
     <Draggable
@@ -69,9 +80,16 @@ const Node = ({
     >
       <div
         id={node.id}
-        className={"node node-" + node.type + selectedClass + readOutClass}
+        className={"node-wrapper"}
         onClick={() => onClickNode(node)}
       >
+        <div className="node-cut-off">
+          <div
+            className={
+              "node-shape " + getClassNames(node.type, selected, node.read_out)
+            }
+          ></div>
+        </div>
         <div
           className="node-name"
           contentEditable={editMode}
@@ -80,7 +98,7 @@ const Node = ({
         >
           {storedName}
         </div>
-        {getNodeProps(node, editMode, voltage, spike)}
+        {getNodeProps(node, voltage, spike)}
       </div>
     </Draggable>
   );

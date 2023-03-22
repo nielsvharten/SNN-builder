@@ -101,7 +101,13 @@ class Network extends Component {
       <TransformWrapper
         maxScale={1}
         panning={{
-          excluded: ["node", "node-name", "node-prop"],
+          excluded: [
+            "node-wrapper",
+            "node-cut-off",
+            "node-shape",
+            "node-name",
+            "node-prop",
+          ],
         }}
       >
         <TransformComponent>

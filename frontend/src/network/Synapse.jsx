@@ -20,6 +20,7 @@ const Synapse = ({ synapse, selected, onClickSynapse }) => {
         style={{
           color: "white",
           fontWeight: "bold",
+          cursor: "pointer",
         }}
         onClick={() => onClickSynapse(synapse.id)}
       >
