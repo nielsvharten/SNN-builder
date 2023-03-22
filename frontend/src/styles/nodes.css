@@ -1,6 +1,7 @@
 .node-wrapper {
   width:60px;
   height:60px;
+  position: absolute;
   cursor: pointer;
 
   /* positioning within neuron */
@@ -11,7 +12,6 @@
 
 .node-cut-off {
   overflow: hidden;
-  
 }
 
 .node-shape {
