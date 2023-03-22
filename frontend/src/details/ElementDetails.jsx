@@ -45,7 +45,6 @@ class ElementDetails extends Component {
       input: [
         { name: "train", type: "float-list", text: "Input spike train" },
         { name: "loop", type: "bool", text: "Whether to loop the train" },
-        { name: "read_out", type: "bool", text: "Read-out neuron" },
       ],
       random: [
         {
@@ -55,7 +54,6 @@ class ElementDetails extends Component {
           min: 0,
           max: 1,
         },
-        { name: "read_out", type: "bool", text: "Read-out neuron" },
       ],
       synapse: [
         { name: "w", type: "float", text: "Synaptic weight", default: 1 },
@@ -198,7 +196,7 @@ class ElementDetails extends Component {
   getPlotsSelectedNode(selectedNode, measurements) {
     if (
       selectedNode &&
-      selectedNode.read_out &&
+      /*selectedNode.read_out &&*/
       measurements[selectedNode.id]
     ) {
       return (
