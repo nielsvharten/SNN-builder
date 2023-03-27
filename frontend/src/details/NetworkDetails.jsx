@@ -3,6 +3,7 @@ import React, { Component } from "react";
 class NetworkDetails extends Component {
   getDetails() {
     const { nrNodes, nrSynapses, duration, onChangeDuration } = this.props;
+    const DURATION = 10;
 
     return (
       <React.Fragment>
@@ -38,9 +39,14 @@ class NetworkDetails extends Component {
             <input
               className=" form-control"
               type="text"
-              placeholder={10}
+              placeholder={DURATION}
               value={duration}
               onChange={(e) => onChangeDuration(e.target.value)}
+              onBlur={(e) => {
+                if (e.target.value === "") {
+                  onChangeDuration(DURATION);
+                }
+              }}
             ></input>
           </div>
         </div>

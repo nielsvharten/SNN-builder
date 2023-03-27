@@ -13,18 +13,6 @@ import {
 } from "react-contexify";
 
 class Network extends Component {
-  state = {
-    storedNodes: [...this.props.network.nodes],
-  };
-
-  getStoredName(nodeId) {
-    const storedNode = this.state.storedNodes.find(
-      (node) => node.id === nodeId
-    );
-
-    return storedNode ? storedNode.name : "";
-  }
-
   getNodeVoltage(node, execution) {
     if (execution.measurements[node.id]) {
       return execution.measurements[node.id]["voltages"][execution.timeStep];
@@ -46,6 +34,7 @@ class Network extends Component {
       selectedNodeId,
       execution,
       editMode,
+      onStartDragNode,
       onStopDragNode,
       onClickNode,
       onRenameNode,
@@ -59,8 +48,8 @@ class Network extends Component {
         editMode={editMode}
         voltage={this.getNodeVoltage(node, execution)}
         spike={this.getNodeSpike(node, execution)}
-        storedName={this.getStoredName(node.id)}
         // handlers
+        onStartDragNode={onStartDragNode}
         onStopDragNode={onStopDragNode}
         onClickNode={onClickNode}
         onRenameNode={onRenameNode}
@@ -121,6 +110,18 @@ class Network extends Component {
     });
   };
 
+  handleRemoveSelection = (e) => {
+    const { connectMode, onDeselectElements } = this.props;
+
+    if (!e.target.classList.value.includes("node-name")) {
+      document.activeElement.blur();
+    }
+
+    if (!connectMode && e.target.classList.value.includes("column-left")) {
+      onDeselectElements();
+    }
+  };
+
   render() {
     const { nodes, synapses } = this.props.network;
 
@@ -145,6 +146,7 @@ class Network extends Component {
               minHeight: this.getMinNetworkHeight(),
               backgroundColor: this.getBackgroundColor(),
             }}
+            onClick={this.handleRemoveSelection}
             onContextMenu={this.displayMenu}
           >
             <ContextMenu />

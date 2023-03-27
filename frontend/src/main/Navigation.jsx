@@ -3,19 +3,20 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import Network from "../model/network";
 
 class Navigation extends Component {
   state = {};
 
   handleImportFile = () => {
-    const { onImportNetwork } = this.props;
+    const { onChangeNetwork } = this.props;
 
     document.getElementById("uploadFile").click();
     document.getElementById("uploadFile").onchange = (e) => {
       const fileReader = new FileReader();
       fileReader.readAsText(e.target.files[0], "UTF-8");
       fileReader.onload = (e) => {
-        onImportNetwork(JSON.parse(e.target.result));
+        onChangeNetwork(JSON.parse(e.target.result));
       };
     };
   };
@@ -55,6 +56,13 @@ class Navigation extends Component {
     }
   };
 
+  handleNewFile = () => {
+    const { onChangeNetwork } = this.props;
+    const network = new Network();
+
+    onChangeNetwork(network);
+  };
+
   render() {
     return (
       <Navbar bg="dark" expand="sm" variant="dark">
@@ -64,10 +72,30 @@ class Navigation extends Component {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <NavDropdown title="File" id="basic-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">
+                <NavDropdown.Item
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Have you saved your progress? The current network will be lost"
+                      )
+                    ) {
+                      this.handleNewFile();
+                    }
+                  }}
+                >
                   New network
                 </NavDropdown.Item>
-                <NavDropdown.Item onClick={this.handleImportFile}>
+                <NavDropdown.Item
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Have you saved your progress? The current network will be lost"
+                      )
+                    ) {
+                      this.handleImportFile();
+                    }
+                  }}
+                >
                   Import network
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={this.handleExportFile}>

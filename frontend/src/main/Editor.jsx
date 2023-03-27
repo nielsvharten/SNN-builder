@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import Navigation from "./Navigation";
-import Network from "../network/Network";
+import Canvas from "../network/Canvas";
 import InputValidator from "../utils/InputValidator";
 import NetworkDetails from "../details/NetworkDetails";
 import ElementDetails from "../details/ElementDetails";
 import { LIF, InputTrain, RandomSpiker } from "../model/node";
+import Network from "../model/network";
 
 class Editor extends Component {
   state = {
@@ -16,13 +17,7 @@ class Editor extends Component {
 
     loaded: false,
 
-    network: {
-      nodes: [],
-      synapses: [],
-      maxNodeId: 0,
-      maxSynapseId: 0,
-      duration: 10,
-    },
+    network: new Network(),
 
     execution: { timeStep: 0, duration: 10, measurements: {} },
 
@@ -73,6 +68,10 @@ class Editor extends Component {
     }
   };
 
+  handleDeselectElements = () => {
+    this.setState({ selectedNodeId: null, selectedSynapseId: null });
+  };
+
   handleSelectNode = (nodeId) => {
     const selectedNodeId = nodeId;
     const selectedSynapseId = null;
@@ -83,6 +82,7 @@ class Editor extends Component {
   };
 
   handleClickNode = (node) => {
+    console.log(node);
     const { connectMode, selectedNodeId } = this.state;
 
     if (connectMode) {
@@ -162,29 +162,42 @@ class Editor extends Component {
     this.handleUpdateNetwork(network);
   };
 
-  handleStartDragNode() {}
+  handleStartDragNode = () => {
+    const undo = [...this.state.undo];
+    undo.push(this.state.network);
+
+    this.setState({ undo });
+  };
 
   handleStopDragNode = (node, x, y) => {
     const network = { ...this.state.network };
-    const index = network.nodes.indexOf(node);
-    network.nodes[index] = { ...node };
-    network.nodes[index].x = x;
-    network.nodes[index].y = y;
+    const nodes = [...network.nodes];
+    const index = nodes.indexOf(node);
+    nodes[index] = { ...node };
+    nodes[index].x = x;
+    nodes[index].y = y;
 
+    network.nodes = nodes;
     this.setState({ network });
+    this.handleSaveNetwork(network);
   };
 
   handleRenameNode = (node, newName) => {
     const network = { ...this.state.network };
-    const index = network.nodes.indexOf(node);
-    network.nodes[index] = { ...node };
-    network.nodes[index].name = newName;
+    const nodes = [...network.nodes];
+    const index = nodes.indexOf(node);
+    nodes[index] = { ...node };
+    nodes[index].name = newName;
 
+    network.nodes = nodes;
     this.setState({ network });
   };
 
   handleAddSynapse = (preId, postId) => {
-    console.log("create", preId, postId);
+    if (preId === null || postId === null) {
+      return;
+    }
+
     const network = { ...this.state.network };
     const id = network.maxSynapseId + 1;
 
@@ -212,8 +225,9 @@ class Editor extends Component {
 
   handleChangeOption = (element, elementType, option, newValue) => {
     const network = { ...this.state.network };
-    const index = network[elementType].indexOf(element);
-    const oldValue = network[elementType][index][option.name];
+    const elements = [...network[elementType]];
+    const index = elements.indexOf(element);
+    const oldValue = elements[index][option.name];
 
     // TODO: check if input is valid
     const validatedValue = InputValidator(
@@ -224,8 +238,9 @@ class Editor extends Component {
       option.max
     );
 
-    network[elementType][index] = { ...element };
-    network[elementType][index][option.name] = validatedValue;
+    elements[index] = { ...element };
+    elements[index][option.name] = validatedValue;
+    network[elementType] = elements;
 
     this.handleUpdateNetwork(network);
   };
@@ -345,28 +360,38 @@ class Editor extends Component {
   }
 
   getEditor() {
-    const { network, editMode, execution, selectedNodeId, selectedSynapseId } =
-      this.state;
+    const {
+      network,
+      editMode,
+      connectMode,
+      execution,
+      selectedNodeId,
+      selectedSynapseId,
+    } = this.state;
 
     return (
       <React.Fragment>
         <Navigation
           network={network}
-          onImportNetwork={this.handleImportNetwork}
+          // handlers
+          onChangeNetwork={this.handleChangeNetwork}
         />
         <div className="builder">
-          <Network
+          <Canvas
             network={network}
             execution={execution}
             editMode={editMode}
+            connectMode={connectMode}
             // selected element
             selectedNodeId={selectedNodeId}
             selectedSynapseId={selectedSynapseId}
             // handlers
+            onStartDragNode={this.handleStartDragNode}
             onStopDragNode={this.handleStopDragNode}
             onClickNode={this.handleClickNode}
             onClickSynapse={this.handleClickSynapse}
             onRenameNode={this.handleRenameNode}
+            onDeselectElements={this.handleDeselectElements}
           />
           <div className="column-right">
             <NetworkDetails
@@ -408,8 +433,13 @@ class Editor extends Component {
     );
   }
 
-  handleImportNetwork = (network) => {
-    this.setState({ network });
+  handleChangeNetwork = (network) => {
+    this.handleSwitchEditMode(true);
+
+    const undo = [...this.state.undo];
+    undo.push(this.state.network);
+
+    this.setState({ network, undo });
   };
 
   // try loading network json object from local storage

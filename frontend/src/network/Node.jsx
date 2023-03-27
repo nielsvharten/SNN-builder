@@ -64,7 +64,7 @@ const Node = ({
   editMode,
   voltage,
   spike,
-  storedName,
+  onStartDragNode,
   onStopDragNode,
   onClickNode,
   onRenameNode,
@@ -73,7 +73,10 @@ const Node = ({
 
   return (
     <Draggable
-      onStart={() => onClickNode(node)}
+      onStart={() => {
+        onStartDragNode();
+        onClickNode(node);
+      }}
       onDrag={updateXarrow}
       onStop={(_, data) => onStopDragNode(node, data.x, data.y)}
       position={{ x: node.x, y: node.y }}
@@ -96,9 +99,9 @@ const Node = ({
           className="node-name"
           contentEditable={editMode}
           spellCheck="false"
-          onInput={(e) => onRenameNode(node, e.currentTarget.textContent)}
+          onBlur={(e) => onRenameNode(node, e.currentTarget.textContent)}
         >
-          {storedName}
+          {node.name}
         </div>
         {getNodeProps(node, voltage, spike)}
       </div>

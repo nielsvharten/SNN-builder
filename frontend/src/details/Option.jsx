@@ -10,6 +10,11 @@ class Option extends Component {
         disabled={!editMode}
         placeholder={option.default}
         onChange={(e) => onChangeOption(e.target.value)}
+        onBlur={(e) => {
+          if (e.target.value === "") {
+            onChangeOption(option.default);
+          }
+        }}
       />
     );
   }
