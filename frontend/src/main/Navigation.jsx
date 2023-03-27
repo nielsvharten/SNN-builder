@@ -24,8 +24,8 @@ class Navigation extends Component {
     const opts = {
       types: [
         {
-          description: "JSON file",
-          accept: { "application/json": [".json"] },
+          description: "Spiking Neural Network",
+          accept: { "application/json": [".snn"] },
         },
       ],
     };
@@ -41,7 +41,7 @@ class Navigation extends Component {
     const blob = new Blob([content], { type: "application/json" });
 
     saveNetwork.href = URL.createObjectURL(blob);
-    saveNetwork.download = "network.json";
+    saveNetwork.download = "network.snn";
     saveNetwork.click();
     setTimeout(() => URL.revokeObjectURL(saveNetwork.href), 60000);
   }
@@ -78,7 +78,7 @@ class Navigation extends Component {
             </Nav>
           </Navbar.Collapse>
         </Container>
-        <input type="file" id="uploadFile" hidden />
+        <input type="file" id="uploadFile" accept=".snn" hidden />
       </Navbar>
     );
   }

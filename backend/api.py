@@ -27,13 +27,7 @@ def get_current_time():
 @app.route('/network', methods=['POST'])
 @cross_origin()
 def network():
-    json= request.get_json()
-    network = json['network']
-    try:
-        duration = int(json['duration'])
-    except ValueError:
-        duration = 10
-
+    network = request.get_json()
     net = Network()
 
     read_out_nodes = []
@@ -73,6 +67,11 @@ def network():
     # Add all read_out neurons to the simulation
     sim.raster.addTarget(read_out_nodes)
     sim.multimeter.addTarget(read_out_nodes)
+
+    try:
+        duration = int(network['duration'])
+    except ValueError:
+        duration = 10
 
     sim.run(steps=duration, plotting=False)
 

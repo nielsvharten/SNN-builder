@@ -49,13 +49,40 @@ class NetworkDetails extends Component {
   }
 
   getButtons() {
-    const { editMode, onExecuteNetwork, onSaveNetwork, onSwitchEditMode } =
-      this.props;
+    const {
+      editMode,
+      undo,
+      redo,
+      onExecuteNetwork,
+      onSaveNetwork,
+      onSwitchEditMode,
+      onUndo,
+      onRedo,
+    } = this.props;
 
     const firstButton = editMode ? (
-      <button onClick={onSaveNetwork} className="col-sm btn btn-success m-2">
-        Save network
-      </button>
+      <React.Fragment>
+        <button
+          onClick={onUndo}
+          className={
+            undo.length === 0
+              ? "col-sm-2 btn btn-secondary m-2 disabled"
+              : "col-sm-2 btn btn-secondary m-2"
+          }
+        >
+          Undo
+        </button>
+        <button
+          onClick={onRedo}
+          className={
+            redo.length === 0
+              ? "col-sm-2 btn btn-secondary m-2 disabled"
+              : "col-sm-2 btn btn-secondary m-2"
+          }
+        >
+          Redo
+        </button>
+      </React.Fragment>
     ) : (
       <button
         onClick={() => onSwitchEditMode(true)}

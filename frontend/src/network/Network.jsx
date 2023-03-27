@@ -1,8 +1,16 @@
 import React, { Component } from "react";
 import { Xwrapper } from "react-xarrows";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import ContextMenu from "./ContextMenu";
 import Node from "./Node";
 import Synapse from "./Synapse";
+import {
+  Menu,
+  Item,
+  Separator,
+  Submenu,
+  useContextMenu,
+} from "react-contexify";
 
 class Network extends Component {
   state = {
@@ -94,6 +102,25 @@ class Network extends Component {
     }
   };
 
+  displayMenu = (e) => {
+    const className = e.target.className;
+
+    let id = "";
+    if (className.includes("column-left")) {
+      id = "menu-bg";
+    } else if (className.includes("node-shape")) {
+      id = "menu-node";
+    }
+
+    const { show } = useContextMenu({
+      id: id,
+    });
+
+    show({
+      event: e,
+    });
+  };
+
   render() {
     const { nodes, synapses } = this.props.network;
 
@@ -118,7 +145,9 @@ class Network extends Component {
               minHeight: this.getMinNetworkHeight(),
               backgroundColor: this.getBackgroundColor(),
             }}
+            onContextMenu={this.displayMenu}
           >
+            <ContextMenu />
             <Xwrapper>
               {this.getNodeComponents(nodes)}
               {this.getSynapseComponents(synapses)}

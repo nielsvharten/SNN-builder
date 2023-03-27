@@ -10,24 +10,69 @@ class Editor extends Component {
   state = {
     selectedNodeId: null,
     selectedSynapseId: null,
+
     connectMode: false,
     editMode: true,
+
     loaded: false,
+
     network: {
-      id: 1,
-      name: "",
       nodes: [],
       synapses: [],
       maxNodeId: 0,
       maxSynapseId: 0,
+      duration: 10,
     },
-    duration: 10,
+
     execution: { timeStep: 0, duration: 10, measurements: {} },
+
+    undo: [],
+    redo: [],
   };
 
   /*
   Global handlers
   */
+  handleUpdateNetwork(network) {
+    // add old network to undo
+    const undo = [...this.state.undo];
+    undo.push({ ...this.state.network });
+
+    // set new network
+    this.setState({ undo, network });
+
+    // save new network
+    this.handleSaveNetwork(network);
+  }
+
+  handleUndo = () => {
+    const undo = [...this.state.undo];
+    const redo = [...this.state.redo];
+
+    if (undo.length > 0) {
+      const network = undo.pop();
+      redo.push({ ...this.state.network });
+      this.setState({ undo, redo, network });
+
+      // save new network
+      this.handleSaveNetwork(network);
+    }
+  };
+
+  handleRedo = () => {
+    const undo = [...this.state.undo];
+    const redo = [...this.state.redo];
+
+    if (redo.length > 0) {
+      const network = redo.pop();
+      undo.push({ ...this.state.network });
+      this.setState({ undo, redo, network });
+
+      // save new network
+      this.handleSaveNetwork(network);
+    }
+  };
+
   handleSelectNode = (nodeId) => {
     const selectedNodeId = nodeId;
     const selectedSynapseId = null;
@@ -77,12 +122,10 @@ class Editor extends Component {
   /*
   Handlers for modifying the network
   */
-  handleSaveNetwork = () => {
-    console.log("save network", this.state.network);
-
-    const jsonState = JSON.stringify(this.state.network);
+  handleSaveNetwork(network) {
+    const jsonState = JSON.stringify(network);
     window.localStorage.setItem("network", jsonState);
-  };
+  }
 
   handleAddNode = (type) => {
     const network = { ...this.state.network };
@@ -106,7 +149,7 @@ class Editor extends Component {
     network.nodes = network.nodes.concat(node);
     network.maxNodeId = id;
 
-    this.setState({ network });
+    this.handleUpdateNetwork(network);
   };
 
   handleDeleteNode = (nodeId) => {
@@ -116,8 +159,10 @@ class Editor extends Component {
       (synapse) => synapse.pre !== nodeId && synapse.post !== nodeId
     );
 
-    this.setState({ network });
+    this.handleUpdateNetwork(network);
   };
+
+  handleStartDragNode() {}
 
   handleStopDragNode = (node, x, y) => {
     const network = { ...this.state.network };
@@ -154,14 +199,15 @@ class Editor extends Component {
     network.synapses = network.synapses.concat(synapse);
     network.maxSynapseId = id;
 
-    this.setState({ network });
+    this.handleUpdateNetwork(network);
   };
 
   handleDeleteSynapse = (synapseId) => {
     const network = { ...this.state.network };
     network.synapses = network.synapses.filter((s) => s.id !== synapseId);
     console.log(synapseId);
-    this.setState({ network });
+
+    this.handleUpdateNetwork(network);
   };
 
   handleChangeOption = (element, elementType, option, newValue) => {
@@ -181,7 +227,7 @@ class Editor extends Component {
     network[elementType][index] = { ...element };
     network[elementType][index][option.name] = validatedValue;
 
-    this.setState({ network });
+    this.handleUpdateNetwork(network);
   };
 
   handleSwitchConnectMode = (connectMode) => {
@@ -200,10 +246,7 @@ class Editor extends Component {
         "Access-Control-Allow-Origin": "localhost:5000",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        network: this.state.network,
-        duration: this.state.duration,
-      }),
+      body: JSON.stringify(this.state.network),
     })
       .then((response) => response.json())
       .then((execution) => this.setState({ execution }))
@@ -211,8 +254,11 @@ class Editor extends Component {
   };
 
   handleChangeDuration = (newValue) => {
-    const duration = InputValidator("int", this.state.duration, newValue);
-    this.setState({ duration });
+    let network = { ...this.state.network };
+    const duration = InputValidator("int", network.duration, newValue);
+    network.duration = duration;
+
+    this.handleUpdateNetwork(network);
   };
 
   handleUpdateTimeStep = (newValue) => {
@@ -288,7 +334,7 @@ class Editor extends Component {
             Add input
           </button>
           <button
-            onClick={() => this.handleAddNode("random")}
+            onClick={() => this.handleUndo()} //this.handleAddNode("random")}
             className="btn btn-danger m-2"
           >
             Add random
@@ -325,14 +371,18 @@ class Editor extends Component {
           <div className="column-right">
             <NetworkDetails
               editMode={this.state.editMode}
-              duration={this.state.duration}
+              duration={network.duration}
               nrNodes={network.nodes.length}
               nrSynapses={network.synapses.length}
+              undo={this.state.undo}
+              redo={this.state.redo}
               // handlers
               onExecuteNetwork={this.handleExecuteNetwork}
-              onSaveNetwork={this.handleSaveNetwork}
+              onSaveNetwork={() => this.handleSaveNetwork(this.state.network)}
               onSwitchEditMode={this.handleSwitchEditMode}
               onChangeDuration={this.handleChangeDuration}
+              onUndo={this.handleUndo}
+              onRedo={this.handleRedo}
             />
             <ElementDetails
               nodes={network.nodes}
