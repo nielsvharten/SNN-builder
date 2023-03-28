@@ -2,50 +2,34 @@ import React from "react";
 import { useXarrow } from "react-xarrows";
 import Draggable from "react-draggable";
 
-function getDefaultProps(node) {
-  switch (node.type) {
-    case "lif":
-      return (
-        <React.Fragment>
-          <div className="node-prop node-prop-m">m={node.m}</div>
-          <div className="node-prop node-prop-thr">T={node.thr}</div>
-        </React.Fragment>
-      );
-    case "random":
-      return <div className="node-prop node-prop-type">R</div>;
-    case "input":
-      return <div className="node-prop node-prop-type">IT</div>;
-    default:
-      return;
-  }
+function getSpikeProp() {
+  return <div className="node-prop node-prop-spike">⚡</div>;
 }
 
-function getSpikeProp(spike) {
-  if (spike === "true") {
-    return <div className="node-prop node-prop-spike">⚡</div>;
-  }
-}
-
-function getExecutionProps(node, voltage, spike) {
-  if (node.type !== "lif") {
-    return getSpikeProp(spike);
-  }
+function getLifProps(node, voltage) {
+  const flexProp = voltage !== null ? "V=" + voltage : "m=" + node.m;
 
   return (
     <React.Fragment>
-      <div className="node-prop node-prop-v">V={voltage}</div>
+      <div className="node-prop node-prop-m">{flexProp}</div>
       <div className="node-prop node-prop-thr">T={node.thr}</div>
-      {getSpikeProp(spike)}
     </React.Fragment>
   );
 }
 
+function getInputProps(node) {
+  const type = node.type === "input" ? "IT" : "R";
+
+  return <div className="node-prop node-prop-type">{type}</div>;
+}
+
 function getNodeProps(node, voltage, spike) {
-  if (voltage !== null) {
-    return getExecutionProps(node, voltage, spike);
-  } else {
-    return getDefaultProps(node);
-  }
+  return (
+    <React.Fragment>
+      {node.type === "lif" ? getLifProps(node, voltage) : getInputProps(node)}
+      {spike === "true" ? getSpikeProp() : null}
+    </React.Fragment>
+  );
 }
 
 function getClassNames(type, selected = false, readOut = false) {

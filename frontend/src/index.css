@@ -45,7 +45,7 @@ code {
     flex-direction: column;
   }
 
-  .canvas {
+  .column-left {
     height: 50vh;
   }
 

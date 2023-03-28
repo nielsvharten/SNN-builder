@@ -194,11 +194,7 @@ class ElementDetails extends Component {
   }
 
   getPlotsSelectedNode(selectedNode, measurements) {
-    if (
-      selectedNode &&
-      /*selectedNode.read_out &&*/
-      measurements[selectedNode.id]
-    ) {
+    if (selectedNode && measurements[selectedNode.id]) {
       return (
         <Plot
           voltages={measurements[selectedNode.id]["voltages"]}

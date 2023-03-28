@@ -1,16 +1,8 @@
 import React, { Component } from "react";
 import { Xwrapper } from "react-xarrows";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import ContextMenu from "./ContextMenu";
 import Node from "./Node";
 import Synapse from "./Synapse";
-import {
-  Menu,
-  Item,
-  Separator,
-  Submenu,
-  useContextMenu,
-} from "react-contexify";
 
 class Network extends Component {
   getNodeVoltage(node, execution) {
@@ -91,25 +83,6 @@ class Network extends Component {
     }
   };
 
-  displayMenu = (e) => {
-    const className = e.target.className;
-
-    let id = "";
-    if (className.includes("column-left")) {
-      id = "menu-bg";
-    } else if (className.includes("node-shape")) {
-      id = "menu-node";
-    }
-
-    const { show } = useContextMenu({
-      id: id,
-    });
-
-    show({
-      event: e,
-    });
-  };
-
   handleRemoveSelection = (e) => {
     const { connectMode, onDeselectElements } = this.props;
 
@@ -117,7 +90,7 @@ class Network extends Component {
       document.activeElement.blur();
     }
 
-    if (!connectMode && e.target.classList.value.includes("column-left")) {
+    if (!connectMode && e.target.classList.value.includes("canvas")) {
       onDeselectElements();
     }
   };
@@ -147,9 +120,7 @@ class Network extends Component {
               backgroundColor: this.getBackgroundColor(),
             }}
             onClick={this.handleRemoveSelection}
-            onContextMenu={this.displayMenu}
           >
-            <ContextMenu />
             <Xwrapper>
               {this.getNodeComponents(nodes)}
               {this.getSynapseComponents(synapses)}

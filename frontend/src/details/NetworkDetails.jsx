@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 
 class NetworkDetails extends Component {
-  getDetails() {
-    const { nrNodes, nrSynapses, duration, onChangeDuration } = this.props;
-    const DURATION = 10;
+  getEditorDetails() {
+    const { nrNodes, nrSynapses, editMode } = this.props;
+    if (!editMode) {
+      return;
+    }
 
     return (
       <React.Fragment>
@@ -31,6 +33,17 @@ class NetworkDetails extends Component {
             ></input>
           </div>
         </div>
+      </React.Fragment>
+    );
+  }
+
+  getDetails() {
+    const { duration, onChangeDuration } = this.props;
+    const DURATION = 10;
+
+    return (
+      <React.Fragment>
+        {this.getEditorDetails()}
         <div className="form-group row m-2">
           <div className="col-sm-8">
             <label className="col-form-label">Execution time steps</label>
