@@ -82,7 +82,6 @@ class Editor extends Component {
   };
 
   handleClickNode = (node) => {
-    console.log(node);
     const { connectMode, selectedNodeId } = this.state;
 
     if (connectMode) {
@@ -218,7 +217,6 @@ class Editor extends Component {
   handleDeleteSynapse = (synapseId) => {
     const network = { ...this.state.network };
     network.synapses = network.synapses.filter((s) => s.id !== synapseId);
-    console.log(synapseId);
 
     this.handleUpdateNetwork(network);
   };
@@ -298,7 +296,7 @@ class Editor extends Component {
         .length;
 
       return (
-        <div className="form-group row m-2" style={{ width: "700px" }}>
+        <div className="form-group row m-2 execution-slider">
           <input
             className="col-sm-4 m-2"
             type="range"
@@ -377,22 +375,26 @@ class Editor extends Component {
           onChangeNetwork={this.handleChangeNetwork}
         />
         <div className="builder">
-          <Canvas
-            network={network}
-            execution={execution}
-            editMode={editMode}
-            connectMode={connectMode}
-            // selected element
-            selectedNodeId={selectedNodeId}
-            selectedSynapseId={selectedSynapseId}
-            // handlers
-            onStartDragNode={this.handleStartDragNode}
-            onStopDragNode={this.handleStopDragNode}
-            onClickNode={this.handleClickNode}
-            onClickSynapse={this.handleClickSynapse}
-            onRenameNode={this.handleRenameNode}
-            onDeselectElements={this.handleDeselectElements}
-          />
+          <div className="column-left">
+            <Canvas
+              network={network}
+              execution={execution}
+              editMode={editMode}
+              connectMode={connectMode}
+              // selected element
+              selectedNodeId={selectedNodeId}
+              selectedSynapseId={selectedSynapseId}
+              // handlers
+              onStartDragNode={this.handleStartDragNode}
+              onStopDragNode={this.handleStopDragNode}
+              onClickNode={this.handleClickNode}
+              onClickSynapse={this.handleClickSynapse}
+              onRenameNode={this.handleRenameNode}
+              onDeselectElements={this.handleDeselectElements}
+            />
+            {this.getExecutionSlider()}
+            {this.getButtons()}
+          </div>
           <div className="column-right">
             <NetworkDetails
               editMode={this.state.editMode}
@@ -427,8 +429,6 @@ class Editor extends Component {
             />
           </div>
         </div>
-        {this.getExecutionSlider()}
-        {this.getButtons()}
       </React.Fragment>
     );
   }

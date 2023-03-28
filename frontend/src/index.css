@@ -14,28 +14,46 @@ code {
     monospace;
 }
 
-.network {
-  min-width: 100px;
+.canvas {
   height: 85vh;
   width: 100vw;
-  position: relative;
 }
 
 .column-left {
-  float: left;
+  height: fit-content;
+  min-width: 100px;
+  width: 100%;
 }
 
 .column-right {
-  float: left;
-  min-width: fit-content;
-  width: 400px;
+  min-width: 420px;
+  max-width: 420px;
   padding: 10px;
 }
 
 .builder {
   display: flex;
-  height: 85vh;
   width: 100vw;
+  flex-direction: row;
+}
+
+/* Small screens */
+@media all and (max-width: 576px) {
+  .builder {
+    flex-direction: column;
+  }
+
+  .canvas {
+    height: 50vh;
+  }
+
+  .column-right {
+    min-width: 100%;
+  }
+  
+  .execution-slider>input, .execution-slider>p {
+    width: auto;
+  }
 }
 
 .react-transform-wrapper {
@@ -43,3 +61,9 @@ code {
   width: 100% !important;
   background-color: rgb(219, 219, 219);
 }
+
+button.btn {
+  width: auto;
+}
+
+

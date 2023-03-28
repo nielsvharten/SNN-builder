@@ -140,7 +140,7 @@ class Network extends Component {
       >
         <TransformComponent>
           <div
-            className="network column-left"
+            className="canvas"
             style={{
               minWidth: this.getMinNetworkWidth(),
               minHeight: this.getMinNetworkHeight(),
