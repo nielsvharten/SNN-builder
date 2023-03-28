@@ -15,14 +15,16 @@ code {
 }
 
 .canvas {
+  min-width: 100px;
   height: 85vh;
   width: 100vw;
 }
 
 .column-left {
-  height: fit-content;
+  height: 85vh;
   min-width: 100px;
   width: 100%;
+  margin-bottom: 50px;
 }
 
 .column-right {

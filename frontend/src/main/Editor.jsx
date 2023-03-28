@@ -338,19 +338,19 @@ class Editor extends Component {
             onClick={() => this.handleAddNode("lif")}
             className="btn btn-primary m-2"
           >
-            Add lif
+            LIF Neuron
           </button>
           <button
             onClick={() => this.handleAddNode("input")}
             className="btn btn-warning m-2"
           >
-            Add input
+            Input Train
           </button>
           <button
-            onClick={() => this.handleUndo()} //this.handleAddNode("random")}
+            onClick={() => this.handleAddNode("random")}
             className="btn btn-danger m-2"
           >
-            Add random
+            Random Spiker
           </button>
         </React.Fragment>
       );
