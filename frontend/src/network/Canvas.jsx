@@ -4,7 +4,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Node from "./Node";
 import Synapse from "./Synapse";
 
-class Network extends Component {
+class Canvas extends Component {
   getNodeVoltage(node, execution) {
     if (execution.measurements[node.id]) {
       return execution.measurements[node.id]["voltages"][execution.timeStep];
@@ -84,19 +84,19 @@ class Network extends Component {
   };
 
   handleRemoveSelection = (e) => {
-    const { connectMode, onDeselectElements } = this.props;
+    const { connectMode, onDeselectElement } = this.props;
 
     if (!e.target.classList.value.includes("node-name")) {
       document.activeElement.blur();
     }
 
     if (!connectMode && e.target.classList.value.includes("canvas")) {
-      onDeselectElements();
+      onDeselectElement();
     }
   };
 
   render() {
-    const { nodes, synapses } = this.props.network;
+    const { nodes, synapses, onAddNode } = this.props.network;
 
     return (
       <TransformWrapper
@@ -132,4 +132,4 @@ class Network extends Component {
   }
 }
 
-export default Network;
+export default Canvas;

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { GlobalHotKeys } from "react-hotkeys";
 import Navigation from "./Navigation";
 import Canvas from "../network/Canvas";
 import InputValidator from "../utils/InputValidator";
@@ -6,6 +7,18 @@ import NetworkDetails from "../details/NetworkDetails";
 import ElementDetails from "../details/ElementDetails";
 import { LIF, InputTrain, RandomSpiker } from "../model/node";
 import Network from "../model/network";
+
+const keyMap = {
+  ADD_LIF: "ctrl+shift+l",
+  ADD_INPUT: "ctrl+shift+i",
+  ADD_RANDOM: "ctrl+shift+r",
+  CONNECT_MODE: "ctrl+shift+c",
+  DELETE_SELECTED: "del",
+  UNDO: "ctrl+z",
+  REDO: "ctrl+y",
+  EXECUTE: "ctrl+enter",
+  EDIT: "ctrl+backspace",
+};
 
 class Editor extends Component {
   state = {
@@ -68,17 +81,24 @@ class Editor extends Component {
     }
   };
 
-  handleDeselectElements = () => {
+  handleDeselectElement = () => {
     this.setState({ selectedNodeId: null, selectedSynapseId: null });
   };
 
-  handleSelectNode = (nodeId) => {
-    const selectedNodeId = nodeId;
-    const selectedSynapseId = null;
+  handleDeleteSelectedElement = () => {
+    const { selectedNodeId, selectedSynapseId } = this.state;
 
+    if (selectedNodeId !== null) {
+      this.handleDeleteNode(selectedNodeId);
+    } else if (selectedSynapseId !== null) {
+      this.handleDeleteSynapse(selectedSynapseId);
+    }
+  };
+
+  handleSelectNode = (nodeId) => {
     // select node and deselect previous selected node
-    this.setState({ selectedNodeId });
-    this.setState({ selectedSynapseId });
+    this.setState({ selectedNodeId: nodeId });
+    this.setState({ selectedSynapseId: null });
   };
 
   handleClickNode = (node) => {
@@ -98,12 +118,9 @@ class Editor extends Component {
   };
 
   handleSelectSynapse = (synapseId) => {
-    const selectedSynapseId = synapseId;
-    const selectedNodeId = null;
-
     // select node and deselect previous selected node
-    this.setState({ selectedSynapseId });
-    this.setState({ selectedNodeId });
+    this.setState({ selectedSynapseId: synapseId });
+    this.setState({ selectedNodeId: null });
   };
 
   handleClickSynapse = (synapseId) => {
@@ -149,6 +166,7 @@ class Editor extends Component {
     network.maxNodeId = id;
 
     this.handleUpdateNetwork(network);
+    this.handleSelectNode(id);
   };
 
   handleDeleteNode = (nodeId) => {
@@ -157,6 +175,10 @@ class Editor extends Component {
     network.synapses = network.synapses.filter(
       (synapse) => synapse.pre !== nodeId && synapse.post !== nodeId
     );
+
+    if (this.state.selectedNodeId === nodeId) {
+      this.setState({ selectedNodeId: null });
+    }
 
     this.handleUpdateNetwork(network);
   };
@@ -217,6 +239,10 @@ class Editor extends Component {
   handleDeleteSynapse = (synapseId) => {
     const network = { ...this.state.network };
     network.synapses = network.synapses.filter((s) => s.id !== synapseId);
+
+    if (this.state.selectedSynapseId === synapseId) {
+      this.setState({ selectedSynapseId: null });
+    }
 
     this.handleUpdateNetwork(network);
   };
@@ -343,6 +369,9 @@ class Editor extends Component {
           <button
             onClick={() => this.handleAddNode("input")}
             className="btn btn-warning m-2"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="ctrl+shift+i"
           >
             Input Train
           </button>
@@ -357,6 +386,30 @@ class Editor extends Component {
     }
   }
 
+  getHotKeyHandlers() {
+    return {
+      ADD_LIF: () => this.handleAddNode("lif"),
+      ADD_INPUT: (e) => {
+        e.preventDefault();
+        this.handleAddNode("input");
+      },
+      ADD_RANDOM: (e) => {
+        e.preventDefault();
+        this.handleAddNode("random");
+      },
+
+      DELETE_SELECTED: this.handleDeleteSelectedElement,
+      CONNECT_MODE: (e) => {
+        e.preventDefault();
+        this.handleSwitchConnectMode(!this.state.connectMode);
+      },
+      UNDO: this.handleUndo,
+      REDO: this.handleRedo,
+      EXECUTE: this.handleExecuteNetwork,
+      EDIT: this.handleSwitchEditMode,
+    };
+  }
+
   getEditor() {
     const {
       network,
@@ -369,6 +422,7 @@ class Editor extends Component {
 
     return (
       <React.Fragment>
+        <GlobalHotKeys keyMap={keyMap} handlers={this.getHotKeyHandlers()} />
         <Navigation
           network={network}
           // handlers
@@ -385,12 +439,13 @@ class Editor extends Component {
               selectedNodeId={selectedNodeId}
               selectedSynapseId={selectedSynapseId}
               // handlers
+              onAddNode={this.handleAddNode}
               onStartDragNode={this.handleStartDragNode}
               onStopDragNode={this.handleStopDragNode}
               onClickNode={this.handleClickNode}
               onClickSynapse={this.handleClickSynapse}
               onRenameNode={this.handleRenameNode}
-              onDeselectElements={this.handleDeselectElements}
+              onDeselectElement={this.handleDeselectElement}
             />
             {this.getExecutionSlider()}
             {this.getButtons()}
