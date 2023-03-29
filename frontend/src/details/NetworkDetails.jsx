@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Option from "./Option";
 
 class NetworkDetails extends Component {
   getEditorDetails() {
@@ -38,31 +39,27 @@ class NetworkDetails extends Component {
   }
 
   getDetails() {
-    const { duration, onChangeDuration } = this.props;
-    const DURATION = 10;
+    const { editMode, duration, onChangeDuration, onBlurDuration } = this.props;
+
+    const option = {
+      name: "duration",
+      type: "int",
+      text: "Exectution time steps",
+      default: 10,
+      min: 1,
+    };
 
     return (
       <React.Fragment>
         {this.getEditorDetails()}
-        <div className="form-group row m-2">
-          <div className="col-sm-8">
-            <label className="col-form-label">Execution time steps</label>
-          </div>
-          <div className="col-sm-4">
-            <input
-              className=" form-control"
-              type="text"
-              placeholder={DURATION}
-              value={duration}
-              onChange={(e) => onChangeDuration(e.target.value)}
-              onBlur={(e) => {
-                if (e.target.value === "") {
-                  onChangeDuration(DURATION);
-                }
-              }}
-            ></input>
-          </div>
-        </div>
+        <Option
+          key={option.name}
+          option={option}
+          value={duration}
+          editMode={editMode}
+          onChangeOption={(newValue) => onChangeDuration(newValue)}
+          onBlurOption={() => onBlurDuration(option.default)}
+        />
       </React.Fragment>
     );
   }

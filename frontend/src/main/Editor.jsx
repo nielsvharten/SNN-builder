@@ -65,6 +65,8 @@ class Editor extends Component {
 
       // save new network
       this.handleSaveNetwork(network);
+
+      this.forceUpdate();
     }
   };
 
@@ -254,7 +256,6 @@ class Editor extends Component {
     const index = elements.indexOf(element);
     const oldValue = elements[index][option.name];
 
-    // TODO: check if input is valid
     const validatedValue = InputValidator(
       option.type,
       oldValue,
@@ -266,6 +267,36 @@ class Editor extends Component {
     elements[index] = { ...element };
     elements[index][option.name] = validatedValue;
     network[elementType] = elements;
+
+    this.setState({ network });
+  };
+
+  handleBlurOption = (element, elementType, option) => {
+    const value = element[option.name];
+
+    // replace value with default if field is left empty
+    if (value === "" && option.default) {
+      const newValue = option.default;
+      this.handleChangeOption(element, elementType, option, newValue);
+    }
+
+    this.handleUpdateNetwork(this.state.network);
+  };
+
+  handleChangeDuration = (newValue) => {
+    let network = { ...this.state.network };
+    const duration = InputValidator("int", network.duration, newValue, 1);
+    network.duration = duration;
+
+    this.setState({ network });
+  };
+
+  handleBlurDuration = (defaultValue) => {
+    let network = { ...this.state.network };
+
+    if (network.duration === "" && defaultValue) {
+      network.duration = defaultValue;
+    }
 
     this.handleUpdateNetwork(network);
   };
@@ -291,14 +322,6 @@ class Editor extends Component {
       .then((response) => response.json())
       .then((execution) => this.setState({ execution }))
       .catch();
-  };
-
-  handleChangeDuration = (newValue) => {
-    let network = { ...this.state.network };
-    const duration = InputValidator("int", network.duration, newValue);
-    network.duration = duration;
-
-    this.handleUpdateNetwork(network);
   };
 
   handleUpdateTimeStep = (newValue) => {
@@ -480,6 +503,7 @@ class Editor extends Component {
               onSaveNetwork={() => this.handleSaveNetwork(this.state.network)}
               onSwitchEditMode={this.handleSwitchEditMode}
               onChangeDuration={this.handleChangeDuration}
+              onBlurDuration={this.handleBlurDuration}
               onUndo={this.handleUndo}
               onRedo={this.handleRedo}
             />
@@ -496,6 +520,7 @@ class Editor extends Component {
               onDeleteNode={this.handleDeleteNode}
               onDeleteSynapse={this.handleDeleteSynapse}
               onChangeOption={this.handleChangeOption}
+              onBlurOption={this.handleBlurOption}
               onSwitchConnectMode={this.handleSwitchConnectMode}
             />
           </div>

@@ -7,7 +7,7 @@ const { allOptions } = data;
 
 class ElementDetails extends Component {
   getConfigOption(element, elementType, option) {
-    const { editMode, onChangeOption } = this.props;
+    const { editMode, onChangeOption, onBlurOption } = this.props;
 
     return (
       <Option
@@ -18,6 +18,7 @@ class ElementDetails extends Component {
         onChangeOption={(newValue) =>
           onChangeOption(element, elementType, option, newValue)
         }
+        onBlurOption={() => onBlurOption(element, elementType, option)}
       />
     );
   }
