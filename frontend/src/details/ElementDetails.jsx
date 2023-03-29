@@ -1,73 +1,12 @@
 import React, { Component } from "react";
 import Option from "./Option";
 import Plot from "./Plot";
+import data from "./options.json";
+
+// import options from options.json
+const { allOptions } = data;
 
 class ElementDetails extends Component {
-  state = {
-    options: {
-      lif: [
-        {
-          name: "m",
-          type: "float",
-          text: "Inverse leakage (m)",
-          default: 1,
-          min: 0,
-          max: 1,
-        },
-        {
-          name: "V_init",
-          type: "float",
-          text: "Initial voltage",
-          default: 0,
-          min: 0,
-        },
-        {
-          name: "V_reset",
-          type: "float",
-          text: "Reset voltage (R)",
-          default: 0,
-          min: 0,
-        },
-        {
-          name: "thr",
-          type: "float",
-          text: "Spiking threshold (T)",
-          default: 1,
-        },
-        {
-          name: "I_e",
-          type: "float",
-          text: "Constant input current",
-          default: 0,
-        },
-        { name: "read_out", type: "bool", text: "Read-out neuron" },
-      ],
-      input: [
-        { name: "train", type: "float-list", text: "Input spike train" },
-        { name: "loop", type: "bool", text: "Whether to loop the train" },
-      ],
-      random: [
-        {
-          name: "p",
-          type: "float",
-          text: "Spiking probability",
-          min: 0,
-          max: 1,
-        },
-      ],
-      synapse: [
-        { name: "w", type: "float", text: "Synaptic weight", default: 1 },
-        {
-          name: "d",
-          type: "int",
-          text: "Synaptic delay in time steps",
-          default: 1,
-          min: 1,
-        },
-      ],
-    },
-  };
-
   getConfigOption(element, elementType, option) {
     const { editMode, onChangeOption } = this.props;
 
@@ -185,10 +124,10 @@ class ElementDetails extends Component {
 
   getConfigSelectedElement(selectedNode, selectedSynapse) {
     if (selectedNode) {
-      const options = this.state.options[selectedNode.type];
+      const options = allOptions[selectedNode.type];
       return this.getConfigSelectedNode(selectedNode, options);
     } else if (selectedSynapse) {
-      const options = this.state.options.synapse;
+      const options = allOptions.options.synapse;
       return this.getConfigSelectedSynapse(selectedSynapse, options);
     }
   }

@@ -1,0 +1,120 @@
+{ 
+  "allOptions": {
+    "lif": [
+      {
+        "name": "m",
+        "type": "float",
+        "text": "Inverse leakage (m)",
+        "default": 1,
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "V_init",
+        "type": "float",
+        "text": "Initial voltage",
+        "default": 0,
+        "min": 0
+      },
+      {
+        "name": "V_reset",
+        "type": "float",
+        "text": "Reset voltage (R)",
+        "default": 0,
+        "min": 0
+      },
+      {
+        "name": "V_min",
+        "type": "float",
+        "text": "Minimal voltage",
+        "default": 0
+      },
+      {
+        "name": "thr",
+        "type": "float",
+        "text": "Spiking threshold (T)",
+        "default": 1
+      },
+      {
+        "name": "amplitude",
+        "type": "float",
+        "text": "Amplitude of output spikes",
+        "default": 1
+      },
+      {
+        "name": "I_e",
+        "type": "float",
+        "text": "Constant input current",
+        "default": 0
+      },
+      {
+        "name": "noise",
+        "type": "float",
+        "text": "Add noise each time step",
+        "default": 0,
+        "min": 0
+      },
+      {
+        "name": "rng",
+        "type": "int",
+        "text": "Seed for generating the noise",
+        "default": 0,
+        "min": 0
+      },
+      {
+        "name": "read_out",
+        "type": "bool",
+        "text": "Read-out neuron"
+      }
+    ],
+    "input": [
+      {
+        "name": "train",
+        "type": "float-list",
+        "text": "Input spike train"
+      },
+      {
+        "name": "loop",
+        "type": "bool",
+        "text": "Whether to loop the train"
+      }
+    ],
+    "random": [
+      {
+        "name": "p",
+        "type": "float",
+        "text": "Spiking probability",
+        "min": 0,
+        "max": 1
+      },
+      {
+        "name": "amplitude",
+        "type": "float",
+        "text": "Amplitude of output spikes",
+        "default": 1
+      },
+      {
+        "name": "rng",
+        "type": "int",
+        "text": "Seed for generating the noise",
+        "default": 0,
+        "min": 0
+      }
+    ],
+    "synapse": [
+      {
+        "name": "w",
+        "type": "float",
+        "text": "Synaptic weight",
+        "default": 1
+      },
+      {
+        "name": "d",
+        "type": "int",
+        "text": "Synaptic delay in time steps",
+        "default": 1,
+        "min": 1
+      }
+    ]
+  }
+}
