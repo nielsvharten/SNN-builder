@@ -21,6 +21,7 @@ code {
 }
 
 .column-left {
+  position: relative;
   height: 85vh;
   min-width: 100px;
   width: 100%;
@@ -37,6 +38,13 @@ code {
   display: flex;
   width: 100vw;
   flex-direction: row;
+}
+
+.plots {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  z-index: 2;
 }
 
 /* Small screens */

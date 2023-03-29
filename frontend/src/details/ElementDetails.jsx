@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Option from "./Option";
-import Plot from "./Plot";
 import data from "./options.json";
 
 // import options from options.json
@@ -132,28 +131,14 @@ class ElementDetails extends Component {
     }
   }
 
-  getPlotsSelectedNode(selectedNode, measurements) {
-    if (selectedNode && measurements[selectedNode.id]) {
-      return (
-        <Plot
-          voltages={measurements[selectedNode.id]["voltages"]}
-          spikes={measurements[selectedNode.id]["spikes"]}
-        />
-      );
-    }
-  }
-
   render() {
-    const { nodes, measurements, selectedNodeId, synapses, selectedSynapseId } =
-      this.props;
+    const { nodes, selectedNodeId, synapses, selectedSynapseId } = this.props;
     const selectedNode = nodes.find((n) => n.id === selectedNodeId);
     const selectedSynapse = synapses.find((s) => s.id === selectedSynapseId);
 
     return (
       <React.Fragment>
         {this.getConfigSelectedElement(selectedNode, selectedSynapse)}
-        <br />
-        {this.getPlotsSelectedNode(selectedNode, measurements)}
       </React.Fragment>
     );
   }

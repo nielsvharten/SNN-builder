@@ -5,6 +5,7 @@ import Canvas from "../network/Canvas";
 import InputValidator from "../utils/InputValidator";
 import NetworkDetails from "../details/NetworkDetails";
 import ElementDetails from "../details/ElementDetails";
+import Plot from "../details/Plot";
 import { LIF, InputTrain, RandomSpiker } from "../model/node";
 import Network from "../model/network";
 
@@ -410,6 +411,21 @@ class Editor extends Component {
     };
   }
 
+  getPlotsSelectedNode() {
+    const { network, selectedNodeId, execution } = this.state;
+    const selectedNode = network.nodes.find((n) => n.id === selectedNodeId);
+    const measurements = execution.measurements;
+
+    if (selectedNode && measurements[selectedNode.id]) {
+      return (
+        <Plot
+          voltages={measurements[selectedNode.id]["voltages"]}
+          spikes={measurements[selectedNode.id]["spikes"]}
+        />
+      );
+    }
+  }
+
   getEditor() {
     const {
       network,
@@ -430,6 +446,7 @@ class Editor extends Component {
         />
         <div className="builder">
           <div className="column-left">
+            {this.getPlotsSelectedNode()}
             <Canvas
               network={network}
               execution={execution}
@@ -469,7 +486,6 @@ class Editor extends Component {
             <ElementDetails
               nodes={network.nodes}
               synapses={network.synapses}
-              measurements={execution.measurements}
               // selected element
               selectedNodeId={selectedNodeId}
               selectedSynapseId={selectedSynapseId}

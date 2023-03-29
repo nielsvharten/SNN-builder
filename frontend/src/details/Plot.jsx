@@ -25,18 +25,21 @@ class Plot extends Component {
           dataKey="step"
           domain={[0, voltages.length]}
           ticks={tickArray}
+          stroke="black"
         >
-          <Label position="insideBottom" offset={-2}>
+          <Label position="insideBottom" offset={-2} fill="black">
             Time steps
           </Label>
         </XAxis>
 
-        <YAxis>
-          <Label position="insideLeft">V</Label>
+        <YAxis stroke="black">
+          <Label position="insideLeft" fill="black">
+            V
+          </Label>
         </YAxis>
         <Tooltip />
-        <CartesianGrid strokeDasharray="3 3" />
-        <Line type="monotone" dataKey="V" stroke="#00569c" />
+        <CartesianGrid strokeDasharray="3 3" stroke="black" />
+        <Line type="monotone" dataKey="V" stroke="white" />
       </LineChart>
     );
   }
@@ -56,8 +59,9 @@ class Plot extends Component {
           dataKey="step"
           domain={[0, spikes.length]}
           ticks={tickArray}
+          stroke="black"
         >
-          <Label position="insideBottom" offset={-2}>
+          <Label position="insideBottom" offset={-2} fill="black">
             Time steps
           </Label>
         </XAxis>
@@ -67,10 +71,11 @@ class Plot extends Component {
           tick={false}
           dataKey="spike"
           domain={(0, 2)}
+          stroke="black"
         ></YAxis>
         <Tooltip />
-        <CartesianGrid strokeDasharray="3 3" />
-        <Scatter data={data} />
+        <CartesianGrid strokeDasharray="3 3" stroke="black" />
+        <Scatter data={data} fill="white" />
       </ScatterChart>
     );
   }
@@ -87,11 +92,11 @@ class Plot extends Component {
     ];
 
     return (
-      <React.Fragment>
+      <div className="plots">
         {this.getVoltagePlot(voltages, tickArray)}
         <br />
         {this.getSpikePlot(spikes, tickArray)}
-      </React.Fragment>
+      </div>
     );
   }
 }
