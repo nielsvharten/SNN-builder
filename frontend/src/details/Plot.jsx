@@ -25,21 +25,21 @@ class Plot extends Component {
           dataKey="step"
           domain={[0, voltages.length]}
           ticks={tickArray}
-          stroke="black"
+          stroke="white"
         >
-          <Label position="insideBottom" offset={-2} fill="black">
+          <Label position="insideBottom" offset={-2} fill="white">
             Time steps
           </Label>
         </XAxis>
 
-        <YAxis stroke="black">
-          <Label position="insideLeft" fill="black">
+        <YAxis stroke="white">
+          <Label position="insideLeft" fill="white">
             V
           </Label>
         </YAxis>
-        <Tooltip />
-        <CartesianGrid strokeDasharray="3 3" stroke="black" />
-        <Line type="monotone" dataKey="V" stroke="white" />
+        <Tooltip fill="black" />
+        <CartesianGrid strokeDasharray="3 3" fill="white" />
+        <Line type="monotone" dataKey="V" stroke="blue" />
       </LineChart>
     );
   }
@@ -59,9 +59,9 @@ class Plot extends Component {
           dataKey="step"
           domain={[0, spikes.length]}
           ticks={tickArray}
-          stroke="black"
+          stroke="white"
         >
-          <Label position="insideBottom" offset={-2} fill="black">
+          <Label position="insideBottom" offset={-2} fill="white">
             Time steps
           </Label>
         </XAxis>
@@ -71,11 +71,10 @@ class Plot extends Component {
           tick={false}
           dataKey="spike"
           domain={(0, 2)}
-          stroke="black"
         ></YAxis>
         <Tooltip />
-        <CartesianGrid strokeDasharray="3 3" stroke="black" />
-        <Scatter data={data} fill="white" />
+        <CartesianGrid strokeDasharray="3 3" fill="white" />
+        <Scatter data={data} />
       </ScatterChart>
     );
   }

@@ -65,14 +65,14 @@ class Canvas extends Component {
     const xPositionNodes = this.props.network.nodes.map((node) => node.x);
     const width = Math.max(...xPositionNodes);
 
-    return (width + 200).toString() + "px";
+    return (width + 400).toString() + "px";
   };
 
   getMinNetworkHeight = () => {
     const xPositionNodes = this.props.network.nodes.map((node) => node.y);
     const height = Math.max(...xPositionNodes);
 
-    return (height + 200).toString() + "px";
+    return (height + 400).toString() + "px";
   };
 
   getBackgroundColor = () => {
