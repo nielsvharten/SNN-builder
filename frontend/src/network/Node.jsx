@@ -48,7 +48,6 @@ const Node = ({
   editMode,
   voltage,
   spike,
-  onStartDragNode,
   onStopDragNode,
   onClickNode,
   onRenameNode,
@@ -58,7 +57,6 @@ const Node = ({
   return (
     <Draggable
       onStart={() => {
-        onStartDragNode();
         onClickNode(node);
       }}
       onDrag={updateXarrow}

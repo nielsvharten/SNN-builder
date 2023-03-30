@@ -1,8 +1,8 @@
 import "./App.css";
-import Editor from "./main/Editor";
+import Builder from "./main/Builder";
 
 function App() {
-  return <Editor />;
+  return <Builder />;
 }
 
 export default App;

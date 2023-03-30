@@ -20,7 +20,6 @@ class Option extends Component {
   getBoolInput() {
     const { value, editMode, onChangeOption, onBlurOption } = this.props;
 
-    console.log(value);
     return (
       <input
         className="form-check-input"

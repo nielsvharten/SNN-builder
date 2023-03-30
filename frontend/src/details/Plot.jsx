@@ -39,7 +39,7 @@ class Plot extends Component {
         </YAxis>
         <Tooltip fill="black" />
         <CartesianGrid strokeDasharray="3 3" fill="white" />
-        <Line type="monotone" dataKey="V" stroke="blue" />
+        <Line type="monotone" dataKey="V" stroke="#002D42" />
       </LineChart>
     );
   }

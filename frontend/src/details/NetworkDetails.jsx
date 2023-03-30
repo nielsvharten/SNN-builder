@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Alert from "react-bootstrap/Alert";
 import Option from "./Option";
 
 class NetworkDetails extends Component {
@@ -80,21 +81,15 @@ class NetworkDetails extends Component {
       <React.Fragment>
         <button
           onClick={onUndo}
-          className={
-            undo.length === 0
-              ? "col-sm-2 btn btn-secondary m-2 disabled"
-              : "col-sm-2 btn btn-secondary m-2"
-          }
+          disabled={undo.length === 0}
+          className={"col-sm-2 btn btn-secondary m-2"}
         >
           Undo
         </button>
         <button
           onClick={onRedo}
-          className={
-            redo.length === 0
-              ? "col-sm-2 btn btn-secondary m-2 disabled"
-              : "col-sm-2 btn btn-secondary m-2"
-          }
+          disabled={redo.length === 0}
+          className={"col-sm-2 btn btn-secondary m-2"}
         >
           Redo
         </button>
@@ -121,12 +116,25 @@ class NetworkDetails extends Component {
     );
   }
 
+  getExecutionErrorMessage = () => {
+    const { execution } = this.props;
+
+    if (execution && execution.error) {
+      return (
+        <Alert className="m-3" variant="danger" severity="error">
+          Server did not respond to execution request
+        </Alert>
+      );
+    }
+  };
+
   render() {
     return (
       <div style={{ maxWidth: "400px" }}>
         <h3 className="m-2">Network</h3>
         {this.getDetails()}
         {this.getButtons()}
+        {this.getExecutionErrorMessage()}
         <hr className="solid m-2" style={{ paddingBottom: "20px" }}></hr>
       </div>
     );

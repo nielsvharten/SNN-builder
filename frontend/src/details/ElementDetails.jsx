@@ -30,7 +30,7 @@ class ElementDetails extends Component {
       return (
         <button
           className="col-sm btn btn-warning m-2"
-          onClick={() => onSwitchConnectMode(false)}
+          onClick={onSwitchConnectMode}
         >
           Cancel connecting
         </button>
@@ -39,7 +39,7 @@ class ElementDetails extends Component {
       return (
         <button
           className="col-sm btn btn-primary m-2"
-          onClick={() => onSwitchConnectMode(true)}
+          onClick={onSwitchConnectMode}
         >
           Connect node
         </button>
@@ -127,7 +127,7 @@ class ElementDetails extends Component {
       const options = allOptions[selectedNode.type];
       return this.getConfigSelectedNode(selectedNode, options);
     } else if (selectedSynapse) {
-      const options = allOptions.options.synapse;
+      const options = allOptions.synapse;
       return this.getConfigSelectedSynapse(selectedSynapse, options);
     }
   }

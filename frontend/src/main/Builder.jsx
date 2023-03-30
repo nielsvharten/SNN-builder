@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { GlobalHotKeys } from "react-hotkeys";
+import { GlobalHotKeys, HotKeys } from "react-hotkeys";
 import Navigation from "./Navigation";
 import Canvas from "../network/Canvas";
 import InputValidator from "../utils/InputValidator";
@@ -8,6 +8,8 @@ import ElementDetails from "../details/ElementDetails";
 import Plot from "../details/Plot";
 import { LIF, InputTrain, RandomSpiker } from "../model/node";
 import Network from "../model/network";
+import Synapse from "../model/synapse";
+import Execution from "../model/execution";
 
 const keyMap = {
   ADD_LIF: "ctrl+shift+l",
@@ -21,20 +23,25 @@ const keyMap = {
   EDIT: "ctrl+backspace",
 };
 
-class Editor extends Component {
+class Builder extends Component {
   state = {
+    // selected element
     selectedNodeId: null,
     selectedSynapseId: null,
 
+    // current mode
     connectMode: false,
     editMode: true,
 
+    // network
+    network: new Network(),
     loaded: false,
 
-    network: new Network(),
+    // execution details
+    execution: null,
 
-    execution: { timeStep: 0, duration: 10, measurements: {} },
-
+    // undo-redo history
+    savedState: new Network(),
     undo: [],
     redo: [],
   };
@@ -42,66 +49,22 @@ class Editor extends Component {
   /*
   Global handlers
   */
-  handleUpdateNetwork(network) {
-    // add old network to undo
+  handleChangeNetwork = (network) => {
+    this.handleSwitchEditMode(true);
+
     const undo = [...this.state.undo];
-    undo.push({ ...this.state.network });
+    undo.push(this.state.network);
 
-    // set new network
-    this.setState({ undo, network });
-
-    // save new network
-    this.handleSaveNetwork(network);
-  }
-
-  handleUndo = () => {
-    const undo = [...this.state.undo];
-    const redo = [...this.state.redo];
-
-    if (undo.length > 0) {
-      const network = undo.pop();
-      redo.push({ ...this.state.network });
-      this.setState({ undo, redo, network });
-
-      // save new network
-      this.handleSaveNetwork(network);
-
-      this.forceUpdate();
-    }
-  };
-
-  handleRedo = () => {
-    const undo = [...this.state.undo];
-    const redo = [...this.state.redo];
-
-    if (redo.length > 0) {
-      const network = redo.pop();
-      undo.push({ ...this.state.network });
-      this.setState({ undo, redo, network });
-
-      // save new network
-      this.handleSaveNetwork(network);
-    }
+    this.setState({ network, undo });
   };
 
   handleDeselectElement = () => {
     this.setState({ selectedNodeId: null, selectedSynapseId: null });
   };
 
-  handleDeleteSelectedElement = () => {
-    const { selectedNodeId, selectedSynapseId } = this.state;
-
-    if (selectedNodeId !== null) {
-      this.handleDeleteNode(selectedNodeId);
-    } else if (selectedSynapseId !== null) {
-      this.handleDeleteSynapse(selectedSynapseId);
-    }
-  };
-
   handleSelectNode = (nodeId) => {
-    // select node and deselect previous selected node
-    this.setState({ selectedNodeId: nodeId });
-    this.setState({ selectedSynapseId: null });
+    // select node and deselect previous selected element if applicable
+    this.setState({ selectedNodeId: nodeId, selectedSynapseId: null });
   };
 
   handleClickNode = (node) => {
@@ -111,30 +74,26 @@ class Editor extends Component {
       if (node.type !== "lif") {
         return;
       }
+
+      // try to connect clicked LIF to selectedNode
       this.handleAddSynapse(selectedNodeId, node.id);
 
       // disable connect mode
-      this.handleSwitchConnectMode(false);
+      this.handleSwitchConnectMode();
     } else {
       this.handleSelectNode(node.id);
     }
   };
 
   handleSelectSynapse = (synapseId) => {
-    // select node and deselect previous selected node
-    this.setState({ selectedSynapseId: synapseId });
-    this.setState({ selectedNodeId: null });
-  };
-
-  handleClickSynapse = (synapseId) => {
-    this.handleSelectSynapse(synapseId);
+    // select node and deselect previous selected element if applicable
+    this.setState({ selectedSynapseId: synapseId, selectedNodeId: null });
   };
 
   handleSwitchEditMode = (editMode) => {
-    const execution = { ...this.state.execution };
-    execution.measurements = {};
-    this.setState({ execution }); // remove execution
+    // switch between editing and executing the network
     this.setState({ editMode }); // set edit mode
+    this.setState({ execution: null }); // remove execution
     this.setState({ connectMode: false }); // disable connectMode
   };
 
@@ -142,11 +101,72 @@ class Editor extends Component {
   Handlers for modifying the network
   */
   handleSaveNetwork(network) {
+    // save network to local browser storage
     const jsonState = JSON.stringify(network);
     window.localStorage.setItem("network", jsonState);
   }
 
+  handleStoreNetworkState(network) {
+    // add savedState to undo
+    const undo = [...this.state.undo];
+    const savedState = this.state.savedState;
+    undo.push(savedState);
+
+    // set new network and overwrite savedState
+    const newSavedState = { ...network };
+    this.setState({ network, undo, savedState: newSavedState });
+
+    // save the network
+    this.handleSaveNetwork(network);
+  }
+
+  handleUndo = () => {
+    if (!this.state.editMode) {
+      return;
+    }
+
+    const undo = [...this.state.undo];
+    const redo = [...this.state.redo];
+
+    if (undo.length > 0) {
+      // reinstate previous network and overwrite savedState
+      const network = undo.pop();
+      const savedState = { ...network };
+
+      redo.push({ ...this.state.network });
+      this.setState({ network, undo, redo, savedState });
+
+      // save the network
+      this.handleSaveNetwork(network);
+    }
+  };
+
+  handleRedo = () => {
+    if (!this.state.editMode) {
+      return;
+    }
+
+    const undo = [...this.state.undo];
+    const redo = [...this.state.redo];
+
+    if (redo.length > 0) {
+      // reinstate next network and overwrite savedState
+      const network = redo.pop();
+      const savedState = { ...network };
+
+      undo.push({ ...this.state.network });
+      this.setState({ network, undo, redo, savedState });
+
+      // save the network
+      this.handleSaveNetwork(network);
+    }
+  };
+
   handleAddNode = (type) => {
+    if (!this.state.editMode) {
+      return;
+    }
+
     const network = { ...this.state.network };
     const id = network.maxNodeId + 1;
 
@@ -168,86 +188,107 @@ class Editor extends Component {
     network.nodes = network.nodes.concat(node);
     network.maxNodeId = id;
 
-    this.handleUpdateNetwork(network);
+    this.handleStoreNetworkState(network);
     this.handleSelectNode(id);
   };
 
   handleDeleteNode = (nodeId) => {
+    if (!this.state.editMode) {
+      return;
+    }
+
+    // remove node and all connected synapses from the network
     const network = { ...this.state.network };
     network.nodes = network.nodes.filter((node) => node.id !== nodeId);
     network.synapses = network.synapses.filter(
       (synapse) => synapse.pre !== nodeId && synapse.post !== nodeId
     );
 
+    // deselect as selectedNode if applicable
     if (this.state.selectedNodeId === nodeId) {
       this.setState({ selectedNodeId: null });
     }
 
-    this.handleUpdateNetwork(network);
-  };
-
-  handleStartDragNode = () => {
-    const undo = [...this.state.undo];
-    undo.push(this.state.network);
-
-    this.setState({ undo });
+    this.handleStoreNetworkState(network);
   };
 
   handleStopDragNode = (node, x, y) => {
+    // update position of node after dragging
     const network = { ...this.state.network };
     const nodes = [...network.nodes];
     const index = nodes.indexOf(node);
     nodes[index] = { ...node };
-    nodes[index].x = x;
-    nodes[index].y = y;
 
-    network.nodes = nodes;
-    this.setState({ network });
-    this.handleSaveNetwork(network);
+    // only store state if move more than one pixel
+    const dx = Math.abs(x - nodes[index].x);
+    const dy = Math.abs(y - nodes[index].y);
+    if (dx > 1 || dy > 1) {
+      nodes[index].x = x;
+      nodes[index].y = y;
+
+      network.nodes = nodes;
+      this.handleStoreNetworkState(network);
+    }
   };
 
   handleRenameNode = (node, newName) => {
     const network = { ...this.state.network };
     const nodes = [...network.nodes];
     const index = nodes.indexOf(node);
-    nodes[index] = { ...node };
-    nodes[index].name = newName;
 
-    network.nodes = nodes;
-    this.setState({ network });
+    // only update name if changed
+    if (newName !== nodes[index].name) {
+      nodes[index] = { ...node };
+      nodes[index].name = newName;
+
+      network.nodes = nodes;
+      this.handleStoreNetworkState(network);
+    }
   };
 
   handleAddSynapse = (preId, postId) => {
-    if (preId === null || postId === null) {
-      return;
+    if (preId === null || postId === null || !this.state.editMode) {
+      return; // synapse requires pre and post neuron
     }
 
     const network = { ...this.state.network };
     const id = network.maxSynapseId + 1;
-
-    const synapse = {
-      id: id,
-      pre: preId,
-      post: postId,
-      w: 1.0,
-      d: 1,
-    };
+    const synapse = new Synapse(id, preId, postId);
 
     network.synapses = network.synapses.concat(synapse);
     network.maxSynapseId = id;
 
-    this.handleUpdateNetwork(network);
+    this.handleStoreNetworkState(network);
   };
 
   handleDeleteSynapse = (synapseId) => {
+    if (!this.state.editMode) {
+      return;
+    }
+
     const network = { ...this.state.network };
     network.synapses = network.synapses.filter((s) => s.id !== synapseId);
 
+    // deselect as selectedSynapse if applicable
     if (this.state.selectedSynapseId === synapseId) {
       this.setState({ selectedSynapseId: null });
     }
 
-    this.handleUpdateNetwork(network);
+    this.handleStoreNetworkState(network);
+  };
+
+  handleDeleteSelectedElement = () => {
+    if (!this.state.editMode) {
+      return;
+    }
+
+    const { selectedNodeId, selectedSynapseId } = this.state;
+
+    if (selectedNodeId !== null) {
+      this.handleDeleteNode(selectedNodeId);
+    } else if (selectedSynapseId !== null) {
+      this.handleDeleteSynapse(selectedSynapseId);
+    }
   };
 
   handleChangeOption = (element, elementType, option, newValue) => {
@@ -268,6 +309,7 @@ class Editor extends Component {
     elements[index][option.name] = validatedValue;
     network[elementType] = elements;
 
+    option.edited = true;
     this.setState({ network });
   };
 
@@ -280,7 +322,11 @@ class Editor extends Component {
       this.handleChangeOption(element, elementType, option, newValue);
     }
 
-    this.handleUpdateNetwork(this.state.network);
+    // only add to undo if value was changed
+    if (option.edited === true) {
+      this.handleStoreNetworkState(this.state.network);
+      option.edited = false;
+    }
   };
 
   handleChangeDuration = (newValue) => {
@@ -294,14 +340,24 @@ class Editor extends Component {
   handleBlurDuration = (defaultValue) => {
     let network = { ...this.state.network };
 
+    // replace value with default if field is left empty
     if (network.duration === "" && defaultValue) {
       network.duration = defaultValue;
     }
 
-    this.handleUpdateNetwork(network);
+    // only add to undo if value was changed compared to savedState
+    const savedDuration = this.state.savedState.duration;
+    if (network.duration != savedDuration) {
+      this.handleStoreNetworkState(network);
+    }
   };
 
-  handleSwitchConnectMode = (connectMode) => {
+  handleSwitchConnectMode = () => {
+    if (!this.state.editMode) {
+      return;
+    }
+
+    const connectMode = !this.state.connectMode;
     this.setState({ connectMode });
   };
 
@@ -311,6 +367,8 @@ class Editor extends Component {
   handleExecuteNetwork = () => {
     this.handleSwitchEditMode(false);
 
+    // request: network object
+    // response: execution object with measurements
     fetch("http://127.0.0.1:5000/network", {
       method: "POST",
       headers: {
@@ -319,12 +377,20 @@ class Editor extends Component {
       },
       body: JSON.stringify(this.state.network),
     })
-      .then((response) => response.json())
-      .then((execution) => this.setState({ execution }))
-      .catch();
+      .then((res) => res.json())
+      .then((data) => {
+        const execution = new Execution(data.duration, data.measurements);
+        this.setState({ execution });
+      })
+      // TODO: should display some loading screen and error if catched error
+      .catch((err) => {
+        const execution = new Execution(0, {}, true);
+        this.setState({ execution });
+      });
   };
 
   handleUpdateTimeStep = (newValue) => {
+    // change execution time step that is currently displayed
     const execution = { ...this.state.execution };
     if (newValue >= execution.duration || newValue < 0) {
       return;
@@ -335,12 +401,15 @@ class Editor extends Component {
   };
 
   /*
-  Components of the Editor 
+  Components of the builder 
   */
   getExecutionSlider() {
+    if (this.state.execution === null) {
+      return;
+    }
+
     const execution = this.state.execution;
     const nrNodes = Object.keys(execution.measurements).length;
-
     if (nrNodes > 0) {
       const nrTimeSteps = Object.values(execution.measurements)[0]["voltages"]
         .length;
@@ -387,21 +456,21 @@ class Editor extends Component {
           <button
             onClick={() => this.handleAddNode("lif")}
             className="btn btn-primary m-2"
+            title={keyMap.ADD_LIF}
           >
             LIF Neuron
           </button>
           <button
             onClick={() => this.handleAddNode("input")}
             className="btn btn-warning m-2"
-            data-toggle="tooltip"
-            data-placement="top"
-            title="ctrl+shift+i"
+            title={keyMap.ADD_INPUT}
           >
             Input Train
           </button>
           <button
             onClick={() => this.handleAddNode("random")}
             className="btn btn-danger m-2"
+            title={keyMap.ADD_RANDOM}
           >
             Random Spiker
           </button>
@@ -425,7 +494,7 @@ class Editor extends Component {
       DELETE_SELECTED: this.handleDeleteSelectedElement,
       CONNECT_MODE: (e) => {
         e.preventDefault();
-        this.handleSwitchConnectMode(!this.state.connectMode);
+        this.handleSwitchConnectMode();
       },
       UNDO: this.handleUndo,
       REDO: this.handleRedo,
@@ -436,6 +505,11 @@ class Editor extends Component {
 
   getPlotsSelectedNode() {
     const { network, selectedNodeId, execution } = this.state;
+
+    if (execution === null) {
+      return;
+    }
+
     const selectedNode = network.nodes.find((n) => n.id === selectedNodeId);
     const measurements = execution.measurements;
 
@@ -449,7 +523,7 @@ class Editor extends Component {
     }
   }
 
-  getEditor() {
+  getBuilder() {
     const {
       network,
       editMode,
@@ -464,10 +538,9 @@ class Editor extends Component {
         <GlobalHotKeys keyMap={keyMap} handlers={this.getHotKeyHandlers()} />
         <Navigation
           network={network}
-          // handlers
           onChangeNetwork={this.handleChangeNetwork}
         />
-        <div className="builder">
+        <div className="content">
           <div className="column-left">
             {this.getPlotsSelectedNode()}
             <Canvas
@@ -480,10 +553,9 @@ class Editor extends Component {
               selectedSynapseId={selectedSynapseId}
               // handlers
               onAddNode={this.handleAddNode}
-              onStartDragNode={this.handleStartDragNode}
               onStopDragNode={this.handleStopDragNode}
               onClickNode={this.handleClickNode}
-              onClickSynapse={this.handleClickSynapse}
+              onClickSynapse={this.handleSelectSynapse}
               onRenameNode={this.handleRenameNode}
               onDeselectElement={this.handleDeselectElement}
             />
@@ -494,6 +566,7 @@ class Editor extends Component {
             <NetworkDetails
               editMode={this.state.editMode}
               duration={network.duration}
+              execution={execution}
               nrNodes={network.nodes.length}
               nrSynapses={network.synapses.length}
               undo={this.state.undo}
@@ -529,17 +602,8 @@ class Editor extends Component {
     );
   }
 
-  handleChangeNetwork = (network) => {
-    this.handleSwitchEditMode(true);
-
-    const undo = [...this.state.undo];
-    undo.push(this.state.network);
-
-    this.setState({ network, undo });
-  };
-
-  // try loading network json object from local storage
   componentDidMount() {
+    // try loading network json object from local storage
     const jsonState = window.localStorage.getItem("network");
     if (jsonState === null) {
       console.log("no network defined");
@@ -548,14 +612,15 @@ class Editor extends Component {
     }
 
     const network = JSON.parse(jsonState);
-    this.setState({ network, loaded: true });
+    const savedState = { ...network };
+    this.setState({ network, savedState, loaded: true });
   }
 
   render() {
     if (this.state.loaded) {
-      return this.getEditor();
+      return this.getBuilder();
     }
   }
 }
 
-export default Editor;
+export default Builder;
