@@ -38,10 +38,13 @@ def network():
             m = float(node['m'])
             V_init = float(node['V_init'])
             V_reset = float(node['V_reset'])
+            V_min = float(node['V_min'])
             thr = float(node['thr'])
+            amplitude = float(node['amplitude'])
             I_e = float(node['I_e'])
+            noise = float(node['noise'])
             
-            nodes[id] = net.createLIF(ID=id, m=m, V_init=V_init, V_reset=V_reset, thr=thr, I_e=I_e)
+            nodes[id] = net.createLIF(ID=id, m=m, V_init=V_init, V_reset=V_reset, V_min=V_min, thr=thr, amplitude=amplitude, I_e=I_e, noise=noise)
         elif node['type'] == "input":
             train = ast.literal_eval(node['train'])
             loop = bool(node['loop'])
@@ -49,8 +52,9 @@ def network():
             nodes[id] = net.createInputTrain(ID=id, train=train, loop=loop)
         elif node['type'] == "random":
             p = float(node['p'])
+            amplitude = float(node['amplitude'])
 
-            nodes[id] = net.createRandomSpiker(ID=id, p=p)
+            nodes[id] = net.createRandomSpiker(ID=id, p=p, amplitude=amplitude)
 
         #if bool(node['read_out']):
         read_out_nodes.append(nodes[id])

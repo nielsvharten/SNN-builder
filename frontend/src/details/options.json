@@ -55,13 +55,6 @@
         "min": 0
       },
       {
-        "name": "rng",
-        "type": "int",
-        "text": "Seed for generating the noise",
-        "default": 0,
-        "min": 0
-      },
-      {
         "name": "read_out",
         "type": "bool",
         "text": "Read-out neuron"
@@ -93,13 +86,6 @@
         "type": "float",
         "text": "Amplitude of output spikes",
         "default": 1
-      },
-      {
-        "name": "rng",
-        "type": "int",
-        "text": "Seed for generating the noise",
-        "default": 0,
-        "min": 0
       }
     ],
     "synapse": [
