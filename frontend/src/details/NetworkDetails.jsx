@@ -71,7 +71,6 @@ class NetworkDetails extends Component {
       undo,
       redo,
       onExecuteNetwork,
-      onSaveNetwork,
       onSwitchEditMode,
       onUndo,
       onRedo,

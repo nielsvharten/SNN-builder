@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { GlobalHotKeys, HotKeys } from "react-hotkeys";
+import { GlobalHotKeys } from "react-hotkeys";
 import Navigation from "./Navigation";
 import Canvas from "../network/Canvas";
 import InputValidator from "../utils/InputValidator";
@@ -576,7 +576,6 @@ class Builder extends Component {
               redo={this.state.redo}
               // handlers
               onExecuteNetwork={this.handleExecuteNetwork}
-              onSaveNetwork={() => this.handleSaveNetwork(this.state.network)}
               onSwitchEditMode={this.handleSwitchEditMode}
               onChangeDuration={this.handleChangeDuration}
               onBlurDuration={this.handleBlurDuration}

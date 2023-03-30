@@ -64,6 +64,9 @@ class Navigation extends Component {
   };
 
   render() {
+    const CONFIRM_TEXT =
+      "Have you saved your progress? The current network will be lost";
+
     return (
       <Navbar bg="dark" expand="sm" variant="dark">
         <Container>
@@ -74,11 +77,7 @@ class Navigation extends Component {
               <NavDropdown title="File" id="basic-nav-dropdown">
                 <NavDropdown.Item
                   onClick={() => {
-                    if (
-                      window.confirm(
-                        "Have you saved your progress? The current network will be lost"
-                      )
-                    ) {
+                    if (window.confirm(CONFIRM_TEXT)) {
                       this.handleNewFile();
                     }
                   }}
@@ -87,11 +86,7 @@ class Navigation extends Component {
                 </NavDropdown.Item>
                 <NavDropdown.Item
                   onClick={() => {
-                    if (
-                      window.confirm(
-                        "Have you saved your progress? The current network will be lost"
-                      )
-                    ) {
+                    if (window.confirm(CONFIRM_TEXT)) {
                       this.handleImportFile();
                     }
                   }}
