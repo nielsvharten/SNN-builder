@@ -311,20 +311,23 @@ class Builder extends Component {
 
     option.edited = true;
     this.setState({ network });
+
+    return network;
   };
 
   handleBlurOption = (element, elementType, option) => {
     const value = element[option.name];
+    let network = this.state.network;
 
     // replace value with default if field is left empty
-    if (value === "" && option.default) {
+    if (value === "" && typeof option.default !== "undefined") {
       const newValue = option.default;
-      this.handleChangeOption(element, elementType, option, newValue);
+      network = this.handleChangeOption(element, elementType, option, newValue);
     }
 
     // only add to undo if value was changed
     if (option.edited === true) {
-      this.handleStoreNetworkState(this.state.network);
+      this.handleStoreNetworkState(network);
       option.edited = false;
     }
   };
