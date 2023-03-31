@@ -48,6 +48,7 @@ const Node = ({
   editMode,
   voltage,
   spike,
+  onDragNode,
   onStopDragNode,
   onClickNode,
   onRenameNode,
@@ -59,7 +60,7 @@ const Node = ({
       onStart={() => {
         onClickNode(node);
       }}
-      onDrag={updateXarrow}
+      onDrag={(_, data) => onDragNode(node, data.x, data.y)}
       onStop={(_, data) => onStopDragNode(node, data.x, data.y)}
       position={{ x: node.x, y: node.y }}
       bounds={"parent"}

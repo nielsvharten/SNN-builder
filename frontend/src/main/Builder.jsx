@@ -212,6 +212,25 @@ class Builder extends Component {
     this.handleStoreNetworkState(network);
   };
 
+  handleDragNode = (node, x, y) => {
+    // update position of node after dragging
+    const network = { ...this.state.network };
+    const nodes = [...network.nodes];
+    const index = nodes.indexOf(node);
+    nodes[index] = { ...node };
+
+    // only store state if move more than one pixel
+    const dx = Math.abs(x - nodes[index].x);
+    const dy = Math.abs(y - nodes[index].y);
+    if (dx > 1 || dy > 1) {
+      nodes[index].x = x;
+      nodes[index].y = y;
+
+      network.nodes = nodes;
+      this.setState({ network });
+    }
+  };
+
   handleStopDragNode = (node, x, y) => {
     // update position of node after dragging
     const network = { ...this.state.network };
@@ -555,6 +574,7 @@ class Builder extends Component {
               selectedNodeId={selectedNodeId}
               selectedSynapseId={selectedSynapseId}
               // handlers
+              onDragNode={this.handleDragNode}
               onStopDragNode={this.handleStopDragNode}
               onClickNode={this.handleClickNode}
               onClickSynapse={this.handleSelectSynapse}

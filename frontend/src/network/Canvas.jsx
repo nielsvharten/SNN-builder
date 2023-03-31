@@ -5,6 +5,8 @@ import Node from "./Node";
 import Connection from "./Connection";
 
 class Canvas extends Component {
+  state = { loops: {} };
+
   getNodeVoltage(node, execution) {
     if (execution && execution.measurements[node.id]) {
       return execution.measurements[node.id]["voltages"][execution.timeStep];
@@ -26,6 +28,7 @@ class Canvas extends Component {
       selectedNodeId,
       execution,
       editMode,
+      onDragNode,
       onStopDragNode,
       onClickNode,
       onRenameNode,
@@ -40,6 +43,7 @@ class Canvas extends Component {
         voltage={this.getNodeVoltage(node, execution)}
         spike={this.getNodeSpike(node, execution)}
         // handlers
+        onDragNode={onDragNode}
         onStopDragNode={onStopDragNode}
         onClickNode={onClickNode}
         onRenameNode={onRenameNode}
