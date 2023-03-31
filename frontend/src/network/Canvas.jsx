@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Xwrapper } from "react-xarrows";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Node from "./Node";
-import Synapse from "./Synapse";
+import Connection from "./Connection";
 
 class Canvas extends Component {
   getNodeVoltage(node, execution) {
@@ -48,11 +48,23 @@ class Canvas extends Component {
   }
 
   getSynapseComponents(synapses) {
-    return synapses.map((synapse) => (
-      <Synapse
-        key={synapse.id}
-        synapse={synapse}
-        selected={this.props.selectedSynapseId === synapse.id}
+    const connections = {};
+    synapses.forEach((synapse) => {
+      // does connection from pre to post exist?
+      if (connections[[synapse.pre, synapse.post]]) {
+        // yes, add to list
+        connections[[synapse.pre, synapse.post]].push(synapse);
+      } else {
+        // no, initialize new list with synapse
+        connections[[synapse.pre, synapse.post]] = [synapse];
+      }
+    });
+
+    return Object.entries(connections).map((item) => (
+      <Connection
+        key={item[0]}
+        synapses={item[1]}
+        selectedSynapseId={this.props.selectedSynapseId}
         // handlers
         onClickSynapse={this.props.onClickSynapse}
       />
@@ -104,8 +116,8 @@ class Canvas extends Component {
             "node-wrapper",
             "node-cut-off",
             "node-shape",
-            "node-name",
             "node-prop",
+            "node-name",
           ],
         }}
       >

@@ -82,6 +82,7 @@ class NetworkDetails extends Component {
           onClick={onUndo}
           disabled={undo.length === 0}
           className={"col-sm-2 btn btn-secondary m-2"}
+          title="ctrl+z"
         >
           Undo
         </button>
@@ -89,6 +90,7 @@ class NetworkDetails extends Component {
           onClick={onRedo}
           disabled={redo.length === 0}
           className={"col-sm-2 btn btn-secondary m-2"}
+          title="ctrl+y"
         >
           Redo
         </button>
@@ -97,6 +99,7 @@ class NetworkDetails extends Component {
       <button
         onClick={() => onSwitchEditMode(true)}
         className="col-sm btn btn-warning m-2"
+        title="ctrl+backspace"
       >
         Edit network
       </button>
@@ -108,6 +111,7 @@ class NetworkDetails extends Component {
         <button
           onClick={onExecuteNetwork}
           className="col-sm btn btn-primary m-2"
+          title="ctrl+enter"
         >
           Execute network
         </button>

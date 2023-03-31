@@ -31,6 +31,7 @@ class ElementDetails extends Component {
         <button
           className="col-sm btn btn-warning m-2"
           onClick={onSwitchConnectMode}
+          title="ctrl+shift+c"
         >
           Cancel connecting
         </button>
@@ -40,6 +41,7 @@ class ElementDetails extends Component {
         <button
           className="col-sm btn btn-primary m-2"
           onClick={onSwitchConnectMode}
+          title="ctrl+shift+c"
         >
           Connect node
         </button>
@@ -69,6 +71,7 @@ class ElementDetails extends Component {
         <button
           className="col-sm btn btn-danger m-2"
           onClick={() => this.props.onDeleteNode(selectedNode.id)}
+          title="del"
         >
           Delete node
         </button>
@@ -100,6 +103,7 @@ class ElementDetails extends Component {
         <button
           className="col-sm btn btn-danger m-2"
           onClick={() => this.props.onDeleteSynapse(selectedSynapse.id)}
+          title="del"
         >
           Delete synapse
         </button>
