@@ -47,7 +47,7 @@ class Canvas extends Component {
     ));
   }
 
-  getSynapseComponents(synapses) {
+  getSynapseComponents(nodes, synapses) {
     const connections = {};
     synapses.forEach((synapse) => {
       // does connection from pre to post exist?
@@ -60,10 +60,11 @@ class Canvas extends Component {
       }
     });
 
-    return Object.entries(connections).map((item) => (
+    return Object.entries(connections).map(([id, synapses]) => (
       <Connection
-        key={item[0]}
-        synapses={item[1]}
+        key={id}
+        preNode={nodes.find((node) => node.id === synapses[0].pre)}
+        synapses={synapses}
         selectedSynapseId={this.props.selectedSynapseId}
         // handlers
         onClickSynapse={this.props.onClickSynapse}
@@ -106,7 +107,7 @@ class Canvas extends Component {
   };
 
   render() {
-    const { nodes, synapses, onAddNode } = this.props.network;
+    const { nodes, synapses } = this.props.network;
 
     return (
       <TransformWrapper
@@ -133,7 +134,7 @@ class Canvas extends Component {
           >
             <Xwrapper>
               {this.getNodeComponents(nodes)}
-              {this.getSynapseComponents(synapses)}
+              {this.getSynapseComponents(nodes, synapses)}
             </Xwrapper>
           </div>
         </TransformComponent>

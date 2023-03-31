@@ -350,7 +350,7 @@ class Builder extends Component {
 
     // only add to undo if value was changed compared to savedState
     const savedDuration = this.state.savedState.duration;
-    if (network.duration != savedDuration) {
+    if (network.duration !== savedDuration) {
       this.handleStoreNetworkState(network);
     }
   };
@@ -555,7 +555,6 @@ class Builder extends Component {
               selectedNodeId={selectedNodeId}
               selectedSynapseId={selectedSynapseId}
               // handlers
-              onAddNode={this.handleAddNode}
               onStopDragNode={this.handleStopDragNode}
               onClickNode={this.handleClickNode}
               onClickSynapse={this.handleSelectSynapse}

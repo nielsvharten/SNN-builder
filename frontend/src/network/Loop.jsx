@@ -1,6 +1,6 @@
 import React from "react";
 
-const SelfLoop = ({ x, y }) => {
+const Loop = ({ x, y, color, labels, onClickSynapse }) => {
   return (
     <React.Fragment>
       <svg
@@ -15,13 +15,13 @@ const SelfLoop = ({ x, y }) => {
       >
         <path
           d="M 60 80 C 10 80, 40 20, 64 51"
-          stroke="black"
+          stroke={color}
           stroke-width="3"
           fill="transparent"
           pointer-events="visibleStroke"
         ></path>
         <g
-          fill="black"
+          fill={color}
           pointer-events="auto"
           transform="translate(65,40) rotate(45) scale(18)"
           opacity="1"
@@ -35,24 +35,15 @@ const SelfLoop = ({ x, y }) => {
           display: "table",
           width: "max-content",
           position: "absolute",
-          left: x - 70,
-          top: y - 5,
+          left: x - 85,
+          top: y - 10,
           zIndex: 1,
         }}
       >
-        <p
-          style={{
-            color: "white",
-            fontWeight: "bold",
-            cursor: "pointer",
-            marginBottom: "0px",
-          }}
-        >
-          w=1.1 d=1
-        </p>
+        {labels}
       </div>
     </React.Fragment>
   );
 };
 
-export default SelfLoop;
+export default Loop;

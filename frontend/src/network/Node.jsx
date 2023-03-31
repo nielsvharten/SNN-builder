@@ -1,7 +1,6 @@
 import React from "react";
 import { useXarrow } from "react-xarrows";
 import Draggable from "react-draggable";
-import SelfLoop from "./SelfLoop";
 
 function getSpikeProp() {
   return <div className="node-prop node-prop-spike">⚡</div>;
@@ -98,4 +97,3 @@ const Node = ({
 };
 
 export default Node;
-// {node.type === "lif" ? <SelfLoop x={node.x} y={node.y} /> : null}

@@ -96,7 +96,6 @@ class Navigation extends Component {
                 <NavDropdown.Item onClick={this.handleExportFile}>
                   Export network
                 </NavDropdown.Item>
-                <NavDropdown.Divider />
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>
