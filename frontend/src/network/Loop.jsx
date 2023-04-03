@@ -10,7 +10,6 @@ const Loop = ({ x, y, color, labels, onClickSynapse }) => {
           position: "absolute",
           left: x - 60,
           top: y - 50,
-          zIndex: 0,
         }}
         overflow="auto"
       >

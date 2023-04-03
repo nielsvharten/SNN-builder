@@ -1,5 +1,4 @@
 import React from "react";
-import { useXarrow } from "react-xarrows";
 import Draggable from "react-draggable";
 
 function getSpikeProp() {
@@ -53,8 +52,6 @@ const Node = ({
   onClickNode,
   onRenameNode,
 }) => {
-  const updateXarrow = useXarrow();
-
   return (
     <Draggable
       onStart={() => {
