@@ -76,4 +76,19 @@ button.btn {
   width: auto;
 }
 
+p.synapse-label {
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 0;
+  padding: 0px 4px;
+}
 
+p.synapse-label.bundle {
+  border: 1px dashed white;
+}
+
+p.synapse-label.bundle.selected {
+  border: 2px dashed blue;
+}

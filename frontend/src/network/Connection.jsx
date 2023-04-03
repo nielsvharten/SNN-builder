@@ -2,28 +2,12 @@ import Xarrow from "react-xarrows";
 import Loop from "./Loop";
 
 function getSynapseLabel(synapse, selected, onClickSynapse, bundle = false) {
-  let border = "";
-  if (bundle) {
-    if (selected) {
-      border = "2px dashed blue";
-    } else {
-      border = "1px dashed white";
-    }
-  }
+  let className = "synapse-label";
+  className += bundle ? " bundle" : "";
+  className += selected ? " selected" : "";
 
   return (
-    <p
-      style={{
-        color: "white",
-        fontWeight: "bold",
-        textAlign: "center",
-        cursor: "pointer",
-        marginBottom: 0,
-        border: border,
-        padding: "0px 4px",
-      }}
-      onClick={() => onClickSynapse(synapse.id)}
-    >
+    <p className={className} onClick={() => onClickSynapse(synapse.id)}>
       {"w=" + synapse.w + " d=" + synapse.d}
     </p>
   );
