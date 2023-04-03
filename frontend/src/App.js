@@ -1,4 +1,3 @@
-import "./App.css";
 import Builder from "./main/Builder";
 
 function App() {
