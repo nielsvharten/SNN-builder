@@ -20,3 +20,8 @@ pip install flask, flask_cors, networkx, numpy, matplotlib, python-dotenv
 cd backend
 flask run
 ```
+
+Now for subsequent usage:
+```
+npm run dev --prefix frontend
+```
