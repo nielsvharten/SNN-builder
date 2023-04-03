@@ -26,7 +26,7 @@ class Option extends Component {
         type="checkbox"
         checked={value}
         disabled={!editMode}
-        onChange={(e) => onChangeOption(e.target.value)}
+        onChange={(e) => onChangeOption(e.target.checked)}
         onBlur={onBlurOption}
         style={{ height: "24px", width: "24px" }}
       />

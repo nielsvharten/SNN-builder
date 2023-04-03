@@ -37,7 +37,6 @@ function validateInt(oldValue, newValue, min, max) {
 }
 
 function validateFloatList(oldValue, newValue) {
-  console.log(newValue);
   const valid = floatListRegex.test(newValue);
   if (valid) {
     return newValue;

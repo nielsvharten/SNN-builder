@@ -238,9 +238,9 @@ class Builder extends Component {
     const index = nodes.indexOf(node);
     nodes[index] = { ...node };
 
-    // only store state if move more than one pixel
-    const dx = Math.abs(x - nodes[index].x);
-    const dy = Math.abs(y - nodes[index].y);
+    // only store state if moved more than one pixel
+    const dx = Math.abs(x - this.state.savedState.nodes[index].x);
+    const dy = Math.abs(y - this.state.savedState.nodes[index].y);
     if (dx > 1 || dy > 1) {
       nodes[index].x = x;
       nodes[index].y = y;
@@ -327,7 +327,7 @@ class Builder extends Component {
     elements[index] = { ...element };
     elements[index][option.name] = validatedValue;
     network[elementType] = elements;
-
+    console.log(validatedValue);
     option.edited = true;
     this.setState({ network });
 

@@ -4,12 +4,13 @@ const Loop = ({ x, y, color, labels, onClickSynapse }) => {
   return (
     <React.Fragment>
       <svg
-        width="85"
-        height="85"
+        width="71"
+        height="82"
         style={{
           position: "absolute",
           left: x - 60,
           top: y - 50,
+          zIndex: 0,
         }}
         overflow="auto"
       >
@@ -18,7 +19,9 @@ const Loop = ({ x, y, color, labels, onClickSynapse }) => {
           stroke={color}
           stroke-width="3"
           fill="transparent"
-          pointer-events="visibleStroke"
+          cursor="pointer"
+          pointerEvents="visibleStroke"
+          onClick={onClickSynapse}
         ></path>
         <g
           fill={color}
@@ -26,6 +29,8 @@ const Loop = ({ x, y, color, labels, onClickSynapse }) => {
           transform="translate(65,40) rotate(45) scale(18)"
           opacity="1"
           cursor="pointer"
+          pointerEvents="visibleStroke"
+          onClick={onClickSynapse}
         >
           <path d="M 0 0 L 1 0.5 L 0 1 L 0.25 0.5 z"></path>
         </g>
