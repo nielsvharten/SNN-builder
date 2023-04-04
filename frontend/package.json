@@ -21,6 +21,9 @@
     "web-vitals": "^2.1.4",
     "yarn": "^1.22.19"
   },
+  "overrides": {
+    "typescript": "^5.0.2"
+  },
   "scripts": {
     "start": "react-scripts start",
     "start-api": "cd ..\\backend && ..\\venv\\Scripts\\activate && flask run",
