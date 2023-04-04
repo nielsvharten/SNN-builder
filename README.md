@@ -5,12 +5,18 @@ Build spiking neural networks from scratch
 ## Requirements
 
 1. npm
-2. virtual environment
-3. this repository
+2. this repository
 
 ## Getting started
 
-To set-up front-end:
+Create a virtual environment (called venv) in the project's root directory:
+```
+pip install virtualenv
+virtualenv venv
+.\venv\Scripts\activate
+```
+
+Set-up front-end from project's root directory:
 
 ```
 cd frontend
@@ -18,7 +24,7 @@ npm install
 npm start
 ```
 
-To set-up back-end:
+To set-up back-end from project's root directory:
 
 ```
 pip install flask, flask_cors, networkx, numpy, matplotlib, python-dotenv
