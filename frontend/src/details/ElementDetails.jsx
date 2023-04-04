@@ -53,11 +53,11 @@ class ElementDetails extends Component {
     const nodes = this.props.nodes;
     const node = nodes.find((node) => node.id === nodeId);
 
-    if (node) {
-      return node.name;
-    } else {
-      return "";
-    }
+    // get name, check if node exists
+    let name = node ? node.name : "";
+
+    // return name, if empty return _
+    return name === "" ? "_" : name;
   }
 
   getButtonsNodeConfig(selectedNode) {

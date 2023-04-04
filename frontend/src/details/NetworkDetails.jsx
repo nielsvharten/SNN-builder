@@ -45,7 +45,7 @@ class NetworkDetails extends Component {
     const option = {
       name: "duration",
       type: "int",
-      text: "Exectution time steps",
+      text: "Execution time steps",
       default: 10,
       min: 1,
     };
