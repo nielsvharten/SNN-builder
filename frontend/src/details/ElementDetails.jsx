@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import Option from "./Option";
-import data from "./options.json";
+import data from "../main/options.json";
 
 // import options from options.json
-const { allOptions } = data;
+const { options } = data;
 
 class ElementDetails extends Component {
   getConfigOption(element, elementType, option) {
@@ -79,13 +79,13 @@ class ElementDetails extends Component {
     );
   }
 
-  getConfigSelectedNode(selectedNode, options) {
+  getConfigSelectedNode(selectedNode, nodeOptions) {
     return (
       <div style={{ maxWidth: "400px" }}>
         <h3 className="m-2">
           {selectedNode.type} <b>{selectedNode.name}</b>
         </h3>
-        {options.map((option) =>
+        {nodeOptions.map((option) =>
           this.getConfigOption(selectedNode, "nodes", option)
         )}
         {this.getButtonsNodeConfig(selectedNode)}
@@ -111,14 +111,14 @@ class ElementDetails extends Component {
     );
   }
 
-  getConfigSelectedSynapse(selectedSynapse, options) {
+  getConfigSelectedSynapse(selectedSynapse, synapseOptions) {
     return (
       <div style={{ maxWidth: "400px" }}>
         <h3 className="m-2">
           Synapse from {this.getNodeName(selectedSynapse.pre)} to{" "}
           {this.getNodeName(selectedSynapse.post)}
         </h3>
-        {options.map((option) =>
+        {synapseOptions.map((option) =>
           this.getConfigOption(selectedSynapse, "synapses", option)
         )}
         {this.getButtonsSynapseConfig(selectedSynapse)}
@@ -126,13 +126,28 @@ class ElementDetails extends Component {
     );
   }
 
+  getNodeOptions(nodeType) {
+    const optionalFeatures = this.props.optionalFeatures;
+    const nodeOptions = Object.values(options.node);
+
+    // only show options of type and not disabled optional features
+    const filteredOptions = nodeOptions.filter((option) => {
+      const disabled =
+        option.name in optionalFeatures && !optionalFeatures[option.name];
+
+      return !disabled && option.node_types.includes(nodeType);
+    });
+
+    return filteredOptions;
+  }
+
   getConfigSelectedElement(selectedNode, selectedSynapse) {
     if (selectedNode) {
-      const options = allOptions[selectedNode.type];
-      return this.getConfigSelectedNode(selectedNode, options);
+      const nodeOptions = this.getNodeOptions(selectedNode.type);
+      return this.getConfigSelectedNode(selectedNode, nodeOptions);
     } else if (selectedSynapse) {
-      const options = allOptions.synapse;
-      return this.getConfigSelectedSynapse(selectedSynapse, options);
+      const synapseOptions = Object.values(options.synapse);
+      return this.getConfigSelectedSynapse(selectedSynapse, synapseOptions);
     }
   }
 

@@ -28,6 +28,7 @@ class LIF extends AbstractNode {
     thr = 1,
     I_e = 0,
     noise = 0,
+    rng = "",
     // general node parameters
     amplitude = 1,
     read_out = false,
@@ -44,6 +45,7 @@ class LIF extends AbstractNode {
     this.thr = thr;
     this.I_e = I_e;
     this.noise = noise;
+    this.rng = rng;
   }
 }
 
@@ -70,6 +72,7 @@ class RandomSpiker extends AbstractNode {
   constructor(
     id,
     p = 0.5,
+    rng = "",
     // general node parameters
     amplitude = 1,
     read_out = false,
@@ -80,6 +83,7 @@ class RandomSpiker extends AbstractNode {
     super(id, "random", amplitude, read_out, name, x, y);
 
     this.p = p;
+    this.rng = rng;
   }
 }
 

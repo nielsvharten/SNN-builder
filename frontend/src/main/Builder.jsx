@@ -5,11 +5,16 @@ import Canvas from "../network/Canvas";
 import InputValidator from "../utils/InputValidator";
 import NetworkDetails from "../details/NetworkDetails";
 import ElementDetails from "../details/ElementDetails";
+import Config from "./Config";
 import Plot from "../details/Plot";
 import { LIF, InputTrain, RandomSpiker } from "../model/node";
 import Network from "../model/network";
 import Synapse from "../model/synapse";
 import Execution from "../model/execution";
+import data from "./options.json";
+
+// import options from options.json
+const { options } = data;
 
 const keyMap = {
   ADD_LIF: "ctrl+shift+l",
@@ -32,6 +37,8 @@ class Builder extends Component {
     // current mode
     connectMode: false,
     editMode: true,
+    showConfig: false,
+    configError: null,
 
     // network
     network: new Network(),
@@ -56,6 +63,37 @@ class Builder extends Component {
     undo.push(this.state.network);
 
     this.setState({ network, undo });
+  };
+
+  handleToggleConfig = (showConfig) => {
+    this.setState({ showConfig, configError: null });
+  };
+
+  handleToggleFeature = (feature, enabled) => {
+    const network = { ...this.state.network };
+    const optionalFeatures = { ...network.optionalFeatures };
+
+    // on disable, check if all nodes have default value
+    if (!enabled) {
+      const option = options.node[feature];
+      const nonDefault = network.nodes.find(
+        (node) =>
+          node[feature] &&
+          node[feature].toString() !== option.default.toString()
+      );
+
+      if (nonDefault) {
+        this.setState({
+          configError: { option: option, nodeName: nonDefault.name },
+        });
+
+        return;
+      }
+    }
+    optionalFeatures[feature] = enabled;
+    network.optionalFeatures = optionalFeatures;
+
+    this.handleChangeNetwork(network);
   };
 
   handleDeselectElement = () => {
@@ -561,6 +599,7 @@ class Builder extends Component {
         <Navigation
           network={network}
           onChangeNetwork={this.handleChangeNetwork}
+          onShowConfig={() => this.handleToggleConfig(true)}
         />
         <div className="content">
           <div className="column-left">
@@ -604,6 +643,7 @@ class Builder extends Component {
             <ElementDetails
               nodes={network.nodes}
               synapses={network.synapses}
+              optionalFeatures={network.optionalFeatures}
               // selected element
               selectedNodeId={selectedNodeId}
               selectedSynapseId={selectedSynapseId}
@@ -619,6 +659,13 @@ class Builder extends Component {
             />
           </div>
         </div>
+        <Config
+          show={this.state.showConfig}
+          error={this.state.configError}
+          optionalFeatures={this.state.network.optionalFeatures}
+          onClose={() => this.handleToggleConfig(false)}
+          onToggleFeature={this.handleToggleFeature}
+        />
       </React.Fragment>
     );
   }

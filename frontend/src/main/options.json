@@ -1,107 +1,117 @@
 { 
-  "allOptions": {
-    "lif": [
-      {
+  "options": {
+    "node": {
+      "m": {
         "name": "m",
         "type": "float",
         "text": "Inverse leakage (m)",
         "default": 1,
         "min": 0,
-        "max": 1
+        "max": 1,
+        "node_types": ["lif"]
       },
-      {
+      "V_init": {
         "name": "V_init",
         "type": "float",
         "text": "Initial voltage",
         "default": 0,
-        "min": 0
+        "min": 0,
+        "node_types": ["lif"]
       },
-      {
+      "V_reset": {
         "name": "V_reset",
         "type": "float",
         "text": "Reset voltage (R)",
         "default": 0,
-        "min": 0
+        "min": 0,
+        "node_types": ["lif"]
       },
-      {
+      "V_min": {
         "name": "V_min",
         "type": "float",
         "text": "Minimal voltage",
-        "default": 0
+        "default": 0,
+        "node_types": ["lif"]
       },
-      {
+      "thr": {
         "name": "thr",
         "type": "float",
         "text": "Spiking threshold (T)",
-        "default": 1
+        "default": 1,
+        "node_types": ["lif"]
       },
-      {
+      "amplitude": {
         "name": "amplitude",
         "type": "float",
         "text": "Amplitude of output spikes",
-        "default": 1
+        "default": 1,
+        "node_types": ["lif", "random"]
       },
-      {
+      "I_e": {
         "name": "I_e",
         "type": "float",
         "text": "Constant input current",
-        "default": 0
+        "default": 0,
+        "node_types": ["lif"]
       },
-      {
+      "noise": {
         "name": "noise",
         "type": "float",
         "text": "Add noise each time step",
         "default": 0,
-        "min": 0
+        "min": 0,
+        "node_types": ["lif", "random"]
       },
-      {
+      "rng": {
+        "name": "rng",
+        "type": "int",
+        "text": "Seed of random generator",
+        "default": "",
+        "min": 0,
+        "node_types": ["lif", "random"]
+      },
+      "read_out": {
         "name": "read_out",
         "type": "bool",
-        "text": "Read-out neuron"
-      }
-    ],
-    "input": [
-      {
+        "text": "Read-out neuron",
+        "node_types": ["lif"]
+      },
+      "train": {
         "name": "train",
         "type": "float-list",
-        "text": "Input spike train"
+        "text": "Input spike train",
+        "node_types": ["input"]
       },
-      {
+      "loop": {
         "name": "loop",
         "type": "bool",
-        "text": "Whether to loop the train"
-      }
-    ],
-    "random": [
-      {
+        "text": "Whether to loop the train",
+        "node_types": ["input"]
+      },
+      "p": {
         "name": "p",
         "type": "float",
         "text": "Spiking probability",
         "default": 0.5,
         "min": 0,
-        "max": 1
-      },
-      {
-        "name": "amplitude",
-        "type": "float",
-        "text": "Amplitude of output spikes",
-        "default": 1
+        "max": 1,
+        "node_types": ["random"]
       }
-    ],
-    "synapse": [
-      {
+    },
+    "synapse": {
+      "w": {
         "name": "w",
         "type": "float",
         "text": "Synaptic weight",
         "default": 1
       },
-      {
+      "d": {
         "name": "d",
         "type": "int",
         "text": "Synaptic delay in time steps",
         "default": 1,
         "min": 1
       }
-    ]
+    }
   }
 }

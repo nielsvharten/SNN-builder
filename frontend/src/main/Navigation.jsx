@@ -6,8 +6,6 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Network from "../model/network";
 
 class Navigation extends Component {
-  state = {};
-
   handleImportFile = () => {
     const { onChangeNetwork } = this.props;
 
@@ -68,40 +66,50 @@ class Navigation extends Component {
       "Have you saved your progress? The current network will be lost";
 
     return (
-      <Navbar bg="dark" expand="sm" variant="dark">
-        <Container>
-          <Navbar.Brand href="#home">SNN-Builder</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <NavDropdown title="File" id="basic-nav-dropdown">
-                <NavDropdown.Item
-                  onClick={() => {
-                    if (window.confirm(CONFIRM_TEXT)) {
-                      this.handleNewFile();
-                    }
-                  }}
-                >
-                  New network
-                </NavDropdown.Item>
-                <NavDropdown.Item
-                  onClick={() => {
-                    if (window.confirm(CONFIRM_TEXT)) {
-                      this.handleImportFile();
-                    }
-                  }}
-                >
-                  Import network
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={this.handleExportFile}>
-                  Export network
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
+      <>
+        <Navbar bg="dark" expand="sm" variant="dark">
+          <Container>
+            <Navbar.Brand href="#home">SNN-Builder</Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <Nav className="px-sm-3">
+                <NavDropdown title="File" id="basic-nav-dropdown">
+                  <NavDropdown.Item
+                    onClick={() => {
+                      if (window.confirm(CONFIRM_TEXT)) {
+                        this.handleNewFile();
+                      }
+                    }}
+                  >
+                    New network
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    onClick={() => {
+                      if (window.confirm(CONFIRM_TEXT)) {
+                        this.handleImportFile();
+                      }
+                    }}
+                  >
+                    Import network
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={this.handleExportFile}>
+                    Export network
+                  </NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
+              <Nav className="px-sm-3">
+                <Nav.Link onClick={this.props.onShowConfig}>Config</Nav.Link>
+              </Nav>
+              <Nav className="px-sm-3">
+                <Nav.Link onClick={() => this.props.onShowConfig}>
+                  Help
+                </Nav.Link>
+              </Nav>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
         <input type="file" id="uploadFile" accept=".snn" hidden />
-      </Navbar>
+      </>
     );
   }
 }
