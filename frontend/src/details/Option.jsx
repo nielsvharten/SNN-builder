@@ -1,6 +1,16 @@
 import React, { Component } from "react";
 
 class Option extends Component {
+  insertInfinity(e, onChangeOption) {
+    if (e.ctrlKey && e.shiftKey) {
+      const oldValue = e.target.value;
+      const cursor = e.target.selectionStart;
+      onChangeOption(
+        oldValue.slice(0, cursor) + "\u221E" + oldValue.slice(cursor)
+      );
+    }
+  }
+
   getNumberInput(option) {
     const { value, editMode, onChangeOption, onBlurOption } = this.props;
 
@@ -11,6 +21,7 @@ class Option extends Component {
         value={value}
         disabled={!editMode && option.name !== "duration"}
         placeholder={option.default}
+        onKeyDown={(e) => this.insertInfinity(e, onChangeOption)}
         onChange={(e) => onChangeOption(e.target.value)}
         onBlur={onBlurOption}
       />
@@ -26,6 +37,7 @@ class Option extends Component {
         type="checkbox"
         checked={value}
         disabled={!editMode}
+        onKeyDown={(e) => this.insertInfinity(e, onChangeOption)}
         onChange={(e) => onChangeOption(e.target.checked)}
         onBlur={onBlurOption}
         style={{ height: "24px", width: "24px" }}
@@ -42,6 +54,7 @@ class Option extends Component {
         type="text"
         value={value}
         disabled={!editMode}
+        onKeyDown={(e) => this.insertInfinity(e, onChangeOption)}
         onChange={(e) => onChangeOption(e.target.value)}
         onBlur={onBlurOption}
       />

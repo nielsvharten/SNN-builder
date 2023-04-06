@@ -365,7 +365,7 @@ class Builder extends Component {
     elements[index] = { ...element };
     elements[index][option.name] = validatedValue;
     network[elementType] = elements;
-    console.log(validatedValue);
+
     option.edited = true;
     this.setState({ network });
 

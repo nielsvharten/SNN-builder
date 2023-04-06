@@ -48,6 +48,7 @@ class NetworkDetails extends Component {
       text: "Execution time steps",
       default: 10,
       min: 1,
+      max: 9007199254740991,
     };
 
     return (

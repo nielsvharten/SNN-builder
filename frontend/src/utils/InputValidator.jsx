@@ -1,10 +1,13 @@
-const floatRegex = /^-?\d*(\.\d*)?$/;
-const floatRegexNonNegative = /^\d*(\.\d*)?$/;
-const intRegex = /^-?\d*$/;
-const intRegexNonNegative = /^\d*$/;
-const floatListRegex = /^\[(-?\d\d*(\.\d*)?,)*(-?\d*(\d\.\d*)?)?\]$/;
+const INFINITY = "\u221E";
 
 function validateFloat(oldValue, newValue, min, max) {
+  // accept (-)Inf when min/max are not defined
+  if (newValue === INFINITY && max === null) return newValue;
+  if (newValue === "-" + INFINITY && min === null) return newValue;
+
+  const floatRegex = /^-?\d*(\.\d*)?$/;
+  const floatRegexNonNegative = /^\d*(\.\d*)?$/;
+
   const valid =
     min !== null && min >= 0
       ? floatRegexNonNegative.test(newValue)
@@ -21,6 +24,13 @@ function validateFloat(oldValue, newValue, min, max) {
 }
 
 function validateInt(oldValue, newValue, min, max) {
+  // accept (-)Inf when min/max are not defined
+  if (newValue === INFINITY && max === null) return newValue;
+  if (newValue === "-" + INFINITY && min === null) return newValue;
+
+  const intRegex = /^-?\d*$/;
+  const intRegexNonNegative = /^\d*$/;
+
   const valid =
     min !== null && min >= 0
       ? intRegexNonNegative.test(newValue)
@@ -37,6 +47,9 @@ function validateInt(oldValue, newValue, min, max) {
 }
 
 function validateFloatList(oldValue, newValue) {
+  const floatListRegex =
+    /^\[(-?(\d\d*(\.\d*)?|\u221E),)*(-?(\d*(\d\.\d*)?|\u221E))?\]$/;
+
   const valid = floatListRegex.test(newValue);
   if (valid) {
     return newValue;

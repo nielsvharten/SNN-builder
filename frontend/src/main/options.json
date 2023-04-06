@@ -110,7 +110,8 @@
         "type": "int",
         "text": "Synaptic delay in time steps",
         "default": 1,
-        "min": 1
+        "min": 1,
+        "max": 9007199254740991
       }
     }
   }
