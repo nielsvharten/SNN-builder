@@ -1,13 +1,10 @@
-import time
 from flask import Flask
 from flask import request
 from flask import jsonify
 from flask_cors import cross_origin
 import numpy as np
 from core.networks import Network
-import json
 import ast
-from core.nodes import LIF
 from core.simulators import Simulator
 
 app = Flask(__name__)
