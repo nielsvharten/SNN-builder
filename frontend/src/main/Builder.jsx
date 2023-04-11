@@ -12,6 +12,7 @@ import Network from "../model/network";
 import Synapse from "../model/synapse";
 import Execution from "../model/execution";
 import data from "./options.json";
+import Help from "./Help";
 
 // import options from options.json
 const { options } = data;
@@ -37,6 +38,7 @@ class Builder extends Component {
     // current mode
     connectMode: false,
     editMode: true,
+    showHelp: false,
     showConfig: false,
     configError: null,
 
@@ -67,6 +69,10 @@ class Builder extends Component {
 
   handleToggleConfig = (showConfig) => {
     this.setState({ showConfig, configError: null });
+  };
+
+  handleToggleHelp = (showHelp) => {
+    this.setState({ showHelp });
   };
 
   nodeFeatureNonDefault = (feature, network) => {
@@ -459,9 +465,7 @@ class Builder extends Component {
   };
 
   handleSwitchConnectMode = () => {
-    if (!this.state.editMode) {
-      return;
-    }
+    if (!this.state.editMode) return;
 
     const connectMode = !this.state.connectMode;
     this.setState({ connectMode });
@@ -646,6 +650,8 @@ class Builder extends Component {
           network={network}
           onChangeNetwork={this.handleChangeNetwork}
           onShowConfig={() => this.handleToggleConfig(true)}
+          onShowHelp={() => this.handleToggleHelp(true)}
+          onEnableEditMode={() => this.handleSwitchEditMode(true)}
         />
         <div className="content">
           <div className="column-left">
@@ -711,6 +717,11 @@ class Builder extends Component {
           config={this.state.network.config}
           onClose={() => this.handleToggleConfig(false)}
           onToggleFeature={this.handleToggleFeature}
+        />
+        <Help
+          keyMap={keyMap}
+          show={this.state.showHelp}
+          onClose={() => this.handleToggleHelp(false)}
         />
       </React.Fragment>
     );

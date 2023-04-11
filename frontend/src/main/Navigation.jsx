@@ -69,7 +69,12 @@ class Navigation extends Component {
       <>
         <Navbar bg="dark" expand="sm" variant="dark">
           <Container>
-            <Navbar.Brand href="#home">SNN-Builder</Navbar.Brand>
+            <Navbar.Brand
+              onClick={this.props.onEnableEditMode}
+              style={{ cursor: "pointer" }}
+            >
+              SNN-Builder
+            </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="px-sm-3">
@@ -101,9 +106,7 @@ class Navigation extends Component {
                 <Nav.Link onClick={this.props.onShowConfig}>Config</Nav.Link>
               </Nav>
               <Nav className="px-sm-3">
-                <Nav.Link onClick={() => this.props.onShowConfig}>
-                  Help
-                </Nav.Link>
+                <Nav.Link onClick={this.props.onShowHelp}>Help</Nav.Link>
               </Nav>
             </Navbar.Collapse>
           </Container>
