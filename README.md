@@ -4,37 +4,38 @@ Build spiking neural networks from scratch
 
 ## Requirements
 
-1. npm
+1. nodejs & npm [(nvm)](https://github.com/nvm-sh/nvm#installing-and-updating)
 2. this repository
 
-## Getting started
-
-Create a virtual environment (called venv) in the project's root directory:
+## Installation with Conda
+1. Create the Conda environment for this project in the project's root directory
+```
+conda env create --file environment.yml
+```
+2. Activate the created Conda environment
+```
+conda activate snn-builder
+```
+## Installation with virtual environment
+1. Create a virtual environment (called venv) in the project's root directory
 ```
 pip install virtualenv
 virtualenv venv
-.\venv\Scripts\activate
 ```
-
-Set-up front-end from project's root directory:
-
+2. Activate the created virtual environment:
+  - Windows: ```./venv/Scripts/activate```
+  - Linux/Mac: ```./venv/bin/activate```
+3. Install dependencies for the execution server
 ```
-cd frontend
-npm install
-npm start
+pip install flask flask_cors networkx numpy matplotlib
 ```
+## Usage
 
-To set-up back-end from project's root directory:
-
+1. Start UI from project's root directory
 ```
-pip install flask, flask_cors, networkx, numpy, matplotlib, python-dotenv
-cd backend
-flask run
+serve -s frontend/build
 ```
-
-Now for subsequent usage:
-
+2. Start execution server from project's root directory
 ```
-cd frontend
-npm run dev
+flask --app backend/app run
 ```
