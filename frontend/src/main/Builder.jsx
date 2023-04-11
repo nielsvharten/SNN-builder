@@ -69,29 +69,62 @@ class Builder extends Component {
     this.setState({ showConfig, configError: null });
   };
 
-  handleToggleFeature = (feature, enabled) => {
+  nodeFeatureNonDefault = (feature, network) => {
+    const option = options.node[feature];
+    const nonDefault = network.nodes.find(
+      (node) =>
+        node[feature] && node[feature].toString() !== option.default.toString()
+    );
+
+    return nonDefault;
+  };
+
+  synapseRuleBroken = (feature, network) => {
+    if (feature === "synapseBundles") {
+      let example = null;
+      let connections = {};
+
+      network.synapses.every((s) => {
+        if (connections[[s.pre, s.post]]) {
+          example = s;
+          return false;
+        }
+
+        connections[[s.pre, s.post]] = 1;
+        return true;
+      });
+
+      return example;
+    } else if (feature === "selfLoops") {
+      return network.synapses.find((s) => s.pre === s.post);
+    }
+  };
+
+  handleToggleFeature = (type, feature, enabled) => {
     const network = { ...this.state.network };
-    const optionalFeatures = { ...network.optionalFeatures };
+    const config = { ...network.config };
+    const features = { ...config[type] };
 
-    // on disable, check if all nodes have default value
+    // on disable, check if rules are satisfied
     if (!enabled) {
-      const option = options.node[feature];
-      const nonDefault = network.nodes.find(
-        (node) =>
-          node[feature] &&
-          node[feature].toString() !== option.default.toString()
-      );
+      let error = undefined;
+      if (type === "synapseRules") {
+        error = this.synapseRuleBroken(feature, network);
+      } else if (type === "nodeFeatures") {
+        error = this.nodeFeatureNonDefault(feature, network);
+      }
 
-      if (nonDefault) {
+      if (error) {
         this.setState({
-          configError: { option: option, nodeName: nonDefault.name },
+          configError: { feature: feature, details: error },
         });
-
         return;
       }
     }
-    optionalFeatures[feature] = enabled;
-    network.optionalFeatures = optionalFeatures;
+
+    features[feature] = enabled;
+    config[type] = features;
+    network.config = config;
 
     this.handleChangeNetwork(network);
   };
@@ -109,12 +142,19 @@ class Builder extends Component {
     const { connectMode, selectedNodeId } = this.state;
 
     if (connectMode) {
-      if (node.type !== "lif") {
-        return;
-      }
+      if (node.type !== "lif") return;
+
+      const pre = selectedNodeId;
+      const post = node.id;
+
+      // check synapseRules
+      const { synapses, config } = this.state.network;
+      const exists = synapses.find((s) => pre === s.pre && post === s.post);
+      if (exists && !config.synapseRules.synapseBundles) return;
+      if (pre === post && !config.synapseRules.selfLoops) return;
 
       // try to connect clicked LIF to selectedNode
-      this.handleAddSynapse(selectedNodeId, node.id);
+      this.handleAddSynapse(pre, post);
 
       // disable connect mode
       this.handleSwitchConnectMode();
@@ -643,7 +683,7 @@ class Builder extends Component {
             <ElementDetails
               nodes={network.nodes}
               synapses={network.synapses}
-              optionalFeatures={network.optionalFeatures}
+              optionalFeatures={network.config.nodeFeatures}
               // selected element
               selectedNodeId={selectedNodeId}
               selectedSynapseId={selectedSynapseId}
@@ -662,7 +702,7 @@ class Builder extends Component {
         <Config
           show={this.state.showConfig}
           error={this.state.configError}
-          optionalFeatures={this.state.network.optionalFeatures}
+          config={this.state.network.config}
           onClose={() => this.handleToggleConfig(false)}
           onToggleFeature={this.handleToggleFeature}
         />

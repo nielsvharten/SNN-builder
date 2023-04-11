@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 class Option extends Component {
   insertInfinity(e, onChangeOption) {
-    if (e.ctrlKey && e.shiftKey) {
+    if (e.ctrlKey && e.shiftKey && e.code === "Digit8") {
       const oldValue = e.target.value;
       const cursor = e.target.selectionStart;
       onChangeOption(

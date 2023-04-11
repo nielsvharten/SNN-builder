@@ -11,12 +11,18 @@ export default class Network {
     this.maxNodeId = maxNodeId;
     this.maxSynapseId = maxSynapseId;
     this.duration = duration;
-    this.optionalFeatures = {
-      V_min: false,
-      amplitude: false,
-      I_e: false,
-      noise: false,
-      rng: false,
+    this.config = {
+      nodeFeatures: {
+        V_min: false,
+        amplitude: false,
+        I_e: false,
+        noise: false,
+        rng: false,
+      },
+      synapseRules: {
+        selfLoops: true,
+        synapseBundles: false,
+      },
     };
   }
 }

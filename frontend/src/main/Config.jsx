@@ -5,15 +5,21 @@ import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 
 class Config extends Component {
-  getAlert(nodeName) {
+  getAlert(feature, details = null) {
+    let message = "A non-default value is specified for node " + details.name;
+    if (feature === "selfLoops") {
+      message = "A self-loop exists in the network";
+    } else if (feature === "synapseBundles") {
+      message = "There are multiple synapses from one node to another";
+    }
     return (
       <Alert className="m-3" variant="danger" severity="error">
-        A non-default value is specified for node {nodeName}
+        {message}
       </Alert>
     );
   }
 
-  getFeatureCheckbox(feature, value, label) {
+  getFeatureCheckbox(type, feature, value, label) {
     const { error, onToggleFeature } = this.props;
     return (
       <Form.Group className="mb-3">
@@ -21,23 +27,25 @@ class Config extends Component {
           type="checkbox"
           label={label}
           checked={value}
-          onChange={(e) => onToggleFeature(feature, e.target.checked)}
+          onChange={(e) => onToggleFeature(type, feature, e.target.checked)}
         />
-        {error && error.option.name === feature
-          ? this.getAlert(error.nodeName)
+        {error && error.feature === feature
+          ? this.getAlert(feature, error.details)
           : null}
       </Form.Group>
     );
   }
 
   render() {
-    const { show, error, optionalFeatures, onClose } = this.props;
+    const { show, config, onClose } = this.props;
     const labels = {
       V_min: "Minimal voltage (default: 0)",
       amplitude: "Amplitude of output spikes (default: 1)",
       I_e: "Constant input current (default: 0)",
       noise: "Add noise each time step (default: 0)",
       rng: "Seed of random generator (default: Random)",
+      selfLoops: "Allow synapse from a node to itself",
+      synapseBundles: "Allow multiple synapses from one node to another",
     };
 
     return (
@@ -48,24 +56,24 @@ class Config extends Component {
         <Modal.Body>
           <Form>
             <Form.Label>Enable optional values to be specified</Form.Label>
-            {Object.entries(optionalFeatures).map(([feature, value]) =>
-              this.getFeatureCheckbox(feature, value, labels[feature])
+            {Object.entries(config.nodeFeatures).map(([feature, value]) =>
+              this.getFeatureCheckbox(
+                "nodeFeatures",
+                feature,
+                value,
+                labels[feature]
+              )
             )}
             <br />
             <Form.Label>Synapse rules</Form.Label>
-            <Form.Group className="mb-3">
-              <Form.Check
-                type="checkbox"
-                label="Allow synapse from a node to itself"
-                checked
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Check
-                type="checkbox"
-                label="Allow multiple synapses from one node to another"
-              />
-            </Form.Group>
+            {Object.entries(config.synapseRules).map(([feature, value]) =>
+              this.getFeatureCheckbox(
+                "synapseRules",
+                feature,
+                value,
+                labels[feature]
+              )
+            )}
           </Form>
         </Modal.Body>
         <Modal.Footer>
