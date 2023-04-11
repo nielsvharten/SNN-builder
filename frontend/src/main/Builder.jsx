@@ -429,9 +429,15 @@ class Builder extends Component {
     }
   };
 
-  handleChangeDuration = (newValue) => {
+  handleChangeDuration = (option, newValue) => {
     let network = { ...this.state.network };
-    const duration = InputValidator("int", network.duration, newValue, 1);
+    const duration = InputValidator(
+      "int",
+      network.duration,
+      newValue,
+      option.min,
+      option.max
+    );
     network.duration = duration;
 
     this.setState({ network });

@@ -59,7 +59,7 @@ class NetworkDetails extends Component {
           option={option}
           value={duration}
           editMode={editMode}
-          onChangeOption={(newValue) => onChangeDuration(newValue)}
+          onChangeOption={(newValue) => onChangeDuration(option, newValue)}
           onBlurOption={() => onBlurDuration(option.default)}
         />
       </React.Fragment>
