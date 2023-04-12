@@ -1,13 +1,14 @@
 # SNNBuilder
 
-Build spiking neural networks from scratch
+Build spiking neural networks from scratch in an intuitive UI and execute them on the fly with the [SNNSimulator](https://gitlab.socsci.ru.nl/snnsimulator/simsnn) (part of this repository).
 
 ## Requirements
 
 1. nodejs & npm [(nvm)](https://github.com/nvm-sh/nvm#installing-and-updating)
 2. this repository
 
-## Installation with Conda
+## Create environment
+### Option A: Conda environment
 1. Create the Conda environment for this project in the project's root directory
 ```
 conda env create --file environment.yml
@@ -16,7 +17,7 @@ conda env create --file environment.yml
 ```
 conda activate snn-builder
 ```
-## Installation with virtual environment
+### Option B: Virtualenv 
 1. Create a virtual environment (called venv) in the project's root directory
 ```
 pip install virtualenv
@@ -29,13 +30,14 @@ virtualenv venv
 ```
 pip install flask flask_cors networkx numpy matplotlib
 ```
-## Usage
+## Set up frontend
+```
+cd frontend && npm install && cd ..
+```
 
-1. Start UI from project's root directory
+## Usage
+1. Activate environment (venv or Conda)
+2. Start UI and execution server from project's root directory
 ```
-serve -s frontend/build
-```
-2. Start execution server from project's root directory
-```
-flask --app backend/app run
+npm run dev --prefix frontend
 ```
