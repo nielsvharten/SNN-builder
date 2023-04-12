@@ -2,12 +2,12 @@
 
 Build spiking neural networks from scratch in an intuitive UI and execute them on the fly with the [SNNSimulator](https://gitlab.socsci.ru.nl/snnsimulator/simsnn) (part of this repository).
 
-## Requirements
+## 1) Requirements
 
 1. nodejs & npm [(nvm)](https://github.com/nvm-sh/nvm#installing-and-updating)
 2. this repository
 
-## Create environment
+## 2) Create environment
 ### Option A: Conda environment
 1. Create the Conda environment for this project in the project's root directory
 ```
@@ -30,12 +30,12 @@ virtualenv venv
 ```
 pip install flask flask_cors networkx numpy matplotlib
 ```
-## Set up frontend
+## 3) Set up frontend
 ```
 cd frontend && npm install && cd ..
 ```
 
-## Usage
+## 4) Usage
 1. Activate environment (venv or Conda)
 2. Start UI and execution server from project's root directory
 ```
