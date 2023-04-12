@@ -6,7 +6,7 @@ import Modal from "react-bootstrap/Modal";
 class Help extends Component {
   render() {
     const { keyMap, show, onClose } = this.props;
-    console.log(keyMap);
+    
     return (
       <Modal show={show} onHide={onClose}>
         <Modal.Header closeButton>
