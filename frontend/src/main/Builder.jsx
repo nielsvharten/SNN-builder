@@ -13,6 +13,7 @@ import Synapse from "../model/synapse";
 import Execution from "../model/execution";
 import data from "./options.json";
 import Help from "./Help";
+import PlotSpikeOverview from "../details/PlotSpikeOverview";
 
 // import options from options.json
 const { options } = data;
@@ -633,6 +634,27 @@ class Builder extends Component {
     }
   }
 
+  getPlotSpikeOverview() {
+    const { network, execution, selectedNodeId, selectedSynapseId } =
+      this.state;
+
+    if (
+      execution === null ||
+      selectedNodeId !== null ||
+      selectedSynapseId !== null
+    ) {
+      return;
+    }
+
+    return (
+      <PlotSpikeOverview
+        nodes={network.nodes}
+        duration={execution.duration}
+        measurements={execution.measurements}
+      />
+    );
+  }
+
   getBuilder() {
     const {
       network,
@@ -656,6 +678,7 @@ class Builder extends Component {
         <div className="content">
           <div className="column-left">
             {this.getPlotsSelectedNode()}
+            {this.getPlotSpikeOverview()}
             <Canvas
               network={network}
               execution={execution}
