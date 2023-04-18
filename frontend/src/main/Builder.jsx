@@ -6,14 +6,13 @@ import InputValidator from "../utils/InputValidator";
 import NetworkDetails from "../details/NetworkDetails";
 import ElementDetails from "../details/ElementDetails";
 import Config from "./Config";
-import Plot from "../details/Plot";
 import { LIF, InputTrain, RandomSpiker } from "../model/node";
 import Network from "../model/network";
 import Synapse from "../model/synapse";
 import Execution from "../model/execution";
 import data from "./options.json";
 import Help from "./Help";
-import PlotSpikeOverview from "../details/PlotSpikeOverview";
+import Plots from "../details/Plots";
 
 // import options from options.json
 const { options } = data;
@@ -614,47 +613,6 @@ class Builder extends Component {
     };
   }
 
-  getPlotsSelectedNode() {
-    const { network, selectedNodeId, execution } = this.state;
-
-    if (execution === null) {
-      return;
-    }
-
-    const selectedNode = network.nodes.find((n) => n.id === selectedNodeId);
-    const measurements = execution.measurements;
-
-    if (selectedNode && measurements[selectedNode.id]) {
-      return (
-        <Plot
-          voltages={measurements[selectedNode.id]["voltages"]}
-          spikes={measurements[selectedNode.id]["spikes"]}
-        />
-      );
-    }
-  }
-
-  getPlotSpikeOverview() {
-    const { network, execution, selectedNodeId, selectedSynapseId } =
-      this.state;
-
-    if (
-      execution === null ||
-      selectedNodeId !== null ||
-      selectedSynapseId !== null
-    ) {
-      return;
-    }
-
-    return (
-      <PlotSpikeOverview
-        nodes={network.nodes}
-        duration={execution.duration}
-        measurements={execution.measurements}
-      />
-    );
-  }
-
   getBuilder() {
     const {
       network,
@@ -677,8 +635,7 @@ class Builder extends Component {
         />
         <div className="content">
           <div className="column-left">
-            {this.getPlotsSelectedNode()}
-            {this.getPlotSpikeOverview()}
+            <Plots execution={execution} selectedNodeId={selectedNodeId} />
             <Canvas
               network={network}
               execution={execution}

@@ -56,6 +56,7 @@ def network():
 
             return net.createRandomSpiker(ID=id, p=p, amplitude=amplitude)    
     
+    nodes = {}
     def create_synapse(synapse):
         pre = nodes[synapse['pre']]
         post = nodes[synapse['post']]
@@ -68,7 +69,6 @@ def network():
     net = Network()
 
     read_out_nodes = []
-    nodes = {}
     for json_node in network['nodes']:
         node = create_node(json_node)
         nodes[node.ID] = node
@@ -96,7 +96,8 @@ def network():
 
     measurements = {  }
     for i, node in enumerate(read_out_nodes):
-        measurements[node.ID] = { "spikes": [], "voltages": []}
+        node_name = network['nodes'][i].get("name")
+        measurements[node.ID] = { "name": node_name, "spikes": [], "voltages": []}
         for spike in spikes:
             measurements[node.ID]["spikes"].append(str(spike[i]).lower())
         
