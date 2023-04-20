@@ -479,7 +479,7 @@ class Builder extends Component {
 
     // request: network object
     // response: execution object with measurements
-    fetch("http://127.0.0.1:5000/network", {
+    fetch("http://127.0.0.1:8080/network", {
       method: "POST",
       headers: {
         "Access-Control-Allow-Origin": "localhost:5000",

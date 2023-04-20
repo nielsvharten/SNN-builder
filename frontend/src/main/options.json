@@ -38,6 +38,7 @@
         "type": "float",
         "text": "Spiking threshold (T)",
         "default": 1,
+        "min": 0,
         "node_types": ["lif"]
       },
       "amplitude": {
@@ -110,8 +111,7 @@
         "type": "int",
         "text": "Synaptic delay in time steps",
         "default": 1,
-        "min": 1,
-        "max": 9007199254740991
+        "min": 1
       }
     }
   }

@@ -1,33 +1,32 @@
-from flask import Flask
-from flask import request
-from flask import jsonify
+from flask import Flask, request, jsonify
 from flask_cors import cross_origin
-import numpy as np
-from core.networks import Network
-import ast
-from core.simulators import Simulator
+from ast import literal_eval
+from numpy import inf
+from backend.core.networks import Network
+from backend.core.simulators import Simulator
 
-app = Flask(__name__)
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 def parse_float(value):
     if value == "\u221E":
-        return np.inf
+        return inf
     
     if value == "-\u221E":
-        return -np.inf
+        return -inf
     
     return float(value)
 
 def parse_int(value):
     if value == "\u221E":
-        return np.inf
+        return inf
     
     if value == "-\u221E":
-        return -np.inf
+        return -inf
     
     return int(value)
 
+
+app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/network', methods=['POST'])
 @cross_origin()
@@ -46,7 +45,7 @@ def network():
             
             return net.createLIF(ID=id, m=m, V_init=V_init, V_reset=V_reset, V_min=V_min, thr=thr, amplitude=amplitude, I_e=I_e, noise=noise)
         elif node['type'] == "input":
-            train = ast.literal_eval(node['train'])
+            train = literal_eval(node['train'])
             loop = bool(node['loop'])
 
             return net.createInputTrain(ID=id, train=train, loop=loop)
