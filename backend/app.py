@@ -122,7 +122,8 @@ def network():
     measurements = {  }
     for i, node in enumerate(network.nodes):
         node_name = json['nodes'][i].get("name")
-        measurements[node.ID] = { "name": node_name, "spikes": [], "voltages": []}
+        read_out_node = json['nodes'][i].get("read_out")
+        measurements[node.ID] = { "name": node_name, "spikes": [], "voltages": [], "read_out": read_out_node}
         for spike in spikes:
             measurements[node.ID]["spikes"].append(str(spike[i]).lower())
         

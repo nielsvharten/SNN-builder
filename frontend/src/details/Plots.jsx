@@ -108,6 +108,8 @@ class Plots extends Component {
 
     let data = [];
     Object.entries(measurements).forEach(([id, node]) => {
+      if (!node.read_out) return;
+
       data.push({ node: node.name });
       for (let i = 0; i < node.spikes.length; i++) {
         if (node.spikes[i] === "true") {
