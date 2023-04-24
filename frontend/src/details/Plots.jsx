@@ -128,7 +128,7 @@ class Plots extends Component {
   render() {
     const { execution, selectedNodeId } = this.props;
 
-    if (execution === null) return;
+    if (execution === null || execution.error) return;
 
     const showPlots = selectedNodeId
       ? () => this.getPlotsSelectedNode(execution, selectedNodeId)
