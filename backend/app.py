@@ -106,7 +106,7 @@ def network():
         network = create_network(json)
     except Exception as e:
         print(traceback.format_exc())
-        return jsonify({"error": "Network error: " + str(e) + ". Look at server output for traceback."})
+        return jsonify({"error": "Build error: " + str(e) + ". Look at server output for traceback."})
 
     try:
         duration = parse_int(json["duration"])
