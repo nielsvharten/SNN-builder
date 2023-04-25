@@ -94,3 +94,7 @@ p.synapse-label.bundle {
 p.synapse-label.bundle.selected {
   border: 2px dashed blue;
 }
+
+.input-group-text:first-child {
+  background-color: white;
+}
