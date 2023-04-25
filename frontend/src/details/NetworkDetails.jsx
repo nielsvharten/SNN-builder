@@ -15,25 +15,17 @@ class NetworkDetails extends Component {
           <div className="col-sm-8">
             <label className="col-form-label">Number of nodes</label>
           </div>
-          <div className="col-sm-4">
-            <input
-              className=" form-control"
-              disabled={true}
-              value={nrNodes}
-            ></input>
-          </div>
+          <p className="col m-2">
+            <b>{nrNodes}</b>
+          </p>
         </div>
         <div className="form-group row m-2">
           <div className="col-sm-8">
             <label className="col-form-label">Number of synapses</label>
           </div>
-          <div className="col-sm-4">
-            <input
-              className=" form-control"
-              disabled={true}
-              value={nrSynapses}
-            ></input>
-          </div>
+          <p className="col m-2">
+            <b>{nrSynapses}</b>
+          </p>
         </div>
       </React.Fragment>
     );
@@ -46,9 +38,9 @@ class NetworkDetails extends Component {
       name: "duration",
       type: "int",
       text: "Execution time steps",
+      description: "The number of time steps to run the simulator for.",
       default: 10,
       min: 1,
-      max: 9007199254740991,
     };
 
     return (
@@ -126,7 +118,7 @@ class NetworkDetails extends Component {
     if (execution && execution.error) {
       return (
         <Alert className="m-3" variant="danger" severity="error">
-          Server did not respond to execution request
+          {execution.error}
         </Alert>
       );
     }

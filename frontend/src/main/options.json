@@ -5,6 +5,7 @@
         "name": "m",
         "type": "float",
         "text": "Inverse leakage (m)",
+        "description": "The neuron's inverse leakage. 0 means full leakage of its voltage and 1 means complete memory.",
         "default": 1,
         "min": 0,
         "max": 1,
@@ -14,6 +15,7 @@
         "name": "V_init",
         "type": "float",
         "text": "Initial voltage",
+        "description": "The neuron's voltage at time step 0. Spikes at time step 0 if initial voltage >= spiking threshold.",
         "default": 0,
         "min": 0,
         "node_types": ["lif"]
@@ -22,6 +24,7 @@
         "name": "V_reset",
         "type": "float",
         "text": "Reset voltage (R)",
+        "description": "The voltage to which the neuron jumps when a spike occurs.",
         "default": 0,
         "min": 0,
         "node_types": ["lif"]
@@ -30,6 +33,7 @@
         "name": "V_min",
         "type": "float",
         "text": "Minimal voltage",
+        "description": "Minimal voltage the neuron can have. The neuron's voltage will never be lower than it's minimal voltage.",
         "default": 0,
         "node_types": ["lif"]
       },
@@ -37,13 +41,16 @@
         "name": "thr",
         "type": "float",
         "text": "Spiking threshold (T)",
+        "description": "The minimum voltage at which the neuron spikes.",
         "default": 1,
+        "min": 0,
         "node_types": ["lif"]
       },
       "amplitude": {
         "name": "amplitude",
         "type": "float",
-        "text": "Amplitude of output spikes",
+        "text": "Amplitude of output",
+        "description": "The amplitude of the output when the neuron spikes.",
         "default": 1,
         "node_types": ["lif", "random"]
       },
@@ -51,13 +58,15 @@
         "name": "I_e",
         "type": "float",
         "text": "Constant input current",
+        "description": "Constant value which is added to the neuron's voltage each time step.",
         "default": 0,
         "node_types": ["lif"]
       },
       "noise": {
         "name": "noise",
         "type": "float",
-        "text": "Add noise each time step",
+        "text": "Voltage noise",
+        "description": "The standard deviation of the normal distribution that is sampled from to add noise to the membrane voltage at each step.",
         "default": 0,
         "min": 0,
         "node_types": ["lif", "random"]
@@ -65,37 +74,42 @@
       "rng": {
         "name": "rng",
         "type": "int",
-        "text": "Seed of random generator",
+        "text": "Random generator",
+        "description": "The seed of the random generator used for the noise and random spikers",
         "default": "",
         "min": 0,
         "node_types": ["lif", "random"]
       },
-      "read_out": {
-        "name": "read_out",
-        "type": "bool",
-        "text": "Read-out neuron",
-        "node_types": ["lif"]
-      },
       "train": {
         "name": "train",
         "type": "float-list",
-        "text": "Input spike train",
+        "text": "Output train",
+        "description": "The output at each time step.",
         "node_types": ["input"]
       },
       "loop": {
         "name": "loop",
         "type": "bool",
-        "text": "Whether to loop the train",
+        "text": "Loop the train",
+        "description": "If true, the train will be looped. Otherwise, the output is 0 at the end of the train.",
         "node_types": ["input"]
       },
       "p": {
         "name": "p",
         "type": "float",
         "text": "Spiking probability",
+        "description": "The probability with which the random spiker spikes. If 1, it will spike every time step. If 0, it will never spike.",
         "default": 0.5,
         "min": 0,
         "max": 1,
         "node_types": ["random"]
+      },
+      "read_out": {
+        "name": "read_out",
+        "type": "bool",
+        "text": "Read-out neuron",
+        "description": "Signal that the output of this neuron should be measured.",
+        "node_types": ["lif", "input", "random"]
       }
     },
     "synapse": {
@@ -103,15 +117,16 @@
         "name": "w",
         "type": "float",
         "text": "Synaptic weight",
+        "description": "The weight of the connection. The current from the pre-synaptic neuron is multiplied by the weight before being send to the post-synaptic neuron.",
         "default": 1
       },
       "d": {
         "name": "d",
         "type": "int",
-        "text": "Synaptic delay in time steps",
+        "text": "Synaptic delay",
+        "description": "The difference in time steps between the ouput spike of the pre-synaptic neuron and the input current of the post-synaptic neuron.",
         "default": 1,
-        "min": 1,
-        "max": 9007199254740991
+        "min": 1
       }
     }
   }

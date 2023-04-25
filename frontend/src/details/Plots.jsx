@@ -77,7 +77,9 @@ class Plots extends Component {
     // continue only if node has measurements
     if (!measurements[selectedNodeId]) return;
 
-    const nodeName = measurements[selectedNodeId].name;
+    let nodeName = measurements[selectedNodeId].name;
+    if (!nodeName || nodeName === "") nodeName = "?";
+
     const voltages = measurements[selectedNodeId].voltages;
     const spikes = measurements[selectedNodeId].spikes;
     const spikeData = [{ node: nodeName }];
@@ -108,10 +110,15 @@ class Plots extends Component {
 
     let data = [];
     Object.entries(measurements).forEach(([id, node]) => {
-      data.push({ node: node.name });
+      if (!node.read_out) return;
+
+      let nodeName = node.name;
+      if (!nodeName || nodeName === "") nodeName = "?";
+
+      data.push({ node: nodeName });
       for (let i = 0; i < node.spikes.length; i++) {
         if (node.spikes[i] === "true") {
-          data.push({ node: node.name, step: i });
+          data.push({ node: nodeName, step: i });
         }
       }
     });
@@ -128,7 +135,7 @@ class Plots extends Component {
   render() {
     const { execution, selectedNodeId } = this.props;
 
-    if (execution === null) return;
+    if (execution === null || execution.error) return;
 
     const showPlots = selectedNodeId
       ? () => this.getPlotsSelectedNode(execution, selectedNodeId)

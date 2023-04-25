@@ -479,7 +479,7 @@ class Builder extends Component {
 
     // request: network object
     // response: execution object with measurements
-    fetch("http://127.0.0.1:5000/network", {
+    fetch("http://127.0.0.1:8080/network", {
       method: "POST",
       headers: {
         "Access-Control-Allow-Origin": "localhost:5000",
@@ -489,12 +489,21 @@ class Builder extends Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        const execution = new Execution(data.duration, data.measurements);
-        this.setState({ execution });
+        if (data.duration && data.measurements) {
+          const execution = new Execution(data.duration, data.measurements);
+          this.setState({ execution });
+        } else {
+          const execution = new Execution(0, {}, data.error);
+          this.setState({ execution });
+        }
       })
       // TODO: should display some loading screen and error if catched error
       .catch((err) => {
-        const execution = new Execution(0, {}, true);
+        const execution = new Execution(
+          0,
+          {},
+          "Server did not respond to execution request"
+        );
         this.setState({ execution });
       });
   };
