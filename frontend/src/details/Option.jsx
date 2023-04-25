@@ -10,9 +10,10 @@ class Option extends Component {
   insertInfinity(e, onChangeOption) {
     if (e.ctrlKey && e.shiftKey && e.code === "Digit8") {
       const oldValue = e.target.value;
-      const cursor = e.target.selectionStart;
       onChangeOption(
-        oldValue.slice(0, cursor) + "\u221E" + oldValue.slice(cursor)
+        oldValue.slice(0, e.target.selectionStart) +
+          "\u221E" +
+          oldValue.slice(e.target.selectionEnd)
       );
     }
   }
