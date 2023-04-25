@@ -65,6 +65,7 @@ class Option extends Component {
       <Form.Control
         type="text"
         value={value}
+        style={{ textAlign: "center" }}
         disabled={!editMode}
         onKeyDown={(e) => this.insertInfinity(e, onChangeOption)}
         onChange={(e) => onChangeOption(e.target.value)}
