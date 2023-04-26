@@ -1,21 +1,19 @@
 import React, { Component } from "react";
 import { GlobalHotKeys } from "react-hotkeys";
-import Navigation from "./Navigation";
+
 import Canvas from "../network/Canvas";
 import InputValidator from "../utils/InputValidator";
 import NetworkDetails from "../details/NetworkDetails";
 import ElementDetails from "../details/ElementDetails";
+import Plots from "../details/Plots";
+import Navigation from "./Navigation";
 import Config from "./Config";
+import Help from "./Help";
+
 import { LIF, InputTrain, RandomSpiker } from "../model/node";
 import Network from "../model/network";
 import Synapse from "../model/synapse";
 import Execution from "../model/execution";
-import data from "./options.json";
-import Help from "./Help";
-import Plots from "../details/Plots";
-
-// import options from options.json
-const { options } = data;
 
 const keyMap = {
   ADD_LIF: "ctrl+shift+l",
@@ -58,6 +56,8 @@ class Builder extends Component {
   /*
   Global handlers
   */
+
+  // update state.network and add network to be overwritten to undo
   handleChangeNetwork = (network) => {
     this.handleSwitchEditMode(true);
 
@@ -67,67 +67,30 @@ class Builder extends Component {
     this.setState({ network, undo });
   };
 
+  // display/hide config overlay
   handleToggleConfig = (showConfig) => {
     this.setState({ showConfig, configError: null });
   };
 
+  // display/hide help overlay
   handleToggleHelp = (showHelp) => {
     this.setState({ showHelp });
   };
 
-  nodeFeatureNonDefault = (feature, network) => {
-    const option = options.node[feature];
-    const nonDefault = network.nodes.find(
-      (node) =>
-        node[feature] && node[feature].toString() !== option.default.toString()
-    );
-
-    return nonDefault;
+  // set config error message
+  handleConfigError = (feature, error) => {
+    this.setState({
+      configError: { feature: feature, details: error },
+    });
   };
 
-  synapseRuleBroken = (feature, network) => {
-    if (feature === "synapseBundles") {
-      let example = null;
-      let connections = {};
-
-      network.synapses.every((s) => {
-        if (connections[[s.pre, s.post]]) {
-          example = s;
-          return false;
-        }
-
-        connections[[s.pre, s.post]] = 1;
-        return true;
-      });
-
-      return example;
-    } else if (feature === "selfLoops") {
-      return network.synapses.find((s) => s.pre === s.post);
-    }
-  };
-
+  // enable or disable a feature, rules are checked in Config.jsx
   handleToggleFeature = (type, feature, enabled) => {
     const network = { ...this.state.network };
     const config = { ...network.config };
     const features = { ...config[type] };
 
-    // on disable, check if rules are satisfied
-    if (!enabled) {
-      let error = undefined;
-      if (type === "synapseRules") {
-        error = this.synapseRuleBroken(feature, network);
-      } else if (type === "nodeFeatures") {
-        error = this.nodeFeatureNonDefault(feature, network);
-      }
-
-      if (error) {
-        this.setState({
-          configError: { feature: feature, details: error },
-        });
-        return;
-      }
-    }
-
+    // assumes that on disable, rules are not broken
     features[feature] = enabled;
     config[type] = features;
     network.config = config;
@@ -135,19 +98,21 @@ class Builder extends Component {
     this.handleChangeNetwork(network);
   };
 
+  // de-select currently selected node or synapse, used when clicking on canvas
   handleDeselectElement = () => {
     this.setState({ selectedNodeId: null, selectedSynapseId: null });
   };
 
+  // select node and deselect previous selected element if applicable
   handleSelectNode = (nodeId) => {
-    // select node and deselect previous selected element if applicable
     this.setState({ selectedNodeId: nodeId, selectedSynapseId: null });
   };
 
+  // if connectMode: try to connect neurons | else: selectNode
   handleClickNode = (node) => {
-    const { connectMode, selectedNodeId } = this.state;
+    const { connectMode, editMode, selectedNodeId } = this.state;
 
-    if (connectMode) {
+    if (connectMode && editMode) {
       if (node.type !== "lif") return;
 
       const pre = selectedNodeId;
@@ -169,13 +134,13 @@ class Builder extends Component {
     }
   };
 
+  // select node and deselect previous selected element if applicable
   handleSelectSynapse = (synapseId) => {
-    // select node and deselect previous selected element if applicable
     this.setState({ selectedSynapseId: synapseId, selectedNodeId: null });
   };
 
+  // switch between editing and executing the network
   handleSwitchEditMode = (editMode) => {
-    // switch between editing and executing the network
     this.setState({ editMode }); // set edit mode
     this.setState({ execution: null }); // remove execution
     this.setState({ connectMode: false }); // disable connectMode
@@ -184,12 +149,14 @@ class Builder extends Component {
   /*
   Handlers for modifying the network
   */
+
+  // save network to local browser storage
   handleSaveNetwork(network) {
-    // save network to local browser storage
     const jsonState = JSON.stringify(network);
     window.localStorage.setItem("network", jsonState);
   }
 
+  // set and save the network and add savedState to undo
   handleStoreNetworkState(network) {
     // add savedState to undo
     const undo = [...this.state.undo];
@@ -204,6 +171,7 @@ class Builder extends Component {
     this.handleSaveNetwork(network);
   }
 
+  // undo last action
   handleUndo = () => {
     if (!this.state.editMode) {
       return;
@@ -225,6 +193,7 @@ class Builder extends Component {
     }
   };
 
+  // redo last action
   handleRedo = () => {
     if (!this.state.editMode) {
       return;
@@ -246,6 +215,7 @@ class Builder extends Component {
     }
   };
 
+  // add a node to the canvas
   handleAddNode = (type) => {
     if (!this.state.editMode) {
       return;
@@ -276,6 +246,7 @@ class Builder extends Component {
     this.handleSelectNode(id);
   };
 
+  // delete node with node.id === nodeId and connected synapses
   handleDeleteNode = (nodeId) => {
     if (!this.state.editMode) {
       return;
@@ -296,6 +267,7 @@ class Builder extends Component {
     this.handleStoreNetworkState(network);
   };
 
+  // update position of the node if moved significantly
   handleDragNode = (node, x, y) => {
     // update position of node after dragging
     const network = { ...this.state.network };
@@ -315,6 +287,7 @@ class Builder extends Component {
     }
   };
 
+  // update position and storeNetworkState if moved significantly
   handleStopDragNode = (node, x, y) => {
     // update position of node after dragging
     const network = { ...this.state.network };
@@ -334,6 +307,7 @@ class Builder extends Component {
     }
   };
 
+  // rename node, storeNetworkState if different from oldName
   handleRenameNode = (node, newName) => {
     const network = { ...this.state.network };
     const nodes = [...network.nodes];
@@ -349,6 +323,7 @@ class Builder extends Component {
     }
   };
 
+  // add synapse if given preId and postId
   handleAddSynapse = (preId, postId) => {
     if (preId === null || postId === null || !this.state.editMode) {
       return; // synapse requires pre and post neuron
@@ -364,6 +339,7 @@ class Builder extends Component {
     this.handleStoreNetworkState(network);
   };
 
+  // delete synapse with synapse.id === synapseId
   handleDeleteSynapse = (synapseId) => {
     if (!this.state.editMode) {
       return;
@@ -380,6 +356,7 @@ class Builder extends Component {
     this.handleStoreNetworkState(network);
   };
 
+  // delete selected node or synapse
   handleDeleteSelectedElement = () => {
     if (!this.state.editMode) {
       return;
@@ -394,6 +371,7 @@ class Builder extends Component {
     }
   };
 
+  // change option value (if validation succeeds)
   handleChangeOption = (element, elementType, option, newValue) => {
     const network = { ...this.state.network };
     const elements = [...network[elementType]];
@@ -412,29 +390,32 @@ class Builder extends Component {
     elements[index][option.name] = validatedValue;
     network[elementType] = elements;
 
-    option.edited = true;
     this.setState({ network });
 
     return network;
   };
 
+  // on stop editing value, enter default if left empty
+  // add to undo if and only if value was changed
   handleBlurOption = (element, elementType, option) => {
-    const value = element[option.name];
+    let newValue = element[option.name];
     let network = this.state.network;
 
     // replace value with default if field is left empty
-    if (value === "" && typeof option.default !== "undefined") {
-      const newValue = option.default;
+    if (newValue === "" && typeof option.default !== "undefined") {
+      newValue = option.default;
       network = this.handleChangeOption(element, elementType, option, newValue);
     }
 
-    // only add to undo if value was changed
-    if (option.edited === true) {
+    // only add to undo if value was changed compared to savedState
+    const elements = this.state.savedState[elementType];
+    const savedValue = elements.find((e) => e.id === element.id)[option.name];
+    if (newValue !== savedValue) {
       this.handleStoreNetworkState(network);
-      option.edited = false;
     }
   };
 
+  // change duration value (if validation succeeds)
   handleChangeDuration = (option, newValue) => {
     let network = { ...this.state.network };
     const duration = InputValidator(
@@ -449,6 +430,8 @@ class Builder extends Component {
     this.setState({ network });
   };
 
+  // on stop editing duration, enter default if left empty
+  // add to undo if and only if duration was changed
   handleBlurDuration = (defaultValue) => {
     let network = { ...this.state.network };
 
@@ -464,6 +447,7 @@ class Builder extends Component {
     }
   };
 
+  // enter or cancel connect mode
   handleSwitchConnectMode = () => {
     if (!this.state.editMode) return;
 
@@ -474,6 +458,7 @@ class Builder extends Component {
   /* 
   Handlers for executing the network
   */
+  // send execution request to server, gets measurements as response
   handleExecuteNetwork = () => {
     this.handleSwitchEditMode(false);
 
@@ -508,8 +493,8 @@ class Builder extends Component {
       });
   };
 
+  // change execution time step that is currently displayed
   handleUpdateTimeStep = (newValue) => {
-    // change execution time step that is currently displayed
     const execution = { ...this.state.execution };
     if (newValue >= execution.duration || newValue < 0) {
       return;
@@ -637,6 +622,7 @@ class Builder extends Component {
         <GlobalHotKeys keyMap={keyMap} handlers={this.getHotKeyHandlers()} />
         <Navigation
           network={network}
+          // handlers
           onChangeNetwork={this.handleChangeNetwork}
           onShowConfig={() => this.handleToggleConfig(true)}
           onShowHelp={() => this.handleToggleHelp(true)}
@@ -701,23 +687,26 @@ class Builder extends Component {
           </div>
         </div>
         <Config
+          network={this.state.network}
           show={this.state.showConfig}
           error={this.state.configError}
-          config={this.state.network.config}
+          // handlers
           onClose={() => this.handleToggleConfig(false)}
+          onConfigError={this.handleConfigError}
           onToggleFeature={this.handleToggleFeature}
         />
         <Help
           keyMap={keyMap}
           show={this.state.showHelp}
+          // handlers
           onClose={() => this.handleToggleHelp(false)}
         />
       </React.Fragment>
     );
   }
 
+  // try loading network json object from local storage
   componentDidMount() {
-    // try loading network json object from local storage
     const jsonState = window.localStorage.getItem("network");
     if (jsonState === null) {
       console.log("no network defined");

@@ -4,7 +4,64 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 
+import data from "./options.json";
+
+// import options from options.json
+const { options } = data;
+
 class Config extends Component {
+  nodeFeatureNonDefault(feature, network) {
+    const option = options.node[feature];
+    const nonDefault = network.nodes.find(
+      (node) =>
+        node[feature] && node[feature].toString() !== option.default.toString()
+    );
+
+    return nonDefault;
+  }
+
+  synapseRuleBroken(feature, network) {
+    if (feature === "synapseBundles") {
+      let example = null;
+      let connections = {};
+
+      network.synapses.every((s) => {
+        if (connections[[s.pre, s.post]]) {
+          example = s;
+          return false;
+        }
+
+        connections[[s.pre, s.post]] = 1;
+        return true;
+      });
+
+      return example;
+    } else if (feature === "selfLoops") {
+      return network.synapses.find((s) => s.pre === s.post);
+    }
+  }
+
+  handleToggleFeature = (type, feature, enabled) => {
+    const { network, onConfigError, onToggleFeature } = this.props;
+
+    // on disable, check if rules are satisfied
+    if (!enabled) {
+      let error = undefined;
+      if (type === "synapseRules") {
+        error = this.synapseRuleBroken(feature, network);
+      } else if (type === "nodeFeatures") {
+        error = this.nodeFeatureNonDefault(feature, network);
+      }
+
+      if (error) {
+        onConfigError(feature, error);
+        return;
+      }
+    }
+
+    onToggleFeature(type, feature, enabled);
+  };
+
   getAlert(feature, details = null) {
     let message = "A non-default value is specified for node " + details.name;
     if (feature === "selfLoops") {
@@ -20,14 +77,16 @@ class Config extends Component {
   }
 
   getFeatureCheckbox(type, feature, value, label) {
-    const { error, onToggleFeature } = this.props;
+    const { error } = this.props;
     return (
       <Form.Group className="mb-3">
         <Form.Check
           type="checkbox"
           label={label}
           checked={value}
-          onChange={(e) => onToggleFeature(type, feature, e.target.checked)}
+          onChange={(e) =>
+            this.handleToggleFeature(type, feature, e.target.checked)
+          }
         />
         {error && error.feature === feature
           ? this.getAlert(feature, error.details)
@@ -37,7 +96,8 @@ class Config extends Component {
   }
 
   render() {
-    const { show, config, onClose } = this.props;
+    const { show, network, onClose } = this.props;
+    const { nodeFeatures, synapseRules } = network.config;
     const labels = {
       V_min: "Minimal voltage (default: 0)",
       amplitude: "Amplitude of output spikes (default: 1)",
@@ -56,7 +116,7 @@ class Config extends Component {
         <Modal.Body>
           <Form>
             <Form.Label>Enable optional values to be specified</Form.Label>
-            {Object.entries(config.nodeFeatures).map(([feature, value]) =>
+            {Object.entries(nodeFeatures).map(([feature, value]) =>
               this.getFeatureCheckbox(
                 "nodeFeatures",
                 feature,
@@ -66,7 +126,7 @@ class Config extends Component {
             )}
             <br />
             <Form.Label>Synapse rules</Form.Label>
-            {Object.entries(config.synapseRules).map(([feature, value]) =>
+            {Object.entries(synapseRules).map(([feature, value]) =>
               this.getFeatureCheckbox(
                 "synapseRules",
                 feature,
