@@ -7,7 +7,11 @@ function getSynapseLabel(synapse, selected, onClickSynapse, bundle = false) {
   className += selected ? " selected" : "";
 
   return (
-    <p className={className} onClick={() => onClickSynapse(synapse.id)}>
+    <p
+      key={synapse.id}
+      className={className}
+      onClick={() => onClickSynapse(synapse.id)}
+    >
       {"w=" + synapse.w + " d=" + synapse.d}
     </p>
   );

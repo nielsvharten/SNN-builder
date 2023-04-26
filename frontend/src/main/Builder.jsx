@@ -709,7 +709,7 @@ class Builder extends Component {
   componentDidMount() {
     const jsonState = window.localStorage.getItem("network");
     if (jsonState === null) {
-      console.log("no network defined");
+      // no network defined
       this.setState({ loaded: true });
       return;
     }

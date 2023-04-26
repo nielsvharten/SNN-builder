@@ -79,7 +79,7 @@ class Config extends Component {
   getFeatureCheckbox(type, feature, value, label) {
     const { error } = this.props;
     return (
-      <Form.Group className="mb-3">
+      <Form.Group key={feature} className="mb-3">
         <Form.Check
           type="checkbox"
           label={label}

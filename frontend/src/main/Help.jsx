@@ -27,7 +27,7 @@ class Help extends Component {
           <Form>
             <h5>Global hotkeys</h5>
             {Object.entries(keyMap).map(([key, value]) => (
-              <Form.Group>
+              <Form.Group key={key}>
                 {labels[key]}: <b>{value}</b>
               </Form.Group>
             ))}
