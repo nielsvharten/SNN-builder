@@ -87,19 +87,21 @@ class Option extends Component {
   }
 
   render() {
-    const { option } = this.props;
+    const { option, editMode } = this.props;
     const renderTooltip = (props) => (
       <Tooltip id="button-tooltip" {...props}>
         {option.description}
       </Tooltip>
     );
+    let InputGroupClasses = "col m-2";
+    if (editMode) InputGroupClasses += " editMode";
 
     return (
       <Form className="row m-0">
         <Form.Label column sm="6 m-2">
           {option.text}
         </Form.Label>
-        <InputGroup className="col m-2">
+        <InputGroup className={InputGroupClasses}>
           {this.getInput(option)}
           <OverlayTrigger
             placement="top"
