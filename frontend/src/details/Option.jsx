@@ -3,8 +3,6 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Col";
 
 class Option extends Component {
   insertInfinity(e, onChangeOption) {
