@@ -14,30 +14,25 @@ code {
     monospace;
 }
 
-.canvas {
-  min-width: 100px;
-  height: 85vh;
-  width: 100vw;
+.column-left {
+  position: absolute;
+  top: 56px;
+  right: 420px;
+  bottom: 0px;
+  left: 0px;
 }
 
-.column-left {
-  position: relative;
-  height: 85vh;
+.canvas {
   min-width: 100px;
-  width: 100%;
-  margin-bottom: 50px;
+  height: 100vh;
+  width: 100vw;
 }
 
 .column-right {
-  min-width: 420px;
-  max-width: 420px;
+  position: absolute;
+  right: 0px;
+  width: 420px;
   padding: 10px;
-}
-
-.content {
-  display: flex;
-  width: 100vw;
-  flex-direction: row;
 }
 
 .plots {
@@ -47,22 +42,30 @@ code {
   z-index: 2;
 }
 
+.canvas-bottom-div {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  background-color: white;
+  padding-left: 10px;
+}
 /* Small screens */
 @media all and (max-width: 576px) {
-  .content {
-    flex-direction: column;
-  }
-
   .column-left {
-    height: 50vh;
+    right: 0px;
+    bottom: 40vh;
+
   }
 
   .column-right {
+    position: absolute;
+    top: 60vh;
     min-width: 100%;
   }
-  
-  .execution-slider>input, .execution-slider>p {
-    width: auto;
+
+  .canvas-bottom-div>input, .canvas-bottom-div>p {
+    width: auto !important;
   }
 }
 

@@ -519,7 +519,7 @@ class Builder extends Component {
         .length;
 
       return (
-        <div className="form-group row m-2 execution-slider">
+        <div className="form-group row canvas-bottom-div">
           <input
             className="col-sm-4 m-2"
             type="range"
@@ -530,18 +530,26 @@ class Builder extends Component {
           />
           <br />
           <button
-            className="btn btn-secondary col-sm-1"
+            className="btn btn-secondary col-sm-1 m-2"
             onClick={() =>
               this.handleUpdateTimeStep(Number(execution.timeStep) - 1)
             }
           >
             prev
           </button>
-          <p className="col-sm-1 m-2" style={{ textAlign: "center" }}>
+          <p
+            className="col-sm-1 m-2"
+            style={{
+              textAlign: "center",
+              paddingTop: "5px",
+              fontWeight: "bolder",
+              fontSize: "18px",
+            }}
+          >
             {execution.timeStep}
           </p>
           <button
-            className="btn btn-secondary col-sm-1"
+            className="btn btn-secondary col-sm-1 m-2"
             onClick={() =>
               this.handleUpdateTimeStep(Number(execution.timeStep) + 1)
             }
@@ -556,7 +564,7 @@ class Builder extends Component {
   getButtons() {
     if (this.state.editMode) {
       return (
-        <React.Fragment>
+        <div className="canvas-bottom-div">
           <button
             onClick={() => this.handleAddNode("lif")}
             className="btn btn-primary m-2"
@@ -578,7 +586,7 @@ class Builder extends Component {
           >
             Random Spiker
           </button>
-        </React.Fragment>
+        </div>
       );
     }
   }
