@@ -462,9 +462,17 @@ class Builder extends Component {
   handleExecuteNetwork = () => {
     this.handleSwitchEditMode(false);
 
+    // server location to use: default http://127.0.0.1:8080
+    let serverLocation = "http://127.0.0.1:8080/";
+
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("server")) {
+      serverLocation = url.searchParams.get("server");
+    }
+
     // request: network object
     // response: execution object with measurements
-    fetch("http://127.0.0.1:8080/network", {
+    fetch(serverLocation, {
       method: "POST",
       headers: {
         "Access-Control-Allow-Origin": "localhost:5000",

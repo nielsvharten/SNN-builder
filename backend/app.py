@@ -139,7 +139,7 @@ app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
-@app.route('/network', methods=['POST'])
+@app.route('/', methods=['POST'])
 @cross_origin()
 def network():
     json = request.get_json()
