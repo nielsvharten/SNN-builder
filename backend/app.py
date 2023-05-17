@@ -1,14 +1,19 @@
 from flask import Flask, request, jsonify
 from flask_cors import cross_origin
+
 from ast import literal_eval
-from numpy import inf
-from backend.core.networks import Network
-from backend.core.simulators import Simulator
 import warnings
 import traceback
 
+from numpy import inf
+from numpy.random import RandomState
+
+from backend.core.networks import Network
+from backend.core.simulators import Simulator
+
 # to make sure that warnings of server are not ignored in response to user
 warnings.filterwarnings("error")
+
 
 def parse_float(value):
     if value == "\u221E":
@@ -33,26 +38,41 @@ def parse_int(value):
 def create_node(network, node):
     id = node['id']
     if node['type'] == "lif":
-        m = parse_float(node['m'])
-        V_init = parse_float(node['V_init'])
-        V_reset = parse_float(node['V_reset'])
-        V_min = parse_float(node['V_min'])
-        thr = parse_float(node['thr'])
-        amplitude = parse_float(node['amplitude'])
-        I_e = parse_float(node['I_e'])
-        noise = parse_float(node['noise'])
+        params = {
+            "ID": id,
+            "m": parse_float(node['m']),
+            "V_init": parse_float(node['V_init']),
+            "V_reset": parse_float(node['V_reset']),
+            "V_min": parse_float(node['V_min']),
+            "thr": parse_float(node['thr']),
+            "amplitude": parse_float(node['amplitude']),
+            "I_e": parse_float(node['I_e']),
+            "noise": parse_float(node['noise'])
+        }
         
-        return network.createLIF(ID=id, m=m, V_init=V_init, V_reset=V_reset, V_min=V_min, thr=thr, amplitude=amplitude, I_e=I_e, noise=noise)
+        if node['rng']:
+            params["rng"] = RandomState(parse_int(node['rng']))
+        
+        return network.createLIF(**params)
     elif node['type'] == "input":
-        train = literal_eval(node['train'])
-        loop = bool(node['loop'])
+        params = {
+            "ID": id,
+            "train": literal_eval(node['train']),
+            "loop": bool(node['loop'])
+        }
 
-        return network.createInputTrain(ID=id, train=train, loop=loop)
+        return network.createInputTrain(**params)
     elif node['type'] == "random":
-        p = parse_float(node['p'])
-        amplitude = parse_float(node['amplitude'])
+        params = {
+            "ID": id,
+            "p": parse_float(node['p']),
+            "amplitude": parse_float(node['amplitude'])
+        }
 
-        return network.createRandomSpiker(ID=id, p=p, amplitude=amplitude)  
+        if node['rng']:
+            params["rng"] = RandomState(parse_int(node['rng']))
+
+        return network.createRandomSpiker(**params)  
 
 
 def create_synapse(network, nodes, synapse):
@@ -93,6 +113,28 @@ def execute_network(network, duration):
     return spikes, voltages
 
 
+def process_measurements(spikes, voltages, network, json):
+    measurements = {  }
+    for i, node in enumerate(network.nodes):
+        measurements[node.ID] = { 
+            "name": json['nodes'][i].get("name"), 
+            "spikes": [], 
+            "voltages": [], 
+            "read_out": json['nodes'][i].get("read_out")
+        }
+
+        for spike in spikes:
+            measurements[node.ID]["spikes"].append(str(spike[i]).lower())
+        
+        for voltage in voltages:
+            if voltage[i] == inf:
+                measurements[node.ID]["voltages"].append("\u221E")
+            else:
+                measurements[node.ID]["voltages"].append(voltage[i])
+
+    return measurements
+
+
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -119,18 +161,6 @@ def network():
         print(traceback.format_exc())
         return jsonify({"error": "Execution error: " + str(e) + ". Look at server output for traceback."})
 
-    measurements = {  }
-    for i, node in enumerate(network.nodes):
-        node_name = json['nodes'][i].get("name")
-        read_out_node = json['nodes'][i].get("read_out")
-        measurements[node.ID] = { "name": node_name, "spikes": [], "voltages": [], "read_out": read_out_node}
-        for spike in spikes:
-            measurements[node.ID]["spikes"].append(str(spike[i]).lower())
-        
-        for voltage in voltages:
-            if voltage[i] == inf:
-                measurements[node.ID]["voltages"].append("\u221E")
-            else:
-                measurements[node.ID]["voltages"].append(voltage[i])
+    measurements = process_measurements(spikes, voltages, network, json)
 
     return jsonify({"duration": duration, "measurements": measurements, "error": None})
