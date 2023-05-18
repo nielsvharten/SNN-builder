@@ -5,27 +5,43 @@ function getSpikeProp() {
   return <div className="node-prop node-prop-spike">⚡</div>;
 }
 
-function getLifProps(node, voltage) {
-  const flexProp = voltage !== null ? "V=" + voltage : "m=" + node.m;
+function getLifProps(m, thr, voltage) {
+  const flexProp = voltage !== null ? "V=" + voltage : "m=" + m;
 
   return (
     <React.Fragment>
       <div className="node-prop node-prop-m">{flexProp}</div>
-      <div className="node-prop node-prop-thr">T={node.thr}</div>
+      <div className="node-prop node-prop-thr">T={thr}</div>
     </React.Fragment>
   );
 }
 
-function getInputProps(node) {
-  const type = node.type === "input" ? "IT" : "R";
+function getInputTrainProps() {
+  return <div className="node-prop node-prop-type">IT</div>;
+}
 
-  return <div className="node-prop node-prop-type">{type}</div>;
+function getRandomSpikerProps(p) {
+  return (
+    <React.Fragment>
+      <div className="node-prop node-prop-p">p={p}</div>
+      <div className="node-prop node-prop-type">R</div>
+    </React.Fragment>
+  );
 }
 
 function getNodeProps(node, voltage, spike) {
+  let nodeProp;
+  if (node.type === "lif") {
+    nodeProp = getLifProps(node.m, node.thr, voltage);
+  } else if (node.type === "input") {
+    nodeProp = getInputTrainProps();
+  } else if (node.type === "random") {
+    nodeProp = getRandomSpikerProps(node.p);
+  }
+
   return (
     <React.Fragment>
-      {node.type === "lif" ? getLifProps(node, voltage) : getInputProps(node)}
+      {nodeProp}
       {spike === "true" ? getSpikeProp() : null}
     </React.Fragment>
   );

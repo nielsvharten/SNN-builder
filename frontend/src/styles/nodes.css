@@ -63,7 +63,7 @@
   border: 2px solid white; 
 }
 
-.node-prop-v, .node-prop-m {
+.node-prop-v, .node-prop-m, .node-prop-p {
   position: absolute;
   top: -10px;
   left: 50px;
