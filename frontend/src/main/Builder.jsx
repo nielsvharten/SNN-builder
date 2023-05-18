@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { GlobalHotKeys } from "react-hotkeys";
+import { GlobalHotKeys, configure } from "react-hotkeys";
 
 import Canvas from "../network/Canvas";
 import InputValidator from "../utils/InputValidator";
@@ -26,6 +26,12 @@ const keyMap = {
   EXECUTE: "ctrl+enter",
   EDIT: "ctrl+backspace",
 };
+
+// allow hotkeys when focused on text
+configure({
+  ignoreTags: ["input", "select", "textarea"],
+  ignoreEventsCondition: function () {},
+});
 
 class Builder extends Component {
   state = {
@@ -56,6 +62,29 @@ class Builder extends Component {
   /*
   Global handlers
   */
+  getHotKeyHandlers() {
+    return {
+      ADD_LIF: () => this.handleAddNode("lif"),
+      ADD_INPUT: (e) => {
+        e.preventDefault();
+        this.handleAddNode("input");
+      },
+      ADD_RANDOM: (e) => {
+        e.preventDefault();
+        this.handleAddNode("random");
+      },
+
+      DELETE_SELECTED: this.handleDeleteSelectedElement,
+      CONNECT_MODE: (e) => {
+        e.preventDefault();
+        this.handleSwitchConnectMode();
+      },
+      UNDO: this.handleUndo,
+      REDO: this.handleRedo,
+      EXECUTE: this.handleExecuteNetwork,
+      EDIT: this.handleSwitchEditMode,
+    };
+  }
 
   // update state.network and add network to be overwritten to undo
   handleChangeNetwork = (network) => {
@@ -597,30 +626,6 @@ class Builder extends Component {
         </div>
       );
     }
-  }
-
-  getHotKeyHandlers() {
-    return {
-      ADD_LIF: () => this.handleAddNode("lif"),
-      ADD_INPUT: (e) => {
-        e.preventDefault();
-        this.handleAddNode("input");
-      },
-      ADD_RANDOM: (e) => {
-        e.preventDefault();
-        this.handleAddNode("random");
-      },
-
-      DELETE_SELECTED: this.handleDeleteSelectedElement,
-      CONNECT_MODE: (e) => {
-        e.preventDefault();
-        this.handleSwitchConnectMode();
-      },
-      UNDO: this.handleUndo,
-      REDO: this.handleRedo,
-      EXECUTE: this.handleExecuteNetwork,
-      EDIT: this.handleSwitchEditMode,
-    };
   }
 
   getBuilder() {
