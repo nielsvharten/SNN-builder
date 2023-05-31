@@ -519,7 +519,6 @@ class Builder extends Component {
           this.setState({ execution });
         }
       })
-      // TODO: should display some loading screen and error if catched error
       .catch((err) => {
         const execution = new Execution(
           0,

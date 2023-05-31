@@ -25,6 +25,17 @@ def parse_float(value):
     return float(value)
 
 
+def parse_float_list(value):
+    # pre-process: remove brackets
+    value = value.replace("[", "")
+    value = value.replace("]", "")
+
+    # split on ,
+    floats = value.split(",")
+
+    return list(map(lambda x: parse_float(x), floats))
+
+
 def parse_int(value):
     if value == "\u221E":
         return inf
@@ -57,7 +68,7 @@ def create_node(network, node):
     elif node['type'] == "input":
         params = {
             "ID": id,
-            "train": literal_eval(node['train']),
+            "train": parse_float_list(node['train']),
             "loop": bool(node['loop'])
         }
 
