@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start-api": "cd ../backend && flask run -p 8080 --debug",
+    "start-api": "cd ../backend && flask run -p 8922 --debug",
     "dev": "npm-run-all --parallel start start-api",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -92,6 +92,14 @@
   font-size: larger;
 }
 
+.node-prop-spike-unknown {
+  position: absolute;
+  top: 2px;
+  left: 60px;
+  font-size: larger;
+  font-weight: bold;
+}
+
 .node-shape-random > .node-prop-spike {
   left: 38px;
 }

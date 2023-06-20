@@ -1,4 +1,132 @@
-{ 
+{ "simulator": {"options": {
+  "node": {
+    "m": {
+      "name": "m",
+      "type": "float",
+      "text": "Inverse leakage (m)",
+      "description": "The neuron's inverse leakage. 0 means full leakage of its voltage and 1 means complete memory.",
+      "default": 1,
+      "min": 0,
+      "max": 1,
+      "node_types": ["lif"]
+    },
+    "V_init": {
+      "name": "V_init",
+      "type": "float",
+      "text": "Initial voltage",
+      "description": "The neuron's voltage at time step 0. Spikes at time step 0 if initial voltage >= spiking threshold.",
+      "default": 0,
+      "node_types": ["lif"]
+    },
+    "V_reset": {
+      "name": "V_reset",
+      "type": "float",
+      "text": "Reset voltage (R)",
+      "description": "The voltage to which the neuron jumps when a spike occurs.",
+      "default": 0,
+      "node_types": ["lif"]
+    },
+    "V_min": {
+      "name": "V_min",
+      "type": "float",
+      "text": "Minimum voltage",
+      "description": "Minimum voltage the neuron can have. The neuron's voltage will never be lower than it's minimum voltage.",
+      "default": 0,
+      "node_types": ["lif"]
+    },
+    "thr": {
+      "name": "thr",
+      "type": "float",
+      "text": "Spiking threshold (T)",
+      "description": "The neuron spikes if V >= T.",
+      "default": 1,
+      "node_types": ["lif"]
+    },
+    "amplitude": {
+      "name": "amplitude",
+      "type": "float",
+      "text": "Amplitude of output",
+      "description": "The amplitude of the output when the neuron spikes.",
+      "default": 1,
+      "node_types": ["lif", "random"]
+    },
+    "I_e": {
+      "name": "I_e",
+      "type": "float",
+      "text": "Constant input current",
+      "description": "Constant value which is added to the neuron's voltage each time step.",
+      "default": 0,
+      "node_types": ["lif"]
+    },
+    "noise": {
+      "name": "noise",
+      "type": "float",
+      "text": "Voltage noise",
+      "description": "The standard deviation of the normal distribution that is sampled from to add noise to the membrane voltage at each step.",
+      "default": 0,
+      "min": 0,
+      "node_types": ["lif"]
+    },
+    "rng": {
+      "name": "rng",
+      "type": "int",
+      "text": "Random generator",
+      "description": "The seed of the random generator used for the noise and random spikers",
+      "default": "",
+      "min": 0,
+      "node_types": ["lif", "random"]
+    },
+    "train": {
+      "name": "train",
+      "type": "float-list",
+      "text": "Output train",
+      "description": "The output at each time step.",
+      "node_types": ["input"]
+    },
+    "loop": {
+      "name": "loop",
+      "type": "bool",
+      "text": "Loop the train",
+      "description": "If true, the train will be looped. Otherwise, the output is 0 at the end of the train.",
+      "node_types": ["input"]
+    },
+    "p": {
+      "name": "p",
+      "type": "float",
+      "text": "Spiking probability",
+      "description": "The probability with which the random spiker spikes. If 1, it will spike every time step. If 0, it will never spike.",
+      "default": 0.5,
+      "min": 0,
+      "max": 1,
+      "node_types": ["random"]
+    },
+    "read_out": {
+      "name": "read_out",
+      "type": "bool",
+      "text": "Read-out neuron",
+      "description": "Signal that the output of this neuron should be measured.",
+      "node_types": ["lif", "input", "random"]
+    }
+  },
+  "synapse": {
+    "w": {
+      "name": "w",
+      "type": "float",
+      "text": "Synaptic weight",
+      "description": "The weight of the connection. The current from the pre-synaptic neuron is multiplied by the weight before being send to the post-synaptic neuron.",
+      "default": 1
+    },
+    "d": {
+      "name": "d",
+      "type": "int",
+      "text": "Synaptic delay",
+      "description": "The difference in time steps between the ouput spike of the pre-synaptic neuron and the input current of the post-synaptic neuron.",
+      "default": 1,
+      "min": 1
+    }
+  }
+}}
+, "loihi": { 
   "options": {
     "node": {
       "m": {
@@ -13,78 +141,88 @@
       },
       "V_init": {
         "name": "V_init",
-        "type": "float",
+        "type": "int",
         "text": "Initial voltage",
         "description": "The neuron's voltage at time step 0. Spikes at time step 0 if initial voltage >= spiking threshold.",
         "default": 0,
-        "min": 0,
+        "min": -131071,
+        "max": 131071,
         "node_types": ["lif"]
       },
       "V_reset": {
         "name": "V_reset",
         "type": "float",
         "text": "Reset voltage (R)",
-        "description": "The voltage to which the neuron jumps when a spike occurs.",
+        "description": "Fixed at 0 for Loihi 2. Can emulate spiking behaviour using a self-loop with specified weight and d=1.",
         "default": 0,
         "min": 0,
+        "max": 0,
         "node_types": ["lif"]
       },
       "V_min": {
         "name": "V_min",
-        "type": "float",
-        "text": "Minimal voltage",
-        "description": "Minimal voltage the neuron can have. The neuron's voltage will never be lower than it's minimal voltage.",
-        "default": 0,
+        "type": "int",
+        "text": "Minimum voltage",
+        "description": "Minimum voltage the neuron can have. The minimum voltage for Loihi 2 is 1-2E17.",
+        "default": -131071,
+        "min": -131071,
+        "max": -131071,
         "node_types": ["lif"]
       },
       "thr": {
         "name": "thr",
-        "type": "float",
+        "type": "int",
         "text": "Spiking threshold (T)",
-        "description": "The minimum voltage at which the neuron spikes.",
+        "description": "The minimum voltage at which the neuron spikes. For Loihi 2 this has to be an int in the range [0,262143]",
         "default": 1,
         "min": 0,
+        "max": 262143,
         "node_types": ["lif"]
       },
       "amplitude": {
         "name": "amplitude",
-        "type": "float",
+        "type": "int",
         "text": "Amplitude of output",
-        "description": "The amplitude of the output when the neuron spikes.",
+        "description": "The amplitude of the output when the neuron spikes. The weight of outgoing synapses will be multiplied by this value",
         "default": 1,
+        "min": -255,
+        "max": 255,
         "node_types": ["lif", "random"]
       },
       "I_e": {
         "name": "I_e",
         "type": "float",
         "text": "Constant input current",
-        "description": "Constant value which is added to the neuron's voltage each time step.",
+        "description": "Constant value which is added to the neuron's voltage each time step. For Loihi 2 this has to be an int in the range [-511,511]",
         "default": 0,
+        "min": -511,
+        "max": 511,
         "node_types": ["lif"]
       },
       "noise": {
         "name": "noise",
         "type": "float",
         "text": "Voltage noise",
-        "description": "The standard deviation of the normal distribution that is sampled from to add noise to the membrane voltage at each step.",
+        "description": "Loihi 2 does not allow voltage noise to be added.",
         "default": 0,
         "min": 0,
-        "node_types": ["lif", "random"]
+        "max": 0,
+        "node_types": ["lif"]
       },
       "rng": {
         "name": "rng",
         "type": "int",
         "text": "Random generator",
-        "description": "The seed of the random generator used for the noise and random spikers",
+        "description": "The seed of the random generator used for the random spikers",
         "default": "",
         "min": 0,
-        "node_types": ["lif", "random"]
+        "node_types": ["random"]
       },
       "train": {
         "name": "train",
         "type": "float-list",
         "text": "Output train",
-        "description": "The output at each time step.",
+        "description": "The output at each time step. [1,0] will spike at time step 0 but not at step 1.",
         "node_types": ["input"]
       },
       "loop": {
@@ -115,10 +253,12 @@
     "synapse": {
       "w": {
         "name": "w",
-        "type": "float",
+        "type": "int",
         "text": "Synaptic weight",
-        "description": "The weight of the connection. The current from the pre-synaptic neuron is multiplied by the weight before being send to the post-synaptic neuron.",
-        "default": 1
+        "description": "The weight of the connection [-255, 255]. The current from the pre-synaptic neuron is multiplied by the weight before being send to the post-synaptic neuron.",
+        "default": 1,
+        "min": -255,
+        "max:": 255
       },
       "d": {
         "name": "d",
@@ -130,4 +270,4 @@
       }
     }
   }
-}
+}}

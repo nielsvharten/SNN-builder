@@ -125,6 +125,7 @@ class Builder extends Component {
     network.config = config;
 
     this.handleChangeNetwork(network);
+    this.handleSaveNetwork(network);
   };
 
   // de-select currently selected node or synapse, used when clicking on canvas
@@ -491,8 +492,8 @@ class Builder extends Component {
   handleExecuteNetwork = () => {
     this.handleSwitchEditMode(false);
 
-    // server location to use: default http://127.0.0.1:8080
-    let serverLocation = "http://127.0.0.1:8080/";
+    // server location to use: default http://127.0.0.1:8922
+    let serverLocation = "http://127.0.0.1:8922/";
 
     const url = new URL(window.location.href);
     if (url.searchParams.has("server")) {
@@ -691,6 +692,7 @@ class Builder extends Component {
               nodes={network.nodes}
               synapses={network.synapses}
               optionalFeatures={network.config.nodeFeatures}
+              loihiRestrictions={network.config.loihi.loihiRestrictions}
               // selected element
               selectedNodeId={selectedNodeId}
               selectedSynapseId={selectedSynapseId}
@@ -714,6 +716,7 @@ class Builder extends Component {
           onClose={() => this.handleToggleConfig(false)}
           onConfigError={this.handleConfigError}
           onToggleFeature={this.handleToggleFeature}
+          onChangeNetwork={this.handleChangeNetwork}
         />
         <Help
           keyMap={keyMap}

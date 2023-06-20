@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import Option from "./Option";
 import data from "../main/options.json";
 
-// import options from options.json
-const { options } = data;
-
 class ElementDetails extends Component {
   getConfigOption(element, elementType, option) {
     const { editMode, onChangeOption, onBlurOption } = this.props;
@@ -126,7 +123,7 @@ class ElementDetails extends Component {
     );
   }
 
-  getNodeOptions(nodeType) {
+  getNodeOptions(nodeType, options) {
     const optionalFeatures = this.props.optionalFeatures;
     const nodeOptions = Object.values(options.node);
 
@@ -141,9 +138,9 @@ class ElementDetails extends Component {
     return filteredOptions;
   }
 
-  getConfigSelectedElement(selectedNode, selectedSynapse) {
+  getConfigSelectedElement(selectedNode, selectedSynapse, options) {
     if (selectedNode) {
-      const nodeOptions = this.getNodeOptions(selectedNode.type);
+      const nodeOptions = this.getNodeOptions(selectedNode.type, options);
       return this.getConfigSelectedNode(selectedNode, nodeOptions);
     } else if (selectedSynapse) {
       const synapseOptions = Object.values(options.synapse);
@@ -152,13 +149,23 @@ class ElementDetails extends Component {
   }
 
   render() {
-    const { nodes, selectedNodeId, synapses, selectedSynapseId } = this.props;
+    const {
+      nodes,
+      selectedNodeId,
+      synapses,
+      selectedSynapseId,
+      loihiRestrictions,
+    } = this.props;
+
+    // import options from options.json
+    const { options } = loihiRestrictions ? data["loihi"] : data["simulator"];
+
     const selectedNode = nodes.find((n) => n.id === selectedNodeId);
     const selectedSynapse = synapses.find((s) => s.id === selectedSynapseId);
 
     return (
       <React.Fragment>
-        {this.getConfigSelectedElement(selectedNode, selectedSynapse)}
+        {this.getConfigSelectedElement(selectedNode, selectedSynapse, options)}
       </React.Fragment>
     );
   }

@@ -1,127 +1,16 @@
 from flask import Flask, request, jsonify
 from flask_cors import cross_origin
 
-from ast import literal_eval
 import warnings
 import traceback
-
 from numpy import inf
-from numpy.random import RandomState
 
-from backend.core.networks import Network
 from backend.core.simulators import Simulator
+from backend.core.converters import Deserializer
 
 # to make sure that warnings of server are not ignored in response to user
 warnings.filterwarnings("error")
-
-
-def parse_float(value):
-    if value == "\u221E":
-        return inf
-    
-    if value == "-\u221E":
-        return -inf
-    
-    return float(value)
-
-
-def parse_float_list(value):
-    # pre-process: remove brackets
-    value = value.replace("[", "")
-    value = value.replace("]", "")
-
-    # split on ,
-    floats = value.split(",")
-
-    return list(map(lambda x: parse_float(x), floats))
-
-
-def parse_int(value):
-    if value == "\u221E":
-        return inf
-    
-    if value == "-\u221E":
-        return -inf
-    
-    return int(value)
-
-
-def create_node(network, node):
-    id = node['id']
-    if node['type'] == "lif":
-        params = {
-            "ID": id,
-            "m": parse_float(node['m']),
-            "V_init": parse_float(node['V_init']),
-            "V_reset": parse_float(node['V_reset']),
-            "V_min": parse_float(node['V_min']),
-            "thr": parse_float(node['thr']),
-            "amplitude": parse_float(node['amplitude']),
-            "I_e": parse_float(node['I_e']),
-            "noise": parse_float(node['noise'])
-        }
-        
-        if node['rng']:
-            params["rng"] = RandomState(parse_int(node['rng']))
-        
-        return network.createLIF(**params)
-    elif node['type'] == "input":
-        params = {
-            "ID": id,
-            "train": parse_float_list(node['train']),
-            "loop": bool(node['loop'])
-        }
-
-        return network.createInputTrain(**params)
-    elif node['type'] == "random":
-        params = {
-            "ID": id,
-            "p": parse_float(node['p']),
-            "amplitude": parse_float(node['amplitude'])
-        }
-
-        if node['rng']:
-            params["rng"] = RandomState(parse_int(node['rng']))
-
-        return network.createRandomSpiker(**params)  
-
-
-def create_synapse(network, nodes, synapse):
-    pre = nodes[synapse['pre']]
-    post = nodes[synapse['post']]
-    w = parse_float(synapse['w'])
-    d = parse_int(synapse['d'])
-
-    return network.createSynapse(pre=pre, post=post, w=w, d=d)
-
-
-def create_network(json):
-    network = Network()
-    nodes = {}
-    for json_node in json['nodes']:
-        node = create_node(network, json_node)
-        nodes[node.ID] = node
-
-    for json_synapse in json['synapses']:
-        create_synapse(network, nodes, json_synapse)
-
-    return network
-
-
-def execute_network(network, duration):
-    sim = Simulator(network)
-    
-    # Add all read_out neurons to the simulation
-    sim.raster.addTarget(network.nodes)
-    sim.multimeter.addTarget(network.nodes)
-
-    sim.run(steps=duration, plotting=False)
-
-    # Obtain all measurements
-    spikes = sim.raster.get_measurements()
-    voltages = sim.multimeter.get_measurements()
-
-    return spikes, voltages
+warnings.filterwarnings("ignore", message="Partition None overridden by environment variable PARTITION=oheogulch")
 
 
 def process_measurements(spikes, voltages, network, json):
@@ -146,6 +35,85 @@ def process_measurements(spikes, voltages, network, json):
     return measurements
 
 
+def execute_simulator(network, duration, json):
+    sim = Simulator(network)
+    
+    # Add all read_out neurons to the simulation
+    sim.raster.addTarget(network.nodes)
+    sim.multimeter.addTarget(network.nodes)
+
+    sim.run(steps=duration, plotting=False)
+
+    # Obtain all measurements
+    spikes = sim.raster.get_measurements()
+    voltages = sim.multimeter.get_measurements()
+
+    measurements = process_measurements(spikes, voltages, network, json)
+    
+    return measurements
+
+
+def execute_loihi(network, duration, json):
+    from compiler.executor import Executor
+
+    executor = Executor(network, steps=duration)
+    executor.run()
+
+    voltages = executor.voltages
+    spikes = executor.spikes
+
+    measurements = {}
+    for node in json['nodes']:
+        node_id = node.get("id")
+        measurements[node_id] = { 
+            "name": node.get("name"), 
+            "spikes": [str(spike).lower() for spike in spikes[node_id]], 
+            "voltages": voltages[node_id], 
+            "read_out": node.get("read_out")
+        }
+
+    return measurements
+
+
+def compare_voltages(simulator_voltages, loihi_voltages, name):
+    assert len(simulator_voltages) == len(loihi_voltages)
+    
+    for i in range(len(simulator_voltages)):
+        if abs(simulator_voltages[i] - loihi_voltages[i]) > 0.1:
+            print("Voltage does not match for Loihi V =",loihi_voltages[i]," and the simulator V =",simulator_voltages[i],"for Node", name, " at time step", i)
+            return False
+        
+    return True
+
+
+def compare_spikes(simulator_spikes, loihi_spikes, name):
+    # if loihi did not record spikes: return
+    if len(loihi_spikes) == 0:
+        return True
+    
+    assert len(simulator_spikes) == len(loihi_spikes)
+    
+    for i in range(len(simulator_spikes)):
+        if simulator_spikes[i] != loihi_spikes[i]:
+            print("Spike behaviour does not match for Loihi and the simulator for Node", name, " at time step", i)
+            return False
+        
+    return True
+     
+
+def match_results(simulator_measurements, loihi_measurements):
+    for node_id, node in loihi_measurements.items():
+        simulator_voltages = simulator_measurements[node_id]["voltages"]
+        if not compare_voltages(simulator_voltages, node["voltages"], node["name"]):
+            return False
+        
+        simulator_spikes = simulator_measurements[node_id]["spikes"]
+        if not compare_spikes(simulator_spikes, node["spikes"], node["name"]):
+            return False
+        
+    return True
+    
+    
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -156,22 +124,39 @@ def network():
     json = request.get_json()
 
     try:
-        network = create_network(json)
+        network = Deserializer(json).network
     except Exception as e:
         print(traceback.format_exc())
         return jsonify({"error": "Build error: " + str(e) + ". Look at server output for traceback."})
 
     try:
-        duration = parse_int(json["duration"])
+        duration = int(json["duration"])
     except ValueError:
         duration = 10
 
+    loihi = json["config"]["loihi"]["loihiExecution"]
+    
     try:
-        spikes, voltages = execute_network(network, duration)
+        if loihi:
+            print("INFO: Started execution on Loihi")
+            measurements = execute_loihi(network, duration, json)
+            print("INFO: Finished execution on Loihi")
+            
+            # check whether Loihi results match that of the simulator
+            new_network = Deserializer(json).network
+            simulator_measurements = execute_simulator(new_network, duration, json)
+            
+            if json["config"]["loihi"]["matchWithSimulator"]:
+                if not match_results(simulator_measurements, measurements):
+                    return jsonify({"error": "Execution error: measurements of Loihi do not match with the simulator. Look at server output for traceback."})
+                else:
+                    print("Measurements for Loihi match with the simulator")
+        else:
+            print("INFO: Started execution on simulator")
+            measurements = execute_simulator(network, duration, json)
+            print("INFO: Finished execution on simulator")
     except Exception as e:
         print(traceback.format_exc())
         return jsonify({"error": "Execution error: " + str(e) + ". Look at server output for traceback."})
 
-    measurements = process_measurements(spikes, voltages, network, json)
-
-    return jsonify({"duration": duration, "measurements": measurements, "error": None})
+    return jsonify({"duration": duration, "loihi": str(loihi).lower(), "measurements": measurements, "error": None})

@@ -38,7 +38,7 @@ class NetworkDetails extends Component {
       name: "duration",
       type: "int",
       text: "Execution time steps",
-      description: "The number of time steps to run the simulator for.",
+      description: "The number of time steps to run the execution for.",
       default: 10,
       min: 1,
     };

@@ -4,13 +4,16 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert";
 
+import Network from "../model/network";
 import data from "./options.json";
-
-// import options from options.json
-const { options } = data;
 
 class Config extends Component {
   nodeFeatureNonDefault(feature, network) {
+    const { loihiRestrictions } = network.config.loihi;
+
+    // import options from options.json
+    const { options } = loihiRestrictions ? data["loihi"] : data["simulator"];
+
     const option = options.node[feature];
     const nonDefault = network.nodes.find(
       (node) =>
@@ -41,43 +44,73 @@ class Config extends Component {
     }
   }
 
+  handleSwitchConfig = (enabled) => {
+    const CONFIRM_TEXT =
+      "Have you saved your progress? The current network will be lost";
+
+    if (window.confirm(CONFIRM_TEXT)) {
+      const { onChangeNetwork } = this.props;
+      let network = new Network();
+      network["config"]["loihi"]["loihiRestrictions"] = enabled;
+
+      onChangeNetwork(network);
+    }
+  };
+
   handleToggleFeature = (type, feature, enabled) => {
     const { network, onConfigError, onToggleFeature } = this.props;
 
-    // on disable, check if rules are satisfied
+    if (feature === "loihiRestrictions") {
+      // on toggle loihiRestrictions: start with new network
+      this.handleSwitchConfig(enabled);
+      return;
+    }
+
+    let error = undefined;
     if (!enabled) {
-      let error = undefined;
+      // on disable, check if rules are satisfied
       if (type === "synapseRules") {
         error = this.synapseRuleBroken(feature, network);
       } else if (type === "nodeFeatures") {
         error = this.nodeFeatureNonDefault(feature, network);
       }
+    }
 
-      if (error) {
-        onConfigError(feature, error);
-        return;
-      }
+    if (error) {
+      onConfigError(feature, error);
+      return;
     }
 
     onToggleFeature(type, feature, enabled);
   };
 
   getAlert(feature, details = null) {
-    let message = "A non-default value is specified for node " + details.name;
-    if (feature === "selfLoops") {
-      message = "A self-loop exists in the network";
-    } else if (feature === "synapseBundles") {
-      message = "There are multiple synapses from one node to another";
-    }
+    const messages = {
+      V_min:
+        "A non-default minimum voltage is specified for node " + details.name,
+      amplitude:
+        "A non-default amplitude is specified for node " + details.name,
+      I_e: "A non-default input current is specified for node " + details.name,
+      noise: "A non-default noise value is specified for node " + details.name,
+      rng: "A random generator seed is specified for node " + details.name,
+      selfLoops: "A self-loop exists in the network",
+      synapseBundles: "There are multiple synapses from one node to another",
+      loihiExecution:
+        "May only execute on Loihi if hardware restrictions are enabled",
+      matchWithSimulator:
+        "Can only match with simulator when executing on Loihi",
+    };
+
     return (
       <Alert className="m-3" variant="danger" severity="error">
-        {message}
+        {messages[feature]}
       </Alert>
     );
   }
 
   getFeatureCheckbox(type, feature, value, label) {
     const { error } = this.props;
+
     return (
       <Form.Group key={feature} className="mb-3">
         <Form.Check
@@ -97,7 +130,7 @@ class Config extends Component {
 
   render() {
     const { show, network, onClose } = this.props;
-    const { nodeFeatures, synapseRules } = network.config;
+    const { nodeFeatures, synapseRules, loihi } = network.config;
     const labels = {
       V_min: "Minimal voltage (default: 0)",
       amplitude: "Amplitude of output spikes (default: 1)",
@@ -106,6 +139,9 @@ class Config extends Component {
       rng: "Seed of random generator (default: Random)",
       selfLoops: "Allow synapse from a node to itself",
       synapseBundles: "Allow multiple synapses from one node to another",
+      loihiRestrictions: "Apply hardware restrictions for Loihi",
+      loihiExecution: "Execute on Loihi",
+      matchWithSimulator: "Check Loihi's measurements with the simulator",
     };
 
     return (
@@ -134,6 +170,30 @@ class Config extends Component {
                 labels[feature]
               )
             )}
+            <br />
+            <Form.Label>Execute on Loihi</Form.Label>
+            {this.getFeatureCheckbox(
+              "loihi",
+              "loihiRestrictions",
+              loihi["loihiRestrictions"],
+              labels["loihiRestrictions"]
+            )}
+            {loihi["loihiRestrictions"] // only show loihi execution if restrictions are enabled
+              ? this.getFeatureCheckbox(
+                  "loihi",
+                  "loihiExecution",
+                  loihi["loihiExecution"],
+                  labels["loihiExecution"]
+                )
+              : null}
+            {loihi["loihiExecution"] // only show match with simulator if loihi execution is enabled
+              ? this.getFeatureCheckbox(
+                  "loihi",
+                  "matchWithSimulator",
+                  loihi["matchWithSimulator"],
+                  labels["matchWithSimulator"]
+                )
+              : null}
           </Form>
         </Modal.Body>
         <Modal.Footer>

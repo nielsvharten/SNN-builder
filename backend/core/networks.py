@@ -31,6 +31,7 @@ class Network:
         I_e=0,
         noise=0,
         rng=None,
+        read_out=True,
         ID=None,
         increment_count=True,
     ):
@@ -45,6 +46,7 @@ class Network:
             I_e,
             noise,
             rng,
+            read_out,
             ID,
             increment_count,
         )

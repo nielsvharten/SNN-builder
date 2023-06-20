@@ -23,6 +23,11 @@ export default class Network {
         selfLoops: true,
         synapseBundles: false,
       },
+      loihi: {
+        loihiRestrictions: false,
+        loihiExecution: false,
+        matchWithSimulator: false,
+      },
     };
   }
 }

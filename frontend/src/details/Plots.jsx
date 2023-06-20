@@ -99,7 +99,11 @@ class Plots extends Component {
       <>
         {this.getVoltagePlot(voltages, tickArray)}
         <br />
-        {this.getSpikePlot(spikeData, 1, duration)}
+
+        {
+          // do not show spike plot when does not have the data
+          spikes.length > 0 ? this.getSpikePlot(spikeData, 1, duration) : null
+        }
       </>
     );
   }

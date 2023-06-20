@@ -64,6 +64,7 @@ class LIF(AbstractNeuron):
         I_e=0,
         noise=0,
         rng=None,
+        read_out=True,
         ID=None,
         increment_count=True,
     ):
@@ -77,6 +78,7 @@ class LIF(AbstractNeuron):
         self.I = I_e
         self.rng = rng if rng is not None else np.random.RandomState()
         self.noise = noise
+        self.read_out = read_out
 
         if ID is None:
             self.ID = LIF.count + 1

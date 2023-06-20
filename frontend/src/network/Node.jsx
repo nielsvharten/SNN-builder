@@ -1,8 +1,30 @@
 import React from "react";
 import Draggable from "react-draggable";
 
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+
 function getSpikeProp() {
   return <div className="node-prop node-prop-spike">⚡</div>;
+}
+
+function getSpikeUnknownProp() {
+  const renderTooltip = (props) => (
+    <Tooltip id="spike-unknown-tooltip" {...props}>
+      For Loihi only the spikes of LIF neurons that are flagged as read-out can
+      be measured.
+    </Tooltip>
+  );
+
+  return (
+    <OverlayTrigger
+      placement="top"
+      delay={{ show: 250, hide: 400 }}
+      overlay={renderTooltip}
+    >
+      <div className="node-prop node-prop-spike-unknown">?</div>
+    </OverlayTrigger>
+  );
 }
 
 function getLifProps(m, thr, voltage) {
@@ -43,6 +65,7 @@ function getNodeProps(node, voltage, spike) {
     <React.Fragment>
       {nodeProp}
       {spike === "true" ? getSpikeProp() : null}
+      {spike === undefined ? getSpikeUnknownProp() : null}
     </React.Fragment>
   );
 }
@@ -52,9 +75,9 @@ function getClassNames(type, selected = false, readOut = false) {
 
   if (readOut) {
     return "node-shape-read-out " + selectedClass;
+  } else {
+    return "node-shape-" + type + selectedClass;
   }
-
-  return "node-shape-" + type + selectedClass;
 }
 
 const Node = ({
