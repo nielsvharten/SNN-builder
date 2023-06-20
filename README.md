@@ -9,11 +9,10 @@ Build spiking neural networks from scratch in an intuitive UI and execute them o
 2. The build repository
 
 ### 2) Create environment
-#### Option A: Virtualenv 
+#### Option A: [Venv](https://docs.python.org/3/library/venv.html) 
 1. Create a virtual environment (called venv) in the project's root directory
 ```
-pip install virtualenv
-virtualenv venv
+python -m venv venv
 ```
 2. Activate the created virtual environment:
   - Windows: ```./venv/Scripts/activate```
@@ -46,11 +45,10 @@ python start.py
 3. The development repository
 
 ### 2) Create environment
-#### Option A: Virtualenv 
+#### Option A: [Venv](https://docs.python.org/3/library/venv.html) 
 1. Create a virtual environment (called venv) in the project's root directory
 ```
-pip install virtualenv
-virtualenv venv
+python -m venv venv
 ```
 2. Activate the created virtual environment:
   - Windows: ```./venv/Scripts/activate```
