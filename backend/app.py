@@ -112,8 +112,8 @@ def match_results(simulator_measurements, loihi_measurements):
             return False
         
     return True
-    
-    
+
+
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -142,11 +142,15 @@ def network():
             measurements = execute_loihi(network, duration, json)
             print("INFO: Finished execution on Loihi")
             
-            # check whether Loihi results match that of the simulator
-            new_network = Deserializer(json).network
-            simulator_measurements = execute_simulator(new_network, duration, json)
-            
             if json["config"]["loihi"]["matchWithSimulator"]:
+
+                # give warning if network contains random generator without seed (and this generator is used)
+                if any(node["type"] == "random" and node["rng"] == "" for node in json["nodes"]):
+                    print("Warning: trying to match results of Loihi with simulator having random spiker without specified seed.")
+
+                # check whether Loihi results match that of the simulator
+                new_network = Deserializer(json).network
+                simulator_measurements = execute_simulator(new_network, duration, json)
                 if not match_results(simulator_measurements, measurements):
                     return jsonify({"error": "Execution error: measurements of Loihi do not match with the simulator. Look at server output for traceback."})
                 else:
