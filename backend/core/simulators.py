@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import networkx as nx
-from backend.core.detectors import Raster, Multimeter
+from core.detectors import Raster, Multimeter
 
 
 class Simulator:

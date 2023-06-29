@@ -96,9 +96,9 @@ class Config extends Component {
       selfLoops: "A self-loop exists in the network",
       synapseBundles: "There are multiple synapses from one node to another",
       loihiExecution:
-        "May only execute on Loihi if hardware restrictions are enabled",
+        "May only execute on Loihi 2 if hardware restrictions are enabled",
       matchWithSimulator:
-        "Can only match with simulator when executing on Loihi",
+        "Can only match with simulator when executing on Loihi 2",
     };
 
     return (
@@ -139,9 +139,9 @@ class Config extends Component {
       rng: "Seed of random generator (default: Random)",
       selfLoops: "Allow synapse from a node to itself",
       synapseBundles: "Allow multiple synapses from one node to another",
-      loihiRestrictions: "Apply hardware restrictions for Loihi",
-      loihiExecution: "Execute on Loihi",
-      matchWithSimulator: "Check Loihi's measurements with the simulator",
+      loihiRestrictions: "Apply hardware restrictions for Loihi 2",
+      loihiExecution: "Execute on Loihi 2",
+      matchWithSimulator: "Check Loihi 2's measurements with the simulator",
     };
 
     return (
@@ -171,7 +171,7 @@ class Config extends Component {
               )
             )}
             <br />
-            <Form.Label>Execute on Loihi</Form.Label>
+            <Form.Label>Execute on Loihi 2</Form.Label>
             {this.getFeatureCheckbox(
               "loihi",
               "loihiRestrictions",

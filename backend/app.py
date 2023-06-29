@@ -5,8 +5,8 @@ import warnings
 import traceback
 from numpy import inf
 
-from backend.core.simulators import Simulator
-from backend.core.converters import Deserializer
+from core.simulators import Simulator
+from core.converters import Deserializer
 
 # to make sure that warnings of server are not ignored in response to user
 warnings.filterwarnings("error")

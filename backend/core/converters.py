@@ -1,7 +1,7 @@
 from numpy import inf
 from numpy.random import RandomState
 
-from backend.core.networks import Network
+from core.networks import Network
 
     
 class Deserializer:

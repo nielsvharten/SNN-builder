@@ -1,7 +1,7 @@
 import networkx as nx
 
-from backend.core.nodes import LIF, InputTrain, RandomSpiker
-from backend.core.connections import Synapse
+from core.nodes import LIF, InputTrain, RandomSpiker
+from core.connections import Synapse
 
 
 class Network:
