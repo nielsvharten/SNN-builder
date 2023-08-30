@@ -6,7 +6,7 @@ Build spiking neural networks from scratch in an intuitive UI and execute them o
 ### 1) Requirements
 
 1. Python with [pip](https://pypi.org/project/pip/)
-2. [The build repository](https://github.com/nielsvharten/SNN-builder/releases/download/1.0.0/SNN-builder.zip)
+2. [The build repository](https://github.com/nielsvharten/SNN-builder/releases/download/1.0.0/SNN-builder-v1.0.0-build.zip)
 
 ### 2) Create environment
 #### Option A: [Venv](https://docs.python.org/3/library/venv.html) 
